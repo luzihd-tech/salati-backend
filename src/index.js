@@ -1,55 +1,38 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const path = require('path');
-
-const authRoutes = require('./routes/auth');
-const placesRoutes = require('./routes/places');
-const prayerRoutes = require('./routes/prayer');
-const adminRoutes = require('./routes/admin');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Middlewares
-app.use(cors({
-  origin: process.env.FRONTEND_URL || '*',
-  credentials: true
-}));
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true }));
+// ⚠️ Le webhook Stripe a besoin du raw body AVANT express.json()
+// Il faut l'enregistrer en premier
+const stripeRoutes = require('./routes/stripe');
+app.use('/api/stripe/webhook', express.raw({ type: 'application/json' }), (req, res, next) => {
+  // Garde le raw body pour la vérification de signature
+  req.rawBody = req.body;
+  next();
+});
 
-// Servir les photos uploadées
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
-
-// Routes API
-app.use('/api/auth', authRoutes);
-app.use('/api/places', placesRoutes);
-app.use('/api/prayer', prayerRoutes);
-app.use('/api/admin', adminRoutes);
+// Middlewares globaux
+app.use(cors({ origin: '*', methods: ['GET','POST','PUT','DELETE','OPTIONS'], allowedHeaders: ['Content-Type','Authorization'] }));
+app.use(express.json());
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', version: '1.0.0', name: 'Salati API' });
+  res.json({ status: 'ok', name: 'Salati API', version: '1.0.0', timestamp: new Date().toISOString() });
 });
 
-// 404
-app.use((req, res) => {
-  res.status(404).json({ error: 'Route introuvable' });
-});
+// Routes
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/places', require('./routes/places'));
+app.use('/api/prayer', require('./routes/prayer'));
+app.use('/api/stripe', stripeRoutes);
+app.use('/api/admin', require('./routes/admin'));
 
-// Error handler
-app.use((err, req, res, next) => {
-  console.error(err);
-  res.status(500).json({ error: err.message || 'Erreur serveur' });
-});
+app.use((req, res) => res.status(404).json({ error: 'Route introuvable' }));
 
 app.listen(PORT, () => {
-  console.log(`\n🕌 Salati API démarrée sur http://localhost:${PORT}`);
-  console.log(`📖 Health check: http://localhost:${PORT}/api/health`);
-  console.log(`\n🔑 Admin par défaut:`);
-  console.log(`   Email: admin@salati.fr`);
-  console.log(`   Mot de passe: password\n`);
+  console.log(`🕌 Salati API démarrée sur http://localhost:${PORT}`);
+  console.log(`Stripe: ${process.env.STRIPE_SECRET_KEY ? '✅ configuré' : '⚠️ STRIPE_SECRET_KEY manquant'}`);
 });
-
-module.exports = app;

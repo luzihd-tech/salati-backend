@@ -1,7 +1,6 @@
 {
   "name": "salati-backend",
   "version": "1.0.0",
-  "description": "API backend pour Salati - App de lieux de prière",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
@@ -15,7 +14,8 @@
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
     "dotenv": "^16.3.1",
-    "node-fetch": "^2.7.0"
+    "node-fetch": "^2.7.0",
+    "stripe": "^14.21.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"

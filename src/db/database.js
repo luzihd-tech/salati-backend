@@ -1,15 +1,10 @@
-/**
- * SALATI - Couche de données
- * Connectée à Supabase (PostgreSQL hébergé).
- */
-
 const { createClient } = require('@supabase/supabase-js');
 
 const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SECRET_KEY; // clé secrète, accès complet, usage backend uniquement
+const supabaseKey = process.env.SUPABASE_SECRET_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
-  console.error('❌ SUPABASE_URL ou SUPABASE_SECRET_KEY manquant dans le fichier .env');
+  console.error('SUPABASE_URL ou SUPABASE_SECRET_KEY manquant');
 }
 
 const supabase = createClient(supabaseUrl, supabaseKey, {
