@@ -2098,148 +2098,43 @@ function showLocDeniedModal(){
 }
 
 // ============================================================
-// HORAIRES DE PRIÈRE
-// ============================================================
-// ============================================================
 // HORAIRES DE PRIÈRE — Mawaqit en priorité, aladhan en secours
 // ============================================================
-const MAWAQIT_MAX_KM = 50; // Seuil : si la mosquée Mawaqit est à plus de 50 km → aladhan
-
 async function fetchPrayers(lat, lng){
-  // 1. Utiliser le mawaqit_id de la mosquée Prayer Spot la plus proche
+  // Trouver le mawaqit_id de la mosquée Prayer Spot la plus proche (dans 50 km)
   const nearestWithMawaqit = PLACES
     .filter(p => p.type==='mosque' && p.mawaqit_id)
     .sort((a,b) => dist(lat,lng,a.lat,a.lng) - dist(lat,lng,b.lat,b.lng))[0];
 
-  if(nearestWithMawaqit && dist(lat,lng,nearestWithMawaqit.lat,nearestWithMawaqit.lng) <= MAWAQIT_MAX_KM){
-    const ok = await tryFetchFromMawaqitById(nearestWithMawaqit.mawaqit_id, nearestWithMawaqit.name);
-    if(ok) return;
+  const mawaqitId = (nearestWithMawaqit && dist(lat,lng,nearestWithMawaqit.lat,nearestWithMawaqit.lng) <= 50)
+    ? nearestWithMawaqit.mawaqit_id : null;
+
+  // Tout passe par le backend (pas de CORS)
+  try{
+    const params = mawaqitId
+      ? `mawaqit_id=${encodeURIComponent(mawaqitId)}`
+      : `lat=${lat}&lng=${lng}`;
+    const r = await fetch(`${API}/prayer-times?${params}`, { signal: AbortSignal.timeout(8000) });
+    if(r.ok){
+      const data = await r.json();
+      if(data.times){
+        renderPrayers(data.times);
+        savePrayerTimes(data.times);
+        return;
+      }
+    }
+  }catch(err){
+    console.log('Prayer times backend erreur:', err.message);
   }
 
-  // 2. Essai Mawaqit par géolocalisation (mosquées non référencées)
-  const mawaqitSuccess = await tryFetchFromMawaqit(lat, lng);
-  if(mawaqitSuccess) return;
-
-  // 2. Secours : aladhan.com (calcul astronomique UOIF)
-  const aladhanSuccess = await tryFetchFromAladhan(lat, lng);
-  if(aladhanSuccess) return;
-
-  // 3. Dernier recours : derniers horaires connus (sauvegardés en local)
+  // Dernier recours : derniers horaires connus (sauvegardés en local)
   const saved = loadSavedPrayerTimes();
   if(saved){
     renderPrayers(saved.times);
     showToast('Pas de connexion — horaires du '+saved.date+' affichés');
   } else {
-    // Aucun horaire jamais enregistré sur cet appareil
     renderPrayers(null);
     showToast('Connexion requise pour charger les horaires');
-  }
-}
-
-async function tryFetchFromMawaqitById(mawaqitId, mosqueName){
-  try{
-    const r = await fetch(
-      `https://mawaqit.net/api/2.0/mosque/${mawaqitId}/prayer-times`,
-      { headers:{'Accept':'application/json'}, signal: AbortSignal.timeout(5000) }
-    );
-    if(!r.ok) return false;
-    const data = await r.json();
-    const times = data.times || data.calendar?.[0] || null;
-    if(!times || !times.length) return false;
-    const today = new Date().getDate() - 1;
-    const todayTimes = Array.isArray(times[0]) ? times[today] : times;
-    if(!todayTimes || todayTimes.length < 5) return false;
-    renderPrayers({
-      Fajr:    todayTimes[0],
-      Chourouk:todayTimes[1],
-      Dhohr:   todayTimes[2],
-      Asr:     todayTimes[3],
-      Maghrib: todayTimes[4],
-      Icha:    todayTimes[5] || todayTimes[4]
-    });
-    console.log(`Mawaqit ID: horaires de "${mosqueName}" (${mawaqitId}) chargés`);
-    return true;
-  }catch(err){
-    console.log('Mawaqit ID fetch erreur:', err.message);
-    return false;
-  }
-}
-
-async function tryFetchFromMawaqit(lat, lng){
-  try{
-    // Étape 1 : trouver la mosquée Mawaqit la plus proche
-    const r = await fetch(
-      `https://mawaqit.net/api/2.0/mosque/nearests?lat=${lat}&lon=${lng}&language=fr`,
-      { headers:{'Accept':'application/json'}, signal: AbortSignal.timeout(5000) }
-    );
-    if(!r.ok) return false;
-    const mosques = await r.json();
-    if(!mosques || !mosques.length) return false;
-
-    const nearest = mosques[0];
-
-    // Étape 2 : vérifier que la mosquée est dans le rayon de 50 km
-    const mosqueKm = dist(lat, lng, nearest.lat, nearest.lon||nearest.lng);
-    if(mosqueKm > MAWAQIT_MAX_KM){
-      console.log(`Mawaqit: mosquée la plus proche à ${mosqueKm.toFixed(0)} km — trop loin, bascule sur aladhan`);
-      return false;
-    }
-
-    console.log(`Mawaqit: mosquée "${nearest.name}" trouvée à ${mosqueKm.toFixed(1)} km`);
-
-    // Étape 3 : charger les horaires de cette mosquée
-    const r2 = await fetch(
-      `https://mawaqit.net/api/2.0/mosque/${nearest.uuid}/prayer-times`,
-      { headers:{'Accept':'application/json'}, signal: AbortSignal.timeout(5000) }
-    );
-    if(!r2.ok) return false;
-    const data = await r2.json();
-
-    // Mawaqit retourne les horaires du jour en tableau [Fajr, Chourouk, Dhohr, Asr, Maghrib, Icha]
-    const times = data.times || data.calendar?.[0] || null;
-    if(!times || !times.length) return false;
-
-    // Mawaqit format : ["05:12", "06:47", "13:02", "16:38", "19:44", "21:18"]
-    const today = new Date().getDate() - 1; // index 0-based
-    const todayTimes = Array.isArray(times[0]) ? times[today] : times;
-
-    if(!todayTimes || todayTimes.length < 5) return false;
-
-    renderPrayers({
-      Fajr:    todayTimes[0],
-      Chourouk:todayTimes[1],
-      Dhohr:   todayTimes[2],
-      Asr:     todayTimes[3],
-      Maghrib: todayTimes[4],
-      Icha:    todayTimes[5] || todayTimes[4]
-    });
-
-    // Sauvegarde silencieuse de la mosquée Mawaqit utilisée pour les horaires
-    nearestMosqueForPrayer = nearest;
-    return true;
-  }catch(err){
-    console.log('Mawaqit indisponible:', err.message);
-    return false;
-  }
-}
-
-async function tryFetchFromAladhan(lat, lng){
-  try{
-    const d=new Date(), date=`${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}`;
-    const r=await fetch(
-      `https://api.aladhan.com/v1/timings/${date}?latitude=${lat}&longitude=${lng}&method=3`,
-      { signal: AbortSignal.timeout(5000) }
-    );
-    const data=await r.json();
-    if(data.code===200){
-      const t=data.data.timings;
-      renderPrayers({Fajr:t.Fajr,Chourouk:t.Sunrise,Dhohr:t.Dhuhr,Asr:t.Asr,Maghrib:t.Maghrib,Icha:t.Isha});
-      return true;
-    }
-    return false;
-  }catch(err){
-    console.log('Aladhan indisponible:', err.message);
-    return false;
   }
 }
 
