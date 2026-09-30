@@ -9,7 +9,7 @@ function nodeFetch(url, timeoutMs = 6000) {
   return new Promise((resolve, reject) => {
     const lib = url.startsWith('https') ? https : http;
     const req = lib.get(url, {
-      headers: { 'Accept': 'application/json', 'User-Agent': 'PrayerSpot/1.0' }
+      headers: { 'Accept': 'application/json, text/plain, */*', 'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1', 'Accept-Language': 'fr-FR,fr;q=0.9', 'Referer': 'https://mawaqit.net/' }
     }, (res) => {
       let data = '';
       res.on('data', chunk => data += chunk);
@@ -75,7 +75,7 @@ router.get('/', async (req, res) => {
     try {
       const d = new Date();
       const date = `${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}`;
-      const r = await nodeFetch(`https://api.aladhan.com/v1/timings/${date}?latitude=${lat}&longitude=${lng}&method=3`);
+      const r = await nodeFetch(`https://api.aladhan.com/v1/timings/${date}?latitude=${lat}&longitude=${lng}&method=12`);
       if (r.ok) {
         const data = r.json();
         if (data.code === 200) {
@@ -93,3 +93,4 @@ router.get('/', async (req, res) => {
 });
 
 module.exports = router;
+
