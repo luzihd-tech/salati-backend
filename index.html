@@ -2100,146 +2100,24 @@ function doGetCurrentPosition(){
   });
 }
 function showLocDeniedModal(){
-  // Détecter le navigateur pour personnaliser l'instruction
   const ua=navigator.userAgent;
   let instru='';
   if(/safari/i.test(ua)&&!/chrome/i.test(ua)){
-    instru='Réglages → Vie privée & sécurité → Services de localisation → Safari → "Lors de l'utilisation"';
+    instru="Réglages → Vie privée & sécurité → Services de localisation → Safari → Lors de l'utilisation";
   } else if(/chrome/i.test(ua)){
-    instru='Appuie sur l'icône 🔒 dans la barre d'adresse → "Paramètres du site" → Localisation → "Autoriser"';
+    instru="Appuie sur l'icône 🔒 dans la barre d'adresse → Paramètres du site → Localisation → Autoriser";
   } else if(/firefox/i.test(ua)){
-    instru='Appuie sur l'icône 🔒 → "Plus d'informations" → Autorisations → Accès à votre position → "Autoriser"';
+    instru="Appuie sur l'icône 🔒 → Plus d'informations → Autorisations → Accès à votre position → Autoriser";
   } else {
-    instru='Dans les paramètres de ton navigateur, autorise l'accès à la localisation pour ce site.';
+    instru="Dans les paramètres de ton navigateur, autorise l'accès à la localisation pour ce site.";
   }
   const overlay=document.createElement('div');
   overlay.id='loc-denied-overlay';
-  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9999;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .2s ease';
-  overlay.innerHTML=`<div style="background:var(--white);border-radius:24px 24px 0 0;padding:28px 24px 36px;width:100%;max-width:520px;box-shadow:0 -4px 32px rgba(0,0,0,0.18)">
-    <div style="width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px;"></div>
-    <div style="font-size:32px;text-align:center;margin-bottom:12px">📍</div>
-    <div style="font-size:17px;font-weight:800;text-align:center;margin-bottom:8px;font-family:'Outfit',sans-serif">Localisation bloquée</div>
-    <p style="font-size:13.5px;color:var(--muted);text-align:center;line-height:1.6;margin-bottom:18px">Tu as précédemment refusé l'accès à ta position. Pour l'autoriser :</p>
-    <div style="background:var(--gray-100);border-radius:14px;padding:14px 16px;font-size:13px;color:var(--text);line-height:1.7;margin-bottom:20px">
-      🔧 ${instru}
-    </div>
-    <button onclick="document.getElementById('loc-denied-overlay').remove()" style="width:100%;padding:14px;background:var(--green-deep);color:#fff;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer">Compris</button>
-  </div>`;
-  overlay.onclick=e=>{if(e.target===overlay)overlay.remove();};
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9999;display:flex;align-items:flex-end;justify-content:center';
+  overlay.innerHTML='<div style="background:var(--white);border-radius:24px 24px 0 0;padding:28px 24px 36px;width:100%;max-width:520px;box-shadow:0 -4px 32px rgba(0,0,0,0.18)"><div style="width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px;"></div><div style="font-size:32px;text-align:center;margin-bottom:12px">📍</div><div style="font-size:17px;font-weight:800;text-align:center;margin-bottom:8px;font-family:Outfit,sans-serif">Localisation bloquée</div><p style="font-size:13.5px;color:var(--muted);text-align:center;line-height:1.6;margin-bottom:18px">Tu as bloqué la localisation. Pour activer :</p><div style="background:var(--gray-100);border-radius:14px;padding:14px 16px;font-size:13px;color:var(--text);line-height:1.7;margin-bottom:20px">🔧 '+instru+'</div><button onclick="document.getElementById(\'loc-denied-overlay\').remove()" style="width:100%;padding:14px;background:var(--green-deep);color:#fff;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer">Compris</button></div>';
+  overlay.onclick=function(e){if(e.target===overlay)overlay.remove();};
   document.body.appendChild(overlay);
 }
-
-// ============================================================
-// HORAIRES DE PRIÈRE
-// ============================================================
-// ============================================================
-// HORAIRES DE PRIÈRE — Mawaqit en priorité, aladhan en secours
-// ============================================================
-const MAWAQIT_MAX_KM = 50; // Seuil : si la mosquée Mawaqit est à plus de 50 km → aladhan
-
-async function fetchPrayers(lat, lng){
-  // 1. Essai Mawaqit (horaires réels des mosquées)
-  const mawaqitSuccess = await tryFetchFromMawaqit(lat, lng);
-  if(mawaqitSuccess) return;
-
-  // 2. Secours : aladhan.com (calcul astronomique UOIF)
-  const aladhanSuccess = await tryFetchFromAladhan(lat, lng);
-  if(aladhanSuccess) return;
-
-  // 3. Dernier recours : derniers horaires connus (sauvegardés en local)
-  const saved = loadSavedPrayerTimes();
-  if(saved){
-    renderPrayers(saved.times);
-    showToast('Pas de connexion — horaires du '+saved.date+' affichés');
-  } else {
-    // Aucun horaire jamais enregistré sur cet appareil
-    renderPrayers(null);
-    showToast('Connexion requise pour charger les horaires');
-  }
-}
-
-async function tryFetchFromMawaqit(lat, lng){
-  try{
-    // Étape 1 : trouver la mosquée Mawaqit la plus proche
-    const r = await fetch(
-      `https://mawaqit.net/api/2.0/mosque/nearests?lat=${lat}&lon=${lng}&language=fr`,
-      { headers:{'Accept':'application/json'}, signal: AbortSignal.timeout(5000) }
-    );
-    if(!r.ok) return false;
-    const mosques = await r.json();
-    if(!mosques || !mosques.length) return false;
-
-    const nearest = mosques[0];
-
-    // Étape 2 : vérifier que la mosquée est dans le rayon de 50 km
-    const mosqueKm = dist(lat, lng, nearest.lat, nearest.lon||nearest.lng);
-    if(mosqueKm > MAWAQIT_MAX_KM){
-      console.log(`Mawaqit: mosquée la plus proche à ${mosqueKm.toFixed(0)} km — trop loin, bascule sur aladhan`);
-      return false;
-    }
-
-    console.log(`Mawaqit: mosquée "${nearest.name}" trouvée à ${mosqueKm.toFixed(1)} km`);
-
-    // Étape 3 : charger les horaires de cette mosquée
-    const r2 = await fetch(
-      `https://mawaqit.net/api/2.0/mosque/${nearest.uuid}/prayer-times`,
-      { headers:{'Accept':'application/json'}, signal: AbortSignal.timeout(5000) }
-    );
-    if(!r2.ok) return false;
-    const data = await r2.json();
-
-    // Mawaqit retourne les horaires du jour en tableau [Fajr, Chourouk, Dhohr, Asr, Maghrib, Icha]
-    const times = data.times || data.calendar?.[0] || null;
-    if(!times || !times.length) return false;
-
-    // Mawaqit format : ["05:12", "06:47", "13:02", "16:38", "19:44", "21:18"]
-    const today = new Date().getDate() - 1; // index 0-based
-    const todayTimes = Array.isArray(times[0]) ? times[today] : times;
-
-    if(!todayTimes || todayTimes.length < 5) return false;
-
-    renderPrayers({
-      Fajr:    todayTimes[0],
-      Chourouk:todayTimes[1],
-      Dhohr:   todayTimes[2],
-      Asr:     todayTimes[3],
-      Maghrib: todayTimes[4],
-      Icha:    todayTimes[5] || todayTimes[4]
-    });
-
-    // Sauvegarde silencieuse de la mosquée Mawaqit utilisée pour les horaires
-    nearestMosqueForPrayer = nearest;
-    return true;
-  }catch(err){
-    console.log('Mawaqit indisponible:', err.message);
-    return false;
-  }
-}
-
-async function tryFetchFromAladhan(lat, lng){
-  try{
-    const d=new Date(), date=`${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}`;
-    const r=await fetch(
-      `https://api.aladhan.com/v1/timings/${date}?latitude=${lat}&longitude=${lng}&method=12`,
-      { signal: AbortSignal.timeout(5000) }
-    );
-    const data=await r.json();
-    if(data.code===200){
-      const t=data.data.timings;
-      renderPrayers({Fajr:t.Fajr,Chourouk:t.Sunrise,Dhohr:t.Dhuhr,Asr:t.Asr,Maghrib:t.Maghrib,Icha:t.Isha});
-      return true;
-    }
-    return false;
-  }catch(err){
-    console.log('Aladhan indisponible:', err.message);
-    return false;
-  }
-}
-
-// ============================================================
-// SÉLECTEUR DE VILLE POUR LES HORAIRES DE PRIÈRE
-// (indépendant de la position de la carte)
-// ============================================================
 function openPrayerCityPicker(){
   document.getElementById('authov').classList.add('open');
   const m=document.getElementById('authmodal');
