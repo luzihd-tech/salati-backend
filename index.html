@@ -1615,7 +1615,6 @@ function initMap(){
   L.control.zoom({position:'bottomright'}).addTo(map);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution:'© OpenStreetMap', maxZoom:19 }).addTo(map);
   mapInitialized=true;
-  fetchPrayers(prayerLat, prayerLng);
   applyFilter();
   initSheetDrag();
   setTimeout(()=>map.invalidateSize(),100);
@@ -3394,6 +3393,7 @@ async function initApp(){
   await restoreSession();
   showScreen('explorer', true);
   await loadPlaces();
+  fetchPrayers(prayerLat, prayerLng);
   findNearestMosqueForPrayer(prayerLat, prayerLng);
 
   // Affiche le popup de localisation uniquement à la première visite
