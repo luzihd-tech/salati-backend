@@ -71,6 +71,7 @@ router.put('/:id', adminMiddleware, async (req, res) => {
     if (updates.lat) updates.lat = parseFloat(updates.lat);
     if (updates.lng) updates.lng = parseFloat(updates.lng);
     if (updates.openingHours !== undefined) { updates.opening_hours = updates.openingHours; delete updates.openingHours; }
+    if (updates.mawaqitId !== undefined) { updates.mawaqit_id = updates.mawaqitId; delete updates.mawaqitId; }
 
     const { data: place, error } = await supabase.from('places').update(updates).eq('id', req.params.id).select().single();
     if (error) throw error;
