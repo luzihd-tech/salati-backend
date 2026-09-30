@@ -27,6 +27,7 @@ app.get('/api/health', (req, res) => {
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/places', require('./routes/places'));
 app.use('/api/prayer', require('./routes/prayer'));
+app.use('/api/prayer-times', require('./routes/prayer-times'));
 app.use('/api/stripe', stripeRoutes);
 app.use('/api/admin', require('./routes/admin'));
 
