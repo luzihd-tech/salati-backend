@@ -1977,7 +1977,7 @@ function openDetail(id) {
   if(mapInitialized && markers[id]) map.panTo([p.lat,p.lng],{animate:true});
   const isFav = favorites.includes(id);
   document.getElementById('dbody').innerHTML=`
-    ${p.image_url ? `<div class="dimg"><img class="dimg-photo" src="${p.image_url}" alt="${p.name}" onerror="this.parentElement.innerHTML='<div class=\'dimg-icon\'>${placeIcon(p.type)}</div>'"></div>` : `<div class="dimg t-${p.type}"><div class="dimg-icon">${placeIcon(p.type)}</div></div>`}
+    ${p.image_url ? `<div class="dimg"><img class="dimg-photo" src="${p.image_url}" alt="${p.name}" onerror="this.style.display='none';this.parentElement.classList.add('t-'+${JSON.stringify(p.type)})"></div>` : `<div class="dimg t-${p.type}"><div class="dimg-icon">${placeIcon(p.type)}</div></div>`}
     <div class="dname">${p.name}</div>
     <div class="daddr">📍 ${p.address}</div>
     <div class="dtags">
