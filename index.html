@@ -1215,31 +1215,22 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
 
     <div class="ap-divider"></div>
     <div class="ap-signoff">Qu'Allah mette la baraka dans cette œuvre<br>et accepte de nous tous. 🤲</div>
-
     <div class="ap-divider"></div>
-    <div class="ap-section-title">📄 Informations légales</div>
-    <p class="ap-text">Salati est développée et maintenue par un développeur indépendant basé en France.</p>
-    <div style="display:flex;flex-direction:column;gap:10px;margin-top:16px">
-      <button onclick="openCGU('app')" style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--gray-100);border:1px solid var(--border);border-radius:14px;font-size:13.5px;font-weight:600;color:var(--text);cursor:pointer;width:100%;text-align:left">
-        <span>📋 Conditions Générales d'Utilisation</span>
-        <span style="color:var(--muted)">›</span>
-      </button>
-      <button onclick="openCGU('sub')" style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--gray-100);border:1px solid var(--border);border-radius:14px;font-size:13.5px;font-weight:600;color:var(--text);cursor:pointer;width:100%;text-align:left">
-        <span>💳 Conditions de l'abonnement</span>
-        <span style="color:var(--muted)">›</span>
-      </button>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;padding-bottom:8px">
+      <button onclick="openCGU('general')" style="background:none;border:1px solid var(--border);border-radius:10px;padding:8px 16px;font-size:12px;color:var(--muted);cursor:pointer;font-family:Outfit,sans-serif">📋 CGU — Application</button>
+      <button onclick="openCGU('subscription')" style="background:none;border:1px solid var(--border);border-radius:10px;padding:8px 16px;font-size:12px;color:var(--muted);cursor:pointer;font-family:Outfit,sans-serif">💳 CGU — Abonnement</button>
     </div>
   </div>
 </div>
 
-<!-- MODALES CGU -->
-<div id="cgu-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9000;overflow:hidden" onclick="if(event.target===this)closeCGU()">
-  <div id="cgu-sheet" style="position:absolute;bottom:0;left:0;right:0;background:var(--white);border-radius:24px 24px 0 0;max-height:92vh;display:flex;flex-direction:column">
-    <div style="flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:18px 20px 14px;border-bottom:1px solid var(--border)">
-      <div id="cgu-title" style="font-size:16px;font-weight:800;font-family:'Outfit',sans-serif"></div>
-      <button onclick="closeCGU()" style="background:var(--gray-100);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
+<!-- MODALE CGU -->
+<div id="cgu-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9999;align-items:flex-end;justify-content:center" onclick="if(event.target===this)closeCGU()">
+  <div style="background:var(--white);border-radius:24px 24px 0 0;padding:24px 20px 40px;width:100%;max-width:540px;max-height:80vh;overflow-y:auto;box-shadow:0 -4px 32px rgba(0,0,0,0.18)">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div id="cgu-title" style="font-size:16px;font-weight:800;font-family:Outfit,sans-serif"></div>
+      <button onclick="closeCGU()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted)">✕</button>
     </div>
-    <div id="cgu-body" style="overflow-y:auto;padding:20px 20px 48px;font-size:13px;line-height:1.75;color:var(--text)"></div>
+    <div id="cgu-body" style="font-size:13px;color:var(--text);line-height:1.75"></div>
   </div>
 </div>
 
@@ -2061,27 +2052,15 @@ async function toggleFav(id){
 // GÉOLOCALISATION
 // ============================================================
 function locateMe(){
-  // Si l'utilisateur n'a jamais répondu au popup → afficher le popup
   const locAsked = localStorage.getItem('salati_loc_asked');
-  if(!locAsked){
-    showLocationPopup();
-    return;
-  }
+  if(!locAsked){ showLocationPopup(); return; }
   if(!navigator.geolocation){showToast('Géolocalisation non disponible');return;}
-  // Vérifier l'état réel de la permission avant d'appeler getCurrentPosition
   if(navigator.permissions){
     navigator.permissions.query({name:'geolocation'}).then(perm=>{
-      if(perm.state==='denied'){
-        // L'utilisateur a bloqué le navigateur → expliquer comment débloquer
-        showLocDeniedModal();
-      } else {
-        // 'granted' ou 'prompt' → on demande/rafraîchit la position
-        doGetCurrentPosition();
-      }
+      if(perm.state==='denied'){ showLocDeniedModal(); }
+      else { doGetCurrentPosition(); }
     }).catch(()=>doGetCurrentPosition());
-  } else {
-    doGetCurrentPosition();
-  }
+  } else { doGetCurrentPosition(); }
 }
 function doGetCurrentPosition(){
   showToast('Localisation en cours... 📍');
@@ -2094,14 +2073,11 @@ function doGetCurrentPosition(){
     }
     applyFilter();
     showToast('Position trouvée ! 🎯');
-  },()=>{
-    // Refus au moment de la demande → montrer modal d'aide
-    showLocDeniedModal();
-  });
+  },()=>{ showLocDeniedModal(); });
 }
 function showLocDeniedModal(){
   const ua=navigator.userAgent;
-  let instru='';
+  let instru="";
   if(/safari/i.test(ua)&&!/chrome/i.test(ua)){
     instru="Réglages → Vie privée & sécurité → Services de localisation → Safari → Lors de l'utilisation";
   } else if(/chrome/i.test(ua)){
@@ -2118,6 +2094,118 @@ function showLocDeniedModal(){
   overlay.onclick=function(e){if(e.target===overlay)overlay.remove();};
   document.body.appendChild(overlay);
 }
+
+// ============================================================
+// HORAIRES DE PRIÈRE
+// ============================================================
+// ============================================================
+// HORAIRES DE PRIÈRE — Mawaqit en priorité, aladhan en secours
+// ============================================================
+const MAWAQIT_MAX_KM = 50; // Seuil : si la mosquée Mawaqit est à plus de 50 km → aladhan
+
+async function fetchPrayers(lat, lng){
+  // 1. Essai Mawaqit (horaires réels des mosquées)
+  const mawaqitSuccess = await tryFetchFromMawaqit(lat, lng);
+  if(mawaqitSuccess) return;
+
+  // 2. Secours : aladhan.com (calcul astronomique UOIF)
+  const aladhanSuccess = await tryFetchFromAladhan(lat, lng);
+  if(aladhanSuccess) return;
+
+  // 3. Dernier recours : derniers horaires connus (sauvegardés en local)
+  const saved = loadSavedPrayerTimes();
+  if(saved){
+    renderPrayers(saved.times);
+    showToast('Pas de connexion — horaires du '+saved.date+' affichés');
+  } else {
+    // Aucun horaire jamais enregistré sur cet appareil
+    renderPrayers(null);
+    showToast('Connexion requise pour charger les horaires');
+  }
+}
+
+async function tryFetchFromMawaqit(lat, lng){
+  try{
+    // Étape 1 : trouver la mosquée Mawaqit la plus proche
+    const r = await fetch(
+      `https://mawaqit.net/api/2.0/mosque/nearests?lat=${lat}&lon=${lng}&language=fr`,
+      { headers:{'Accept':'application/json'}, signal: AbortSignal.timeout(5000) }
+    );
+    if(!r.ok) return false;
+    const mosques = await r.json();
+    if(!mosques || !mosques.length) return false;
+
+    const nearest = mosques[0];
+
+    // Étape 2 : vérifier que la mosquée est dans le rayon de 50 km
+    const mosqueKm = dist(lat, lng, nearest.lat, nearest.lon||nearest.lng);
+    if(mosqueKm > MAWAQIT_MAX_KM){
+      console.log(`Mawaqit: mosquée la plus proche à ${mosqueKm.toFixed(0)} km — trop loin, bascule sur aladhan`);
+      return false;
+    }
+
+    console.log(`Mawaqit: mosquée "${nearest.name}" trouvée à ${mosqueKm.toFixed(1)} km`);
+
+    // Étape 3 : charger les horaires de cette mosquée
+    const r2 = await fetch(
+      `https://mawaqit.net/api/2.0/mosque/${nearest.uuid}/prayer-times`,
+      { headers:{'Accept':'application/json'}, signal: AbortSignal.timeout(5000) }
+    );
+    if(!r2.ok) return false;
+    const data = await r2.json();
+
+    // Mawaqit retourne les horaires du jour en tableau [Fajr, Chourouk, Dhohr, Asr, Maghrib, Icha]
+    const times = data.times || data.calendar?.[0] || null;
+    if(!times || !times.length) return false;
+
+    // Mawaqit format : ["05:12", "06:47", "13:02", "16:38", "19:44", "21:18"]
+    const today = new Date().getDate() - 1; // index 0-based
+    const todayTimes = Array.isArray(times[0]) ? times[today] : times;
+
+    if(!todayTimes || todayTimes.length < 5) return false;
+
+    renderPrayers({
+      Fajr:    todayTimes[0],
+      Chourouk:todayTimes[1],
+      Dhohr:   todayTimes[2],
+      Asr:     todayTimes[3],
+      Maghrib: todayTimes[4],
+      Icha:    todayTimes[5] || todayTimes[4]
+    });
+
+    // Sauvegarde silencieuse de la mosquée Mawaqit utilisée pour les horaires
+    nearestMosqueForPrayer = nearest;
+    return true;
+  }catch(err){
+    console.log('Mawaqit indisponible:', err.message);
+    return false;
+  }
+}
+
+async function tryFetchFromAladhan(lat, lng){
+  try{
+    const d=new Date(), date=`${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}`;
+    const r=await fetch(
+      `https://api.aladhan.com/v1/timings/${date}?latitude=${lat}&longitude=${lng}&method=12`,
+      { signal: AbortSignal.timeout(5000) }
+    );
+    const data=await r.json();
+    if(data.code===200){
+      const t=data.data.timings;
+      renderPrayers({Fajr:t.Fajr,Chourouk:t.Sunrise,Dhohr:t.Dhuhr,Asr:t.Asr,Maghrib:t.Maghrib,Icha:t.Isha});
+      return true;
+    }
+    return false;
+  }catch(err){
+    console.log('Aladhan indisponible:', err.message);
+    return false;
+  }
+}
+
+// ============================================================
+// SÉLECTEUR DE VILLE POUR LES HORAIRES DE PRIÈRE
+// (indépendant de la position de la carte)
+// ============================================================
 function openPrayerCityPicker(){
   document.getElementById('authov').classList.add('open');
   const m=document.getElementById('authmodal');
@@ -3576,36 +3664,30 @@ async function openSourate(num){
     ${num!==9?'<div class="sourate-bismillah">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>':''}
     <div class="quran-loading"><span class="spin">🕌</span><p>Chargement des versets...</p></div>`;
 
-  // Charge les versets depuis deux APIs :
-  // - quran.com pour le texte arabe + translittération
-  // - quranenc.com pour la traduction Hamidullah SANS footnotes dans le texte
+  // Charge les versets depuis l'API quran.foundation (retourne le texte sans Basmala dans v1)
+  // Translation 136 = Hamidullah français, Translation 57 = translittération anglaise
   try{
     const PER_PAGE = 50;
     const totalPages = Math.ceil(versets / PER_PAGE);
     const pages = Array.from({length: totalPages}, (_, i) => i + 1);
 
-    const [pageResults, frData] = await Promise.all([
-      Promise.all(pages.map(p =>
-        fetch(`https://api.quran.com/api/v4/verses/by_chapter/${num}?fields=text_uthmani&translations=57&per_page=${PER_PAGE}&page=${p}`)
-          .then(r => r.json())
-      )),
-      fetch(`https://quranenc.com/api/v1/translation/sura/french_hameedullah/${num}`)
+    // Charge toutes les pages en parallèle
+    const pageResults = await Promise.all(pages.map(p =>
+      fetch(`https://api.quran.com/api/v4/verses/by_chapter/${num}?fields=text_uthmani&translations=136,57&per_page=${PER_PAGE}&page=${p}`)
         .then(r => r.json())
-    ]);
+    ));
 
     const progress = getQuranProgress(num);
     const allVerses = pageResults.flatMap(r => r.verses || []);
-    const frVerses = frData.result || [];
 
     if(!allVerses.length) throw new Error('Aucun verset reçu');
 
     const versetsHtml = allVerses.map(v => {
       const vNum = v.verse_number;
       const arText = v.text_uthmani || '';
-      const translit = (v.translations||[]).find(t=>t.resource_id===57)?.text?.replace(/<[^>]*>/g,'').trim() || '';
-      // Traduction Hamidullah propre — sans footnotes (champ translation séparé des footnotes)
-      const frVerse = frVerses.find(f => f.aya == vNum);
-      const frText = frVerse?.translation || '';
+      // Translation 136 = Hamidullah FR, 57 = translittération
+      const frText = (v.translations||[]).find(t=>t.resource_id===136)?.text?.replace(/<[^>]*>/g,'') || '';
+      const translit = (v.translations||[]).find(t=>t.resource_id===57)?.text?.replace(/<[^>]*>/g,'') || '';
       const isRead = progress[vNum] || false;
       return `<div class="verset${isRead?' read':''}" id="v-${vNum}" data-v="${vNum}" onclick="selectVerset(this,${num},${vNum})">
         <div class="verset-num">${vNum}</div>
@@ -3635,6 +3717,7 @@ async function openSourate(num){
       ${num!==9?'<div class="sourate-bismillah">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>':''}
       ${versetsHtml}`;
 
+    // Scroll vers le dernier verset lu
     const readKeys = Object.keys(progress).filter(k=>progress[k]);
     if(readKeys.length > 0){
       const lastRead = Math.max(...readKeys.map(Number));
@@ -3959,89 +4042,49 @@ async function syncSubscriptionStatus(){
 
 initApp();
 
-
 // ============================================================
-// CGU — Conditions Générales d'Utilisation
+// CGU
 // ============================================================
 const CGU_CONTENT = {
-  app: {
-    title: '📋 Conditions Générales d\'Utilisation',
+  general: {
+    title: "Conditions Générales d'Utilisation",
     body: `
-      <p style="color:var(--muted);font-size:11.5px;margin-bottom:16px">Dernière mise à jour : Septembre 2026 · Application : Prayer Spot · Éditeur : Salati</p>
-
-      <h3 style="font-size:14px;font-weight:800;margin:0 0 8px;font-family:'Outfit',sans-serif">1. Présentation de l'application</h3>
-      <p>Prayer Spot est une application mobile et web développée par Salati, un développeur indépendant basé en France. Elle a pour vocation d'aider les musulmans à localiser des lieux de prière (mosquées, commerces, restaurants disposant d'un espace de prière) en France, et d'offrir des outils d'aide à la pratique islamique (horaires de prière, Coran, Qibla…).</p>
-
-      <h3 style="font-size:14px;font-weight:800;margin:16px 0 8px;font-family:'Outfit',sans-serif">2. Accès à l'application</h3>
-      <p>L'accès à Prayer Spot est libre et gratuit. Certaines fonctionnalités peuvent nécessiter la création d'un compte. L'utilisateur s'engage à fournir des informations exactes lors de son inscription.</p>
-
-      <h3 style="font-size:14px;font-weight:800;margin:16px 0 8px;font-family:'Outfit',sans-serif">3. Données personnelles</h3>
-      <p>Prayer Spot collecte uniquement les données strictement nécessaires au fonctionnement de l'application : adresse e-mail, mot de passe (chiffré), lieux favoris et préférences. La géolocalisation est utilisée uniquement sur demande explicite de l'utilisateur et n'est jamais stockée sur nos serveurs.</p>
-      <p style="margin-top:8px">Conformément au RGPD, l'utilisateur dispose d'un droit d'accès, de rectification et de suppression de ses données en nous contactant à : <b>contact@salati.fr</b></p>
-
-      <h3 style="font-size:14px;font-weight:800;margin:16px 0 8px;font-family:'Outfit',sans-serif">4. Propriété intellectuelle</h3>
-      <p>L'ensemble des contenus de l'application (design, textes, code, logo) est la propriété exclusive de Salati. Toute reproduction ou utilisation sans autorisation est interdite.</p>
-
-      <h3 style="font-size:14px;font-weight:800;margin:16px 0 8px;font-family:'Outfit',sans-serif">5. Responsabilité</h3>
-      <p>Les informations relatives aux lieux de prière sont fournies à titre indicatif. Salati ne peut garantir leur exactitude permanente et décline toute responsabilité en cas d'erreur ou de fermeture d'un lieu. Les horaires de prière sont calculés à partir d'algorithmes reconnus mais peuvent légèrement varier.</p>
-
-      <h3 style="font-size:14px;font-weight:800;margin:16px 0 8px;font-family:'Outfit',sans-serif">6. Modifications</h3>
-      <p>Salati se réserve le droit de modifier les présentes CGU à tout moment. L'utilisateur sera informé des changements significatifs via l'application.</p>
-
-      <h3 style="font-size:14px;font-weight:800;margin:16px 0 8px;font-family:'Outfit',sans-serif">7. Droit applicable</h3>
-      <p>Les présentes CGU sont soumises au droit français. Tout litige relève de la compétence exclusive des tribunaux français.</p>
-
-      <div style="margin-top:24px;padding:14px;background:var(--gray-100);border-radius:12px;font-size:12px;color:var(--muted)">
-        📬 Contact : <b>contact@salati.fr</b>
-      </div>
+      <p style="margin-bottom:14px"><b>Application : Prayer Spot</b><br>Éditeur : Salati<br>Date de mise à jour : septembre 2025</p>
+      <p style="margin-bottom:10px"><b>1. Objet</b><br>Prayer Spot est une application web permettant de localiser des lieux de prière en France. L'utilisation de l'application est gratuite.</p>
+      <p style="margin-bottom:10px"><b>2. Accès au service</b><br>L'accès à Prayer Spot est libre et ne nécessite pas de création de compte. Certaines fonctionnalités (favoris, suivi de prière) nécessitent une inscription.</p>
+      <p style="margin-bottom:10px"><b>3. Données personnelles</b><br>Seules les données strictement nécessaires sont collectées (email, préférences). Aucune donnée n'est revendue à des tiers. La géolocalisation est utilisée uniquement pour afficher les lieux proches et n'est jamais stockée.</p>
+      <p style="margin-bottom:10px"><b>4. Responsabilité</b><br>Salati s'efforce d'assurer l'exactitude des informations (horaires, lieux) mais ne peut garantir leur complétude. L'utilisateur est invité à signaler toute erreur.</p>
+      <p style="margin-bottom:10px"><b>5. Propriété intellectuelle</b><br>L'ensemble du contenu de l'application est la propriété de Salati. Toute reproduction sans autorisation est interdite.</p>
+      <p style="margin-bottom:10px"><b>6. Modification des CGU</b><br>Salati se réserve le droit de modifier ces CGU à tout moment. Les utilisateurs seront informés des changements significatifs.</p>
+      <p style="color:var(--muted);font-size:12px">Contact : contact@prayerspot.fr</p>
     `
   },
-  sub: {
-    title: '💳 Conditions de l\'abonnement',
+  subscription: {
+    title: "CGU — Abonnement",
     body: `
-      <p style="color:var(--muted);font-size:11.5px;margin-bottom:16px">Dernière mise à jour : Septembre 2026 · Service : Prayer Spot Premium · Éditeur : Salati</p>
-
-      <h3 style="font-size:14px;font-weight:800;margin:0 0 8px;font-family:'Outfit',sans-serif">1. Nature de l'abonnement</h3>
-      <p>L'abonnement Prayer Spot est un soutien mensuel volontaire au montant de <b>1,99 € TTC par mois</b>. Il ne confère aucun avantage fonctionnel supplémentaire. Il a pour unique objet de soutenir le développement et la maintenance de l'application, et de rémunérer équitablement le développeur indépendant.</p>
-      <p style="margin-top:8px">Cet abonnement peut être perçu comme une <b>Sadaqa Jariyah</b> (aumône continue), dont la récompense — par la permission d'Allah — perdure tant que l'application aide des musulmans à accomplir leur prière.</p>
-
-      <h3 style="font-size:14px;font-weight:800;margin:16px 0 8px;font-family:'Outfit',sans-serif">2. Paiement</h3>
-      <p>Le paiement est sécurisé et traité par <b>Stripe</b>, prestataire de paiement tiers. Salati ne stocke aucune donnée bancaire. Le montant de 1,99 € est prélevé automatiquement chaque mois à la date de souscription.</p>
-
-      <h3 style="font-size:14px;font-weight:800;margin:16px 0 8px;font-family:'Outfit',sans-serif">3. Résiliation</h3>
-      <p>L'abonnement peut être résilié à tout moment depuis la section <b>Mon compte → Abonnement</b>. La résiliation prend effet à la fin de la période en cours. Aucun remboursement n'est accordé pour une période déjà entamée.</p>
-
-      <h3 style="font-size:14px;font-weight:800;margin:16px 0 8px;font-family:'Outfit',sans-serif">4. Droit de rétractation</h3>
-      <p>Conformément à l'article L221-28 du Code de la consommation, le droit de rétractation de 14 jours ne s'applique pas aux services entièrement exécutés immédiatement après souscription. Toutefois, en cas de problème, contactez-nous et nous étudierons votre situation au cas par cas.</p>
-
-      <h3 style="font-size:14px;font-weight:800;margin:16px 0 8px;font-family:'Outfit',sans-serif">5. Modification du tarif</h3>
-      <p>Salati se réserve le droit de modifier le tarif de l'abonnement. L'utilisateur sera informé au moins 30 jours avant toute modification et pourra résilier sans frais avant l'entrée en vigueur du nouveau tarif.</p>
-
-      <h3 style="font-size:14px;font-weight:800;margin:16px 0 8px;font-family:'Outfit',sans-serif">6. Contact</h3>
-      <p>Pour toute question relative à l'abonnement : <b>contact@salati.fr</b></p>
-
-      <div style="margin-top:24px;padding:14px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;font-size:12.5px;color:#166534">
-        🤲 <b>Jazak Allahu Khayran</b> pour ton soutien. Qu'Allah t'en récompense et mette la baraka dans ce que tu donnes.
-      </div>
+      <p style="margin-bottom:14px"><b>Abonnement Prayer Spot</b><br>Éditeur : Salati<br>Prix : 1,99€/mois</p>
+      <p style="margin-bottom:10px"><b>1. Nature de l'abonnement</b><br>L'abonnement à Prayer Spot est une contribution volontaire. Il ne donne accès à aucune fonctionnalité supplémentaire. Il s'agit d'une Sadaqa Jariyah — une aumône continue — destinée à soutenir le développement et la maintenance de l'application, et à rémunérer le développeur.</p>
+      <p style="margin-bottom:10px"><b>2. Facturation</b><br>L'abonnement est facturé 1,99€ par mois via Stripe, une plateforme de paiement sécurisée. Le prélèvement est effectué à la date d'anniversaire de l'abonnement.</p>
+      <p style="margin-bottom:10px"><b>3. Résiliation</b><br>L'abonnement peut être résilié à tout moment depuis la section "Compte" de l'application ou en contactant contact@prayerspot.fr. La résiliation prend effet à la fin de la période en cours.</p>
+      <p style="margin-bottom:10px"><b>4. Remboursement</b><br>Conformément à la réglementation européenne, vous disposez d'un droit de rétractation de 14 jours suivant la souscription. Passé ce délai, aucun remboursement ne sera effectué pour la période en cours.</p>
+      <p style="margin-bottom:10px"><b>5. Sécurité des paiements</b><br>Les paiements sont entièrement gérés par Stripe. Salati ne stocke aucune information bancaire.</p>
+      <p style="color:var(--muted);font-size:12px">Contact : contact@prayerspot.fr</p>
     `
   }
 };
 
-function openCGU(type){
-  const data = CGU_CONTENT[type];
-  if(!data) return;
-  document.getElementById('cgu-title').innerHTML = data.title;
-  document.getElementById('cgu-body').innerHTML = data.body;
+function openCGU(type) {
+  const content = CGU_CONTENT[type];
+  if(!content) return;
+  document.getElementById('cgu-title').textContent = content.title;
+  document.getElementById('cgu-body').innerHTML = content.body;
   const overlay = document.getElementById('cgu-overlay');
   overlay.style.display = 'flex';
-  overlay.style.alignItems = 'flex-end';
-  requestAnimationFrame(()=>{
-    document.getElementById('cgu-sheet').style.transform = 'translateY(0)';
-  });
 }
-function closeCGU(){
+
+function closeCGU() {
   const overlay = document.getElementById('cgu-overlay');
-  overlay.style.display = 'none';
+  if(overlay) overlay.style.display = 'none';
 }
 
 </script>
