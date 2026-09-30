@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prayer Spot — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#0d6e47;--green-deep:#094f33;--green-dark:#062e1e;
+  --green-light:#edf7f2;--green-soft:#d5eddf;--green-mid:#1a8f60;
+  --white:#fff;--bg:#f8f9fa;--border:#e4eae7;
+  --text:#0d1f18;--text-2:#3d4f47;--muted:#7a8f86;
+  --gray-100:#f1f3f2;--gray-200:#e8ecea;
+  --red:#c0392b;--red-light:#fdf0ef;
+  --gold:#c9963a;--gold-light:#fef8ed;
+  --shadow-sm:0 2px 12px rgba(13,47,30,0.08);
+  --shadow-md:0 8px 28px rgba(13,47,30,0.11);
+  --r:12px;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* ─── LAYOUT ─── */
+.layout{display:flex;min-height:100vh}
+.sidebar{
+  width:240px;background:var(--green-deep);color:#fff;
+  display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;
+  transition:transform 0.3s;
+}
+.sidebar-logo{
+  padding:24px 20px;border-bottom:1px solid rgba(255,255,255,0.1);
+  font-family:'Outfit',sans-serif;font-size:18px;font-weight:800;
+  display:flex;align-items:center;gap:10px;
+}
+.sidebar-logo .badge{
+  width:32px;height:32px;background:rgba(255,255,255,0.15);border-radius:8px;
+  display:flex;align-items:center;justify-content:center;font-size:14px;
+}
+.sidebar-nav{flex:1;padding:12px 10px;overflow-y:auto}
+.nav-section{font-size:9.5px;font-weight:800;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.8px;padding:14px 10px 6px}
+.nav-item{
+  display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;
+  cursor:pointer;font-size:13.5px;font-weight:600;color:rgba(255,255,255,0.75);
+  transition:all 0.12s;margin-bottom:2px;
+}
+.nav-item:hover,.nav-item.active{background:rgba(255,255,255,0.12);color:#fff}
+.nav-item.active{background:rgba(255,255,255,0.18)}
+.nav-item svg{width:16px;height:16px;flex-shrink:0;opacity:0.8}
+.nav-item.active svg{opacity:1}
+.sidebar-foot{padding:16px 20px;border-top:1px solid rgba(255,255,255,0.1);font-size:11px;color:rgba(255,255,255,0.4)}
+
+.main{margin-left:240px;flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{
+  background:var(--white);border-bottom:1px solid var(--border);
+  padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:50;box-shadow:var(--shadow-sm);
+}
+.topbar-title{font-size:16px;font-weight:700;font-family:'Outfit',sans-serif;color:var(--text)}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.topbar-url{font-size:11.5px;color:var(--muted);background:var(--gray-100);padding:5px 10px;border-radius:7px;font-weight:500}
+.content{padding:28px;flex:1}
+
+/* ─── CARDS STATS ─── */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:28px}
+.stat-card{
+  background:var(--white);border:1px solid var(--border);border-radius:var(--r);
+  padding:20px;display:flex;flex-direction:column;gap:8px;
+}
+.stat-card.accent{background:var(--green-deep);border-color:transparent}
+.stat-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px}
+.stat-card.accent .stat-label{color:rgba(255,255,255,0.6)}
+.stat-value{font-size:28px;font-weight:800;font-family:'Outfit',sans-serif;color:var(--text);letter-spacing:-0.5px}
+.stat-card.accent .stat-value{color:#fff}
+.stat-sub{font-size:11px;color:var(--muted);font-weight:500}
+.stat-card.accent .stat-sub{color:rgba(255,255,255,0.5)}
+.stat-ico{font-size:22px;margin-bottom:4px}
+
+/* ─── SECTION HEADER ─── */
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:gap}
+.section-title{font-size:15px;font-weight:800;font-family:'Outfit',sans-serif}
+.btn{
+  display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:9px;
+  font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all 0.13s;
+}
+.btn-primary{background:var(--green-deep);color:#fff;box-shadow:0 3px 10px rgba(9,79,51,0.25)}
+.btn-primary:hover{background:var(--green-dark)}
+.btn-secondary{background:var(--gray-100);color:var(--text-2);border:1px solid var(--border)}
+.btn-secondary:hover{background:var(--gray-200)}
+.btn-danger{background:var(--red-light);color:var(--red);border:1px solid #f5c6c2}
+.btn-danger:hover{background:#fae0de}
+.btn-sm{padding:6px 11px;font-size:12px}
+
+/* ─── TABLE ─── */
+.table-wrap{background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.table-toolbar{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.search-input{
+  flex:1;min-width:180px;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;
+  font-size:13px;outline:none;color:var(--text);background:var(--white);
+}
+.search-input:focus{border-color:var(--green-deep)}
+.filter-select{padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;color:var(--text);background:var(--white);outline:none;cursor:pointer}
+table{width:100%;border-collapse:collapse}
+th{padding:11px 14px;text-align:left;font-size:10.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px;border-bottom:1px solid var(--border);background:var(--gray-100)}
+td{padding:12px 14px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--green-light)}
+.place-name{font-weight:700;color:var(--text);margin-bottom:2px}
+.place-addr{font-size:11px;color:var(--muted);font-weight:500}
+.place-photo{width:40px;height:40px;border-radius:8px;object-fit:cover;background:var(--gray-100);border:1px solid var(--border)}
+.place-photo-placeholder{width:40px;height:40px;border-radius:8px;background:var(--gray-100);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px}
+.badge-type{
+  padding:3px 9px;border-radius:6px;font-size:10.5px;font-weight:700;
+  display:inline-block;
+}
+.badge-mosque{background:var(--green-light);color:var(--green-deep)}
+.badge-shop{background:var(--gold-light);color:var(--gold)}
+.badge-restaurant{background:#fde8ef;color:#b5334a}
+.badge-other{background:var(--gray-100);color:var(--muted)}
+.actions-cell{display:flex;gap:6px}
+.empty-state{padding:48px;text-align:center;color:var(--muted)}
+.empty-state .e-ico{font-size:36px;margin-bottom:12px;display:block}
+.empty-state p{font-size:13px;font-weight:500}
+
+/* ─── MODAL ─── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(8,20,14,0.5);z-index:1000;
+  display:none;align-items:center;justify-content:center;padding:20px;
+  backdrop-filter:blur(4px);
+}
+.modal-overlay.open{display:flex}
+.modal{
+  background:var(--white);border-radius:18px;width:100%;max-width:560px;
+  max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-md);
+}
+.modal-head{
+  padding:20px 24px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;background:var(--white);z-index:10;
+}
+.modal-title{font-size:16px;font-weight:800;font-family:'Outfit',sans-serif}
+.modal-close{background:var(--gray-100);border:none;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:14px;color:var(--muted);display:flex;align-items:center;justify-content:center}
+.modal-body{padding:24px}
+.modal-foot{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;position:sticky;bottom:0;background:var(--white)}
+
+/* ─── FORM ─── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-full{grid-column:1/-1}
+.fg{margin-bottom:0}
+.fg label{font-size:11.5px;font-weight:700;color:var(--text-2);display:block;margin-bottom:6px}
+.fg input,.fg select,.fg textarea{
+  width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:9px;
+  font-size:13.5px;outline:none;color:var(--text);background:var(--white);font-family:'Inter',sans-serif;
+  transition:border-color 0.15s;
+}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--green-deep)}
+.fg textarea{resize:vertical;min-height:80px}
+.fg .hint{font-size:11px;color:var(--muted);margin-top:4px;font-weight:500}
+.photo-preview{
+  width:100%;height:120px;border-radius:9px;object-fit:cover;
+  border:1px solid var(--border);margin-top:8px;display:none;background:var(--gray-100);
+}
+.photo-preview.show{display:block}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)}
+.toggle-row:last-child{border-bottom:none}
+.toggle-label{font-size:13px;font-weight:600;color:var(--text-2)}
+.toggle{position:relative;width:42px;height:24px;background:var(--gray-200);border-radius:12px;cursor:pointer;border:none;flex-shrink:0;transition:background 0.2s}
+.toggle.on{background:var(--green-deep)}
+.toggle::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform 0.2s;box-shadow:0 1px 4px rgba(0,0,0,0.15)}
+.toggle.on::after{transform:translateX(18px)}
+.coord-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* ─── TOAST ─── */
+.toast{
+  position:fixed;bottom:24px;right:24px;background:var(--text);color:#fff;
+  padding:12px 18px;border-radius:10px;font-size:13px;font-weight:600;
+  z-index:9999;opacity:0;transition:opacity 0.25s;pointer-events:none;
+  box-shadow:var(--shadow-md);
+}
+.toast.show{opacity:1}
+.toast.success{background:var(--green-deep)}
+.toast.error{background:var(--red)}
+
+/* ─── CONFIRM ─── */
+.confirm-overlay{position:fixed;inset:0;background:rgba(8,20,14,0.5);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.confirm-overlay.open{display:flex}
+.confirm-box{background:var(--white);border-radius:16px;padding:28px;max-width:360px;width:100%;text-align:center;box-shadow:var(--shadow-md)}
+.confirm-box h3{font-size:16px;font-weight:800;margin-bottom:8px;font-family:'Outfit',sans-serif}
+.confirm-box p{font-size:13px;color:var(--muted);margin-bottom:22px;line-height:1.55}
+.confirm-btns{display:flex;gap:10px;justify-content:center}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .form-grid{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .topbar{padding:0 16px}
+  .content{padding:16px}
+  .menu-toggle{display:flex!important}
+}
+.menu-toggle{
+  display:none;background:var(--gray-100);border:none;width:36px;height:36px;
+  border-radius:8px;cursor:pointer;align-items:center;justify-content:center;
+}
+
+/* ─── SCREENS ─── */
+.screen{display:none}
+.screen.active{display:block}
+
+/* ─── LOGIN ─── */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg);padding:20px}
+.login-box{background:var(--white);border:1px solid var(--border);border-radius:20px;padding:36px 32px;width:100%;max-width:380px;box-shadow:var(--shadow-md)}
+.login-logo{text-align:center;margin-bottom:28px}
+.login-logo .badge{width:52px;height:52px;background:var(--green-deep);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 12px}
+.login-logo h1{font-size:20px;font-weight:800;font-family:'Outfit',sans-serif;color:var(--text)}
+.login-logo p{font-size:12px;color:var(--muted);margin-top:3px}
+.login-fg{margin-bottom:14px}
+.login-fg label{font-size:12px;font-weight:700;color:var(--text-2);display:block;margin-bottom:6px}
+.login-fg input{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:15px;outline:none;color:var(--text);transition:border-color 0.15s}
+.login-fg input:focus{border-color:var(--green-deep)}
+.login-btn{width:100%;background:var(--green-deep);color:#fff;border:none;padding:14px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;margin-top:6px;box-shadow:0 4px 14px rgba(9,79,51,0.3)}
+.login-btn:hover{background:var(--green-dark)}
+.login-error{background:#fdf0ef;color:var(--red);font-size:12.5px;font-weight:600;padding:10px 14px;border-radius:8px;margin-bottom:14px;display:none;border:1px solid #f5c6c2}
+</style>
+</head>
+<body>
+
+<!-- ─── LOGIN ─── -->
+<div id="login-page">
+  <div class="login-wrap">
+    <div class="login-box">
+      <div class="login-logo">
+        <div class="badge">🕌</div>
+        <h1>Prayer Spot</h1>
+        <p>Panel d'administration</p>
+      </div>
+      <div class="login-error" id="login-error">Email ou mot de passe incorrect</div>
+      <div class="login-fg">
+        <label>Email</label>
+        <input type="email" id="login-email" placeholder="admin@prayerspot.fr" autocomplete="email">
+      </div>
+      <div class="login-fg">
+        <label>Mot de passe</label>
+        <input type="password" id="login-pwd" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button class="login-btn" onclick="doLogin()">Se connecter</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── APP ─── -->
+<div id="app-page" style="display:none">
+  <div class="layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <div class="badge">🕌</div>
+        Prayer Spot
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">Dashboard</div>
+        <div class="nav-item active" onclick="showScreen('dashboard',this)">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/></svg>
+          Vue d'ensemble
+        </div>
+        <div class="nav-section">Gestion</div>
+        <div class="nav-item" onclick="showScreen('places',this)">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z" fill="currentColor" fill-opacity="0.7"/></svg>
+          Lieux
+        </div>
+        <div class="nav-item" onclick="showScreen('users',this)">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M4 20c0-4 3.58-7 8-7s8 3 8 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Utilisateurs
+        </div>
+      </nav>
+      <div class="sidebar-foot">Prayer Spot Admin v1.0</div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+      <div class="topbar">
+        <div style="display:flex;align-items:center;gap:12px">
+          <button class="menu-toggle" onclick="toggleSidebar()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+          <span class="topbar-title" id="topbar-title">Vue d'ensemble</span>
+        </div>
+        <div class="topbar-right">
+          <span class="topbar-url" id="topbar-api">API: —</span>
+          <button class="btn btn-secondary btn-sm" onclick="doLogout()">Déconnexion</button>
+        </div>
+      </div>
+
+      <div class="content">
+
+        <!-- DASHBOARD -->
+        <div class="screen active" id="screen-dashboard">
+          <div class="stats-grid" id="stats-grid">
+            <div class="stat-card accent">
+              <div class="stat-label">Lieux enregistrés</div>
+              <div class="stat-value" id="stat-places">—</div>
+              <div class="stat-sub">mosquées, commerces, restos</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Utilisateurs</div>
+              <div class="stat-value" id="stat-users">—</div>
+              <div class="stat-sub">comptes créés</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Abonnés actifs</div>
+              <div class="stat-value" id="stat-subs">—</div>
+              <div class="stat-sub">Sadaqa Jariyah 1,99€/mois</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Revenus estimés</div>
+              <div class="stat-value" id="stat-revenue">—</div>
+              <div class="stat-sub">par mois</div>
+            </div>
+          </div>
+
+          <div class="section-head">
+            <span class="section-title">Derniers lieux ajoutés</span>
+            <button class="btn btn-primary btn-sm" onclick="showScreen('places',document.querySelector('.nav-item:nth-child(3))'))">Voir tous les lieux</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Photo</th><th>Lieu</th><th>Type</th><th>Ville</th><th>Actions</th></tr></thead>
+              <tbody id="recent-places-body">
+                <tr><td colspan="5" class="empty-state"><span class="e-ico">⏳</span><p>Chargement...</p></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- LIEUX -->
+        <div class="screen" id="screen-places">
+          <div class="section-head" style="margin-bottom:18px">
+            <span class="section-title">Tous les lieux</span>
+            <button class="btn btn-primary" onclick="openPlaceModal()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              Ajouter un lieu
+            </button>
+          </div>
+          <div class="table-wrap">
+            <div class="table-toolbar">
+              <input class="search-input" id="places-search" placeholder="🔍 Rechercher un lieu..." oninput="filterPlaces()">
+              <select class="filter-select" id="places-filter" onchange="filterPlaces()">
+                <option value="">Tous les types</option>
+                <option value="mosque">🕌 Mosquées</option>
+                <option value="shop">🏪 Commerces</option>
+                <option value="restaurant">🍽️ Restaurants</option>
+                <option value="other">📍 Autres</option>
+              </select>
+            </div>
+            <table>
+              <thead><tr><th>Photo</th><th>Lieu</th><th>Type</th><th>Ville</th><th>Ablutions</th><th>Vérifié</th><th>Actions</th></tr></thead>
+              <tbody id="places-body">
+                <tr><td colspan="7" class="empty-state"><span class="e-ico">⏳</span><p>Chargement...</p></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- UTILISATEURS -->
+        <div class="screen" id="screen-users">
+          <div class="section-head" style="margin-bottom:18px">
+            <span class="section-title">Utilisateurs</span>
+          </div>
+          <div class="table-wrap">
+            <div class="table-toolbar">
+              <input class="search-input" id="users-search" placeholder="🔍 Rechercher un utilisateur..." oninput="filterUsers()">
+            </div>
+            <table>
+              <thead><tr><th>Nom</th><th>Email</th><th>Rôle</th><th>Abonné</th><th>Inscription</th></tr></thead>
+              <tbody id="users-body">
+                <tr><td colspan="5" class="empty-state"><span class="e-ico">⏳</span><p>Chargement...</p></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ─── MODAL LIEU ─── -->
+<div class="modal-overlay" id="place-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <span class="modal-title" id="modal-title">Ajouter un lieu</span>
+      <button class="modal-close" onclick="closePlaceModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="fg form-full">
+          <label>Nom du lieu *</label>
+          <input type="text" id="f-name" placeholder="Grande Mosquée de Paris">
+        </div>
+        <div class="fg">
+          <label>Type *</label>
+          <select id="f-type">
+            <option value="mosque">🕌 Mosquée / Salle de prière</option>
+            <option value="shop">🏪 Commerce halal</option>
+            <option value="restaurant">🍽️ Restaurant halal</option>
+            <option value="other">📍 Autre</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Genre</label>
+          <select id="f-genre">
+            <option value="mixte">👥 Mixte</option>
+            <option value="hommes">👨 Hommes uniquement</option>
+            <option value="femmes">👩 Femmes uniquement</option>
+          </select>
+        </div>
+        <div class="fg form-full">
+          <label>Adresse *</label>
+          <input type="text" id="f-address" placeholder="2 Place du Puits de l'Ermite, 75005 Paris">
+        </div>
+        <div class="fg">
+          <label>Ville</label>
+          <input type="text" id="f-city" placeholder="Paris">
+        </div>
+        <div class="fg">
+          <label>Horaires d'ouverture</label>
+          <input type="text" id="f-hours" placeholder="Lun-Dim: 5h-23h">
+        </div>
+        <div class="fg form-full">
+          <label>Coordonnées GPS *</label>
+          <div class="coord-row">
+            <input type="number" id="f-lat" placeholder="Latitude (ex: 48.8566)" step="any">
+            <input type="number" id="f-lng" placeholder="Longitude (ex: 2.3522)" step="any">
+          </div>
+          <div class="hint">💡 Trouve les coordonnées sur <a href="https://www.google.com/maps" target="_blank" style="color:var(--green)">Google Maps</a> → clic droit → "C'est ici"</div>
+        </div>
+        <div class="fg form-full">
+          <label>URL de la photo</label>
+          <input type="url" id="f-photo" placeholder="https://..." oninput="previewPhoto(this.value)">
+          <div class="hint">Lien direct vers une image JPG/PNG (Google Maps, site officiel...)</div>
+          <img id="photo-preview" class="photo-preview" alt="Aperçu">
+        </div>
+        <div class="fg form-full">
+          <label>Description</label>
+          <textarea id="f-desc" placeholder="Informations utiles sur ce lieu..."></textarea>
+        </div>
+        <div class="fg form-full">
+          <label>ID Mawaqit (optionnel)</label>
+          <input type="text" id="f-mawaqit" placeholder="ex: grande-mosquee-paris">
+          <div class="hint">Permet d'afficher les vrais horaires de prière de cette mosquée</div>
+        </div>
+      </div>
+
+      <div style="margin-top:20px;background:var(--gray-100);border-radius:10px;padding:4px 14px">
+        <div class="toggle-row">
+          <span class="toggle-label">💧 Ablutions disponibles</span>
+          <button class="toggle" id="t-ablution" onclick="toggleBtn(this)"></button>
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-label">🚻 Toilettes disponibles</span>
+          <button class="toggle" id="t-wc" onclick="toggleBtn(this)"></button>
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-label">✅ Lieu vérifié</span>
+          <button class="toggle on" id="t-verified" onclick="toggleBtn(this)"></button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closePlaceModal()">Annuler</button>
+      <button class="btn btn-primary" onclick="savePlace()" id="save-btn">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── CONFIRM DELETE ─── -->
+<div class="confirm-overlay" id="confirm-overlay">
+  <div class="confirm-box">
+    <h3>Supprimer ce lieu ?</h3>
+    <p>Cette action est irréversible. Le lieu sera définitivement supprimé de la base de données.</p>
+    <div class="confirm-btns">
+      <button class="btn btn-secondary" onclick="closeConfirm()">Annuler</button>
+      <button class="btn btn-danger" onclick="confirmDelete()" id="confirm-delete-btn">Supprimer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── TOAST ─── -->
+<div class="toast" id="toast"></div>
+
+<script>
+const API = 'https://salati-backend.onrender.com/api';
+let token = localStorage.getItem('admin_token');
+let allPlaces = [], allUsers = [];
+let editingPlaceId = null, deletingPlaceId = null;
+
+// ─── INIT ───────────────────────────────────────────────────
+window.onload = () => {
+  document.getElementById('topbar-api').textContent = 'API: ' + API.replace('https://','').split('/')[0];
+  if(token) showApp();
+  else showLogin();
+
+  // Login avec Enter
+  document.getElementById('login-pwd').addEventListener('keydown', e => {
+    if(e.key === 'Enter') doLogin();
+  });
+};
+
+// ─── AUTH ────────────────────────────────────────────────────
+function showLogin(){ document.getElementById('login-page').style.display='block'; document.getElementById('app-page').style.display='none'; }
+function showApp(){ document.getElementById('login-page').style.display='none'; document.getElementById('app-page').style.display='block'; loadAll(); }
+
+async function doLogin(){
+  const email = document.getElementById('login-email').value.trim();
+  const pwd = document.getElementById('login-pwd').value;
+  if(!email||!pwd){ showToast('Remplis tous les champs','error'); return; }
+  try{
+    const r = await fetch(`${API}/auth/login`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email, password:pwd}) });
+    const data = await r.json();
+    if(!r.ok) throw new Error(data.error||'Erreur');
+    if(data.user.role !== 'admin'){ document.getElementById('login-error').style.display='block'; document.getElementById('login-error').textContent = "Accès réservé aux administrateurs"; return; }
+    token = data.token;
+    localStorage.setItem('admin_token', token);
+    document.getElementById('login-error').style.display='none';
+    showApp();
+  } catch(err){
+    document.getElementById('login-error').style.display='block';
+    document.getElementById('login-error').textContent = err.message;
+  }
+}
+
+function doLogout(){
+  localStorage.removeItem('admin_token');
+  token = null;
+  showLogin();
+}
+
+// ─── NAVIGATION ──────────────────────────────────────────────
+function showScreen(name, el){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  if(el) el.classList.add('active');
+  const titles = {dashboard:'Vue d\'ensemble', places:'Lieux', users:'Utilisateurs'};
+  document.getElementById('topbar-title').textContent = titles[name]||name;
+  if(name==='places') renderPlaces();
+  if(name==='users') renderUsers();
+  // Close sidebar on mobile
+  if(window.innerWidth < 768) document.getElementById('sidebar').classList.remove('open');
+}
+
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+// ─── LOAD DATA ───────────────────────────────────────────────
+async function loadAll(){
+  await Promise.all([loadStats(), loadPlaces(), loadUsers()]);
+}
+
+async function loadStats(){
+  try{
+    const r = await fetch(`${API}/admin/stats`, { headers:{'Authorization':'Bearer '+token} });
+    const data = await r.json();
+    document.getElementById('stat-places').textContent = data.places || 0;
+    document.getElementById('stat-users').textContent = data.users || 0;
+    document.getElementById('stat-subs').textContent = data.subscribers || 0;
+    const rev = ((data.subscribers||0) * 1.99).toFixed(2);
+    document.getElementById('stat-revenue').textContent = rev + '€';
+  } catch{}
+}
+
+async function loadPlaces(){
+  try{
+    const r = await fetch(`${API}/places`, { headers:{'Authorization':'Bearer '+token} });
+    const data = await r.json();
+    allPlaces = data.places || [];
+    renderPlaces();
+    renderRecentPlaces();
+  } catch(err){ showToast('Erreur chargement lieux','error'); }
+}
+
+async function loadUsers(){
+  try{
+    const r = await fetch(`${API}/admin/users`, { headers:{'Authorization':'Bearer '+token} });
+    const data = await r.json();
+    allUsers = data.users || [];
+    renderUsers();
+  } catch{}
+}
+
+// ─── RENDER ──────────────────────────────────────────────────
+function typeLabel(t){ return {mosque:'Mosquée',shop:'Commerce',restaurant:'Restaurant',other:'Autre'}[t]||t; }
+function typeBadge(t){ return `<span class="badge-type badge-${t}">${typeLabel(t)}</span>`; }
+function photoCell(p){ return p.photo_url ? `<img class="place-photo" src="${p.photo_url}" alt="" onerror="this.style.display='none'">` : `<div class="place-photo-placeholder">${{mosque:'🕌',shop:'🏪',restaurant:'🍽️',other:'📍'}[p.type]||'📍'}</div>`; }
+function yesNo(v, yes='✅', no='—'){ return v ? yes : no; }
+function dateStr(s){ return s ? new Date(s).toLocaleDateString('fr-FR') : '—'; }
+
+function renderRecentPlaces(){
+  const tbody = document.getElementById('recent-places-body');
+  const recent = [...allPlaces].reverse().slice(0,5);
+  if(!recent.length){ tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><span class="e-ico">🕌</span><p>Aucun lieu pour l'instant</p></div></td></tr>`; return; }
+  tbody.innerHTML = recent.map(p=>`
+    <tr>
+      <td>${photoCell(p)}</td>
+      <td><div class="place-name">${p.name}</div><div class="place-addr">${p.address||''}</div></td>
+      <td>${typeBadge(p.type)}</td>
+      <td style="color:var(--muted);font-size:12px">${p.city||'—'}</td>
+      <td><div class="actions-cell">
+        <button class="btn btn-secondary btn-sm" onclick="editPlace('${p.id}')">Modifier</button>
+        <button class="btn btn-danger btn-sm" onclick="askDelete('${p.id}')">Supprimer</button>
+      </div></td>
+    </tr>`).join('');
+}
+
+function renderPlaces(){
+  const tbody = document.getElementById('places-body');
+  const q = (document.getElementById('places-search')?.value||'').toLowerCase();
+  const f = document.getElementById('places-filter')?.value||'';
+  const filtered = allPlaces.filter(p=>{
+    const matchQ = !q || (p.name+p.address+p.city).toLowerCase().includes(q);
+    const matchF = !f || p.type===f;
+    return matchQ && matchF;
+  });
+  if(!filtered.length){ tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><span class="e-ico">🕌</span><p>Aucun lieu trouvé</p></div></td></tr>`; return; }
+  tbody.innerHTML = filtered.map(p=>`
+    <tr>
+      <td>${photoCell(p)}</td>
+      <td><div class="place-name">${p.name}</div><div class="place-addr">${p.address||''}</div></td>
+      <td>${typeBadge(p.type)}</td>
+      <td style="color:var(--muted);font-size:12px">${p.city||'—'}</td>
+      <td style="text-align:center">${yesNo(p.ablution)}</td>
+      <td style="text-align:center">${yesNo(p.verified)}</td>
+      <td><div class="actions-cell">
+        <button class="btn btn-secondary btn-sm" onclick="editPlace('${p.id}')">Modifier</button>
+        <button class="btn btn-danger btn-sm" onclick="askDelete('${p.id}')">Supprimer</button>
+      </div></td>
+    </tr>`).join('');
+}
+
+function renderUsers(){
+  const tbody = document.getElementById('users-body');
+  const q = (document.getElementById('users-search')?.value||'').toLowerCase();
+  const filtered = allUsers.filter(u => !q || (u.name+u.email).toLowerCase().includes(q));
+  if(!filtered.length){ tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><span class="e-ico">👤</span><p>Aucun utilisateur</p></div></td></tr>`; return; }
+  tbody.innerHTML = filtered.map(u=>`
+    <tr>
+      <td style="font-weight:600">${u.name||'—'}</td>
+      <td style="color:var(--muted);font-size:12.5px">${u.email}</td>
+      <td>${u.role==='admin'?'<span class="badge-type badge-mosque">Admin</span>':'<span class="badge-type badge-other">Utilisateur</span>'}</td>
+      <td>${u.is_subscribed?'<span class="badge-type badge-mosque">✅ Abonné</span>':'<span style="color:var(--muted);font-size:12px">Non</span>'}</td>
+      <td style="color:var(--muted);font-size:12px">${dateStr(u.created_at)}</td>
+    </tr>`).join('');
+}
+
+function filterPlaces(){ renderPlaces(); }
+function filterUsers(){ renderUsers(); }
+
+// ─── MODAL LIEU ──────────────────────────────────────────────
+function openPlaceModal(place=null){
+  editingPlaceId = place ? place.id : null;
+  document.getElementById('modal-title').textContent = place ? 'Modifier le lieu' : 'Ajouter un lieu';
+  document.getElementById('f-name').value = place?.name||'';
+  document.getElementById('f-type').value = place?.type||'mosque';
+  document.getElementById('f-genre').value = place?.genre||'mixte';
+  document.getElementById('f-address').value = place?.address||'';
+  document.getElementById('f-city').value = place?.city||'';
+  document.getElementById('f-hours').value = place?.hours||'';
+  document.getElementById('f-lat').value = place?.lat||'';
+  document.getElementById('f-lng').value = place?.lng||'';
+  document.getElementById('f-photo').value = place?.photo_url||'';
+  document.getElementById('f-desc').value = place?.desc||place?.description||'';
+  document.getElementById('f-mawaqit').value = place?.mawaqit_id||'';
+  setToggle('t-ablution', place?.ablution||false);
+  setToggle('t-wc', place?.wc||false);
+  setToggle('t-verified', place?.verified!==false);
+  previewPhoto(place?.photo_url||'');
+  document.getElementById('place-modal').classList.add('open');
+}
+
+function editPlace(id){
+  const p = allPlaces.find(x=>x.id===id);
+  if(p) openPlaceModal(p);
+}
+
+function closePlaceModal(){
+  document.getElementById('place-modal').classList.remove('open');
+  editingPlaceId = null;
+}
+
+function toggleBtn(btn){ btn.classList.toggle('on'); }
+function setToggle(id, val){ const el = document.getElementById(id); el.classList.toggle('on', !!val); }
+function getToggle(id){ return document.getElementById(id).classList.contains('on'); }
+
+function previewPhoto(url){
+  const img = document.getElementById('photo-preview');
+  if(url && url.startsWith('http')){ img.src=url; img.classList.add('show'); }
+  else { img.classList.remove('show'); img.src=''; }
+}
+
+async function savePlace(){
+  const name = document.getElementById('f-name').value.trim();
+  const lat = parseFloat(document.getElementById('f-lat').value);
+  const lng = parseFloat(document.getElementById('f-lng').value);
+  const address = document.getElementById('f-address').value.trim();
+  if(!name||!address||isNaN(lat)||isNaN(lng)){ showToast('Nom, adresse et coordonnées GPS sont obligatoires','error'); return; }
+
+  const btn = document.getElementById('save-btn');
+  btn.textContent = 'Enregistrement...'; btn.disabled = true;
+
+  const body = {
+    name, address,
+    type: document.getElementById('f-type').value,
+    genre: document.getElementById('f-genre').value,
+    city: document.getElementById('f-city').value.trim(),
+    openingHours: document.getElementById('f-hours').value.trim(),
+    lat, lng,
+    photo_url: document.getElementById('f-photo').value.trim()||null,
+    description: document.getElementById('f-desc').value.trim(),
+    mawaqitId: document.getElementById('f-mawaqit').value.trim()||null,
+    ablution: getToggle('t-ablution'),
+    wc: getToggle('t-wc'),
+    verified: getToggle('t-verified'),
+  };
+
+  try{
+    const url = editingPlaceId ? `${API}/places/${editingPlaceId}` : `${API}/places`;
+    const method = editingPlaceId ? 'PUT' : 'POST';
+    const r = await fetch(url, { method, headers:{'Content-Type':'application/json','Authorization':'Bearer '+token}, body: JSON.stringify(body) });
+    const data = await r.json();
+    if(!r.ok) throw new Error(data.error||'Erreur serveur');
+    showToast(editingPlaceId ? 'Lieu modifié ✅' : 'Lieu ajouté ✅', 'success');
+    closePlaceModal();
+    await loadPlaces();
+    await loadStats();
+  } catch(err){
+    showToast('Erreur : '+err.message, 'error');
+  } finally {
+    btn.textContent = 'Enregistrer'; btn.disabled = false;
+  }
+}
+
+// ─── DELETE ──────────────────────────────────────────────────
+function askDelete(id){
+  deletingPlaceId = id;
+  document.getElementById('confirm-overlay').classList.add('open');
+}
+function closeConfirm(){
+  document.getElementById('confirm-overlay').classList.remove('open');
+  deletingPlaceId = null;
+}
+async function confirmDelete(){
+  if(!deletingPlaceId) return;
+  const btn = document.getElementById('confirm-delete-btn');
+  btn.textContent = 'Suppression...'; btn.disabled = true;
+  try{
+    const r = await fetch(`${API}/places/${deletingPlaceId}`, { method:'DELETE', headers:{'Authorization':'Bearer '+token} });
+    if(!r.ok) throw new Error('Erreur serveur');
+    showToast('Lieu supprimé', 'success');
+    closeConfirm();
+    await loadPlaces();
+    await loadStats();
+  } catch(err){
+    showToast('Erreur : '+err.message, 'error');
+  } finally {
+    btn.textContent = 'Supprimer'; btn.disabled = false;
+  }
+}
+
+// ─── TOAST ───────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg, type=''){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type?' '+type:'');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>{ t.classList.remove('show'); }, 3000);
+}
+</script>
+</body>
+</html>
