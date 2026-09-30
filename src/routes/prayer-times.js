@@ -75,7 +75,7 @@ router.get('/', async (req, res) => {
     try {
       const d = new Date();
       const date = `${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}`;
-      const r = await nodeFetch(`https://api.aladhan.com/v1/timings/${date}?latitude=${lat}&longitude=${lng}&method=12`);
+      const r = await nodeFetch(`https://api.aladhan.com/v1/timings/${date}?latitude=${lat}&longitude=${lng}&method=2`);
       if (r.ok) {
         const data = r.json();
         if (data.code === 200) {
@@ -93,4 +93,3 @@ router.get('/', async (req, res) => {
 });
 
 module.exports = router;
-
