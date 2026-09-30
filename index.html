@@ -2114,7 +2114,7 @@ async function fetchPrayers(lat, lng){
     const params = mawaqitId
       ? `mawaqit_id=${encodeURIComponent(mawaqitId)}`
       : `lat=${lat}&lng=${lng}`;
-    const r = await fetch(`${API}/prayer-times?${params}`, { signal: AbortSignal.timeout(8000) });
+    const r = await fetch(`${API}/prayer-times?${params}`, { signal: AbortSignal.timeout(20000) });
     if(r.ok){
       const data = await r.json();
       if(data.times){
@@ -2252,7 +2252,14 @@ function loadSavedPrayerTimes(){
   try{
     const raw=localStorage.getItem('salati_last_prayers');
     if(!raw) return null;
-    return JSON.parse(raw);
+    const parsed=JSON.parse(raw);
+    // Vérifier que le cache est du jour même
+    if(parsed.savedAt){
+      const savedDate=new Date(parsed.savedAt).toDateString();
+      const todayDate=new Date().toDateString();
+      if(savedDate!==todayDate) return null;
+    }
+    return parsed;
   }catch{ return null; }
 }
 
