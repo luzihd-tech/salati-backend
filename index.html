@@ -3232,7 +3232,7 @@ function showLocationPopup(){
 }
 function hideLocationPopup(){
   const el=document.getElementById('loc-overlay');
-  if(el){ el.style.opacity='0'; el.style.transition='opacity 0.2s'; setTimeout(()=>el.remove(),200); }
+  if(el){ el.style.opacity='0'; el.style.transition='opacity 0.2s'; setTimeout(()=>{el.style.display='none';el.style.opacity='1';},200); }
 }
 function requestLocationPermission(){
   hideLocationPopup();
