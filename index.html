@@ -341,7 +341,7 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
 
 /* ─── DETAIL SHEET ───────────────────────────────────────── */
 .dsheet{
-  position:fixed;bottom:0;left:0;right:0;background:#fff;border-radius:24px 24px 0 0;z-index:1500;
+  position:fixed;bottom:0;left:0;right:0;background:var(--white);border-radius:24px 24px 0 0;z-index:1500;
   padding:0 0 calc(18px + var(--sab));max-height:78vh;overflow-y:auto;
   box-shadow:0 -10px 40px rgba(10,61,44,0.2);transform:translateY(100%);transition:transform 0.32s cubic-bezier(.2,.9,.3,1);
 }
@@ -359,6 +359,7 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
 .dimg.t-other{background:var(--gray-100)}
 .dimg-icon{width:52px;height:52px}
 .dimg-icon svg{width:100%;height:100%}
+.dimg-photo{width:100%;height:100%;object-fit:cover;border-radius:var(--radius-lg)}
 .dname{font-size:19px;font-weight:800;margin-bottom:4px;letter-spacing:-0.4px;font-family:'Outfit',sans-serif;color:var(--text)}
 .daddr{font-size:12.5px;color:var(--muted);margin-bottom:14px;font-weight:500;display:flex;align-items:center;gap:5px}
 .dtags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
@@ -1533,7 +1534,9 @@ function normalizePlace(p){
     desc: p.description || '',
     emoji: p.emoji || (p.type==='mosque'?'🕌':p.type==='shop'?'🏪':p.type==='restaurant'?'🍽️':'📍'),
     verified: p.verified,
-    hours: p.opening_hours || ''
+    hours: p.opening_hours || '',
+    mawaqit_id: p.mawaqit_id || null,
+    image_url: p.image_url || null
   };
 }
 
@@ -1974,7 +1977,7 @@ function openDetail(id) {
   if(mapInitialized && markers[id]) map.panTo([p.lat,p.lng],{animate:true});
   const isFav = favorites.includes(id);
   document.getElementById('dbody').innerHTML=`
-    <div class="dimg t-${p.type}"><div class="dimg-icon">${placeIcon(p.type)}</div></div>
+    ${p.image_url ? `<div class="dimg"><img class="dimg-photo" src="${p.image_url}" alt="${p.name}" onerror="this.parentElement.innerHTML='<div class=\'dimg-icon\'>${placeIcon(p.type)}</div>'"></div>` : `<div class="dimg t-${p.type}"><div class="dimg-icon">${placeIcon(p.type)}</div></div>`}
     <div class="dname">${p.name}</div>
     <div class="daddr">📍 ${p.address}</div>
     <div class="dtags">
@@ -2104,7 +2107,17 @@ function showLocDeniedModal(){
 const MAWAQIT_MAX_KM = 50; // Seuil : si la mosquée Mawaqit est à plus de 50 km → aladhan
 
 async function fetchPrayers(lat, lng){
-  // 1. Essai Mawaqit (horaires réels des mosquées)
+  // 1. Utiliser le mawaqit_id de la mosquée Prayer Spot la plus proche
+  const nearestWithMawaqit = PLACES
+    .filter(p => p.type==='mosque' && p.mawaqit_id)
+    .sort((a,b) => dist(lat,lng,a.lat,a.lng) - dist(lat,lng,b.lat,b.lng))[0];
+
+  if(nearestWithMawaqit && dist(lat,lng,nearestWithMawaqit.lat,nearestWithMawaqit.lng) <= MAWAQIT_MAX_KM){
+    const ok = await tryFetchFromMawaqitById(nearestWithMawaqit.mawaqit_id, nearestWithMawaqit.name);
+    if(ok) return;
+  }
+
+  // 2. Essai Mawaqit par géolocalisation (mosquées non référencées)
   const mawaqitSuccess = await tryFetchFromMawaqit(lat, lng);
   if(mawaqitSuccess) return;
 
@@ -2121,6 +2134,35 @@ async function fetchPrayers(lat, lng){
     // Aucun horaire jamais enregistré sur cet appareil
     renderPrayers(null);
     showToast('Connexion requise pour charger les horaires');
+  }
+}
+
+async function tryFetchFromMawaqitById(mawaqitId, mosqueName){
+  try{
+    const r = await fetch(
+      `https://mawaqit.net/api/2.0/mosque/${mawaqitId}/prayer-times`,
+      { headers:{'Accept':'application/json'}, signal: AbortSignal.timeout(5000) }
+    );
+    if(!r.ok) return false;
+    const data = await r.json();
+    const times = data.times || data.calendar?.[0] || null;
+    if(!times || !times.length) return false;
+    const today = new Date().getDate() - 1;
+    const todayTimes = Array.isArray(times[0]) ? times[today] : times;
+    if(!todayTimes || todayTimes.length < 5) return false;
+    renderPrayers({
+      Fajr:    todayTimes[0],
+      Chourouk:todayTimes[1],
+      Dhohr:   todayTimes[2],
+      Asr:     todayTimes[3],
+      Maghrib: todayTimes[4],
+      Icha:    todayTimes[5] || todayTimes[4]
+    });
+    console.log(`Mawaqit ID: horaires de "${mosqueName}" (${mawaqitId}) chargés`);
+    return true;
+  }catch(err){
+    console.log('Mawaqit ID fetch erreur:', err.message);
+    return false;
   }
 }
 
@@ -2186,7 +2228,7 @@ async function tryFetchFromAladhan(lat, lng){
   try{
     const d=new Date(), date=`${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}`;
     const r=await fetch(
-      `https://api.aladhan.com/v1/timings/${date}?latitude=${lat}&longitude=${lng}&method=12`,
+      `https://api.aladhan.com/v1/timings/${date}?latitude=${lat}&longitude=${lng}&method=3`,
       { signal: AbortSignal.timeout(5000) }
     );
     const data=await r.json();
