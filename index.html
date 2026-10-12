@@ -1003,7 +1003,7 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
       <button class="pbar-date" id="pbar-date" onclick="openCalendarModal()"></button>
     </div>
     <div class="pbar-bottom">
-      <div class="pcity" onclick="openPrayerCityPicker()">📍 Horaires : <span id="cityname">Paris</span></div>
+      <div class="pcity" onclick="openPrayerCityPicker()">📍 Horaires : <span id="cityname">Ma position</span></div>
     </div>
   </div>
   <div class="maplist-wrap">
@@ -2078,14 +2078,16 @@ async function toggleFav(id){
 // ============================================================
 // GÉOLOCALISATION
 // ============================================================
+let isLocating = false;
 function locateMe(){
+  if(isLocating) return;
   const locAsked = localStorage.getItem('salati_loc_asked');
   if(!locAsked){ showLocationPopup(); return; }
   if(!navigator.geolocation){showToast('Géolocalisation non disponible');return;}
   if(navigator.permissions){
     navigator.permissions.query({name:'geolocation'}).then(perm=>{
-      if(perm.state==='denied'){ showLocDeniedModal(); }
-      else { doGetCurrentPosition(); }
+      if(perm.state==='denied'){ location.reload(); return; }
+      doGetCurrentPosition();
     }).catch(()=>doGetCurrentPosition());
   } else { doGetCurrentPosition(); }
 }
@@ -2114,14 +2116,35 @@ function applyPosition(lat, lng, silent){
   if(!silent) showToast('Position trouvée ! 🎯');
 }
 function doGetCurrentPosition(silent){
+  if(isLocating) return;
+  isLocating = true;
   if(!silent) showToast('Localisation en cours... 📍');
   navigator.geolocation.getCurrentPosition(pos=>{
+    isLocating = false;
     const lat=pos.coords.latitude, lng=pos.coords.longitude;
     saveLastPosition(lat, lng);
     applyPosition(lat, lng, silent);
+    // Mise à jour du nom de ville via GPS
+    if(!silent){
+      fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`)
+        .then(r=>r.json()).then(d=>{
+          const city=d.address?.city||d.address?.town||d.address?.village||null;
+          if(city){
+            prayerLat=lat; prayerLng=lng; prayerCityName=city;
+            document.getElementById('cityname').textContent='Ma position';
+            fetchPrayers(lat, lng);
+          }
+        }).catch(()=>{
+          document.getElementById('cityname').textContent='Ma position';
+          fetchPrayers(lat, lng);
+        });
+    }
   }, err=>{
-    if(!silent) showLocDeniedModal();
-  }, {timeout:10000, maximumAge:60000});
+    isLocating = false;
+    if(silent) return;
+    if(err.code===1){ location.reload(); }
+    else { showToast('Position indisponible — réessaie ou entre une ville'); }
+  }, {timeout:8000, maximumAge:60000});
 }
 function showLocDeniedModal(){
   const ua=navigator.userAgent;
@@ -2259,7 +2282,7 @@ async function usePreciseLocationForPrayer(){
 
 async function setPrayerLocation(lat, lng, cityName){
   prayerLat=lat; prayerLng=lng; prayerCityName=cityName;
-  document.getElementById('cityname').textContent=cityName;
+  document.getElementById('cityname').textContent=cityName; // ville choisie = pas d'emoji 📍
   fetchPrayers(lat, lng);
   showToast('📍 Horaires pour '+cityName);
 
@@ -3234,7 +3257,7 @@ function requestLocationPermission(){
       .then(r=>r.json()).then(d=>{
         const city=d.address?.city||d.address?.town||d.address?.village||'Ma position';
         prayerLat=uLat; prayerLng=uLng; prayerCityName=city;
-        document.getElementById('cityname').textContent=city;
+        document.getElementById('cityname').textContent='Ma position';
         fetchPrayers(uLat,uLng);
       }).catch(()=>fetchPrayers(uLat,uLng));
     applyFilter();
@@ -3373,6 +3396,22 @@ async function initApp(){
       }
     }
   }
+
+  // Bouton retour Android — intercepte le geste/bouton natif pour naviguer dans l'app
+  history.pushState({ps:true}, '');
+  window.addEventListener('popstate', ()=>{
+    // Réinjecte un état pour que le prochain retour soit aussi intercepté
+    history.pushState({ps:true}, '');
+    // Ferme ce qui est ouvert en priorité
+    const dsheet = document.getElementById('dsheet');
+    if(dsheet && dsheet.classList.contains('open')){ closeDetail(); return; }
+    const drawer = document.querySelector('.drawer.open');
+    if(drawer){ closeDrawer(); return; }
+    // Sinon remonte dans la pile de navigation
+    if(navStack.length > 1){ goBack(); return; }
+    // Sur l'écran racine, minimise l'app (comportement natif Android)
+    // On ne peut pas vraiment minimiser depuis le web, donc on ne fait rien
+  });
 
   // Gestion du retour depuis la page de paiement Stripe
   const params = new URLSearchParams(window.location.search);
