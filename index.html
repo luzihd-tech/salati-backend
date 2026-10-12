@@ -518,7 +518,7 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
 }
 .compass-n{position:absolute;top:12px;left:50%;transform:translateX(-50%);font-size:13px;font-weight:800;color:var(--green-deep)}
 .qibla-status{
-  margin-top:24px;background:#fff;border-radius:16px;padding:16px 20px;text-align:center;
+  margin-top:24px;background:var(--white);border-radius:16px;padding:16px 20px;text-align:center;
   box-shadow:var(--shadow-sm);width:100%;max-width:280px;
 }
 .qibla-deg{font-size:26px;font-weight:800;color:var(--green-deep);letter-spacing:-0.5px}
@@ -823,7 +823,7 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
   animation:fadeIn 0.25s ease;
 }
 .install-popup{
-  background:#fff;border-radius:var(--radius-xl) var(--radius-xl) 0 0;
+  background:var(--white);border-radius:var(--radius-xl) var(--radius-xl) 0 0;
   padding:20px 24px calc(28px + var(--sab));width:100%;max-width:480px;
   animation:slideUp 0.32s cubic-bezier(.2,.9,.3,1);
   max-height:85vh;overflow-y:auto;
@@ -1460,10 +1460,12 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
   </div>
 </div>
 
+<!-- DETAIL OVERLAY (tap pour fermer) -->
+<div id="dsheet-overlay" onclick="closeDetail()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:1499;"></div>
+
 <!-- DETAIL SHEET -->
 <div class="dsheet" id="dsheet">
-  <button class="bcloseds" onclick="closeDetail()">✕</button>
-  <div class="drag"></div>
+  <div class="drag" onclick="closeDetail()" style="cursor:pointer;padding:6px 0;margin:6px auto 10px;"></div>
   <div class="dbody" id="dbody"></div>
 </div>
 
@@ -1618,6 +1620,12 @@ function initMap(){
   applyFilter();
   initSheetDrag();
   setTimeout(()=>map.invalidateSize(),100);
+  // Clic sur la carte = ferme le detail ET réduit le bottom sheet
+  map.on('click', ()=>{
+    closeDetail();
+    if(sheetState==='expanded') setSheetState('normal');
+    else if(sheetState==='normal') setSheetState('collapsed');
+  });
 }
 
 function mkIcon(type) {
@@ -1678,18 +1686,25 @@ function initSheetDrag(){
     else setSheetState('normal');
   });
 
+  let dragLastY=0, dragVelocity=0;
+
   sheet.addEventListener('touchstart',e=>{
     const list=document.getElementById('plist');
     if(list && list.contains(e.target) && list.scrollTop>0) return;
     isDragging=true;
     dragStartY=e.touches[0].clientY;
+    dragLastY=dragStartY;
+    dragVelocity=0;
     dragStartHeight=sheet.getBoundingClientRect().height;
     sheet.style.transition='none';
   },{passive:true});
 
   sheet.addEventListener('touchmove',e=>{
     if(!isDragging) return;
-    const dy=dragStartY-e.touches[0].clientY;
+    const currentY=e.touches[0].clientY;
+    const dy=dragStartY-currentY;
+    dragVelocity=dragLastY-currentY; // positif = vers le haut
+    dragLastY=currentY;
     const list=document.getElementById('plist');
     if(dy<0 && list && list.scrollTop>0){ isDragging=false; sheet.style.transition=''; return; }
     const wrapH=sheet.parentElement.getBoundingClientRect().height;
@@ -1705,9 +1720,11 @@ function initSheetDrag(){
     const wrapH=sheet.parentElement.getBoundingClientRect().height;
     const h=sheet.getBoundingClientRect().height;
     const pct=h/wrapH;
-    // Snap vers l'état le plus proche
-    if(pct < 0.2) setSheetState('collapsed');
-    else if(pct > 0.55) setSheetState('expanded');
+    // Snap avec prise en compte de la vélocité (flick)
+    if(dragVelocity < -6) { setSheetState('collapsed'); return; } // flick vers le bas
+    if(dragVelocity > 6)  { setSheetState('expanded');  return; } // flick vers le haut
+    if(pct < 0.18) setSheetState('collapsed');
+    else if(pct > 0.5) setSheetState('expanded');
     else setSheetState('normal');
   });
 }
@@ -1996,6 +2013,8 @@ function openDetail(id) {
     <button class="share-btn" onclick="sharePlace('${p.name.replace(/'/g,"\\'")}','${p.address.replace(/'/g,"\\'")}',${p.lat},${p.lng})">🔗 Partager ce lieu</button>
     <button class="report-link" onclick="reportPlaceIssue('${p.id}','${p.name.replace(/'/g,"\\'")}')">⚠️ Signaler un problème avec ce lieu</button>`;
   document.getElementById('dsheet').classList.add('open');
+  const ov = document.getElementById('dsheet-overlay');
+  if(ov) ov.style.display='block';
 }
 
 function sharePlace(name, address, lat, lng){
@@ -2013,7 +2032,13 @@ function sharePlace(name, address, lat, lng){
   }
 }
 
-function closeDetail(){document.getElementById('dsheet').classList.remove('open');selected=null;document.querySelectorAll('.pcard').forEach(c=>c.classList.remove('sel'));}
+function closeDetail(){
+  document.getElementById('dsheet').classList.remove('open');
+  const ov = document.getElementById('dsheet-overlay');
+  if(ov) ov.style.display='none';
+  selected=null;
+  document.querySelectorAll('.pcard').forEach(c=>c.classList.remove('sel'));
+}
 
 function startNav(lat,lng){
   if(confirm("Ouvrir l'itinéraire dans Google Maps ?")){
@@ -2064,18 +2089,39 @@ function locateMe(){
     }).catch(()=>doGetCurrentPosition());
   } else { doGetCurrentPosition(); }
 }
-function doGetCurrentPosition(){
-  showToast('Localisation en cours... 📍');
+function saveLastPosition(lat, lng){
+  try{ localStorage.setItem('salati_last_pos', JSON.stringify({lat, lng, ts: Date.now()})); }catch(e){}
+}
+function loadLastPosition(){
+  try{
+    const raw = localStorage.getItem('salati_last_pos');
+    if(!raw) return null;
+    const p = JSON.parse(raw);
+    if(!p.lat || !p.lng) return null;
+    const age = Date.now() - (p.ts||0);
+    if(age > 24*60*60*1000) return null; // expire après 24h
+    return p;
+  }catch(e){ return null; }
+}
+function applyPosition(lat, lng, silent){
+  uLat=lat; uLng=lng;
+  if(mapInitialized){
+    map.setView([uLat,uLng],14,{animate:true});
+    if(uMarker) map.removeLayer(uMarker);
+    uMarker=L.circleMarker([uLat,uLng],{radius:9,fillColor:'#0a8f5c',color:'#fff',weight:2.5,fillOpacity:1}).addTo(map).bindPopup('Vous êtes ici');
+  }
+  applyFilter();
+  if(!silent) showToast('Position trouvée ! 🎯');
+}
+function doGetCurrentPosition(silent){
+  if(!silent) showToast('Localisation en cours... 📍');
   navigator.geolocation.getCurrentPosition(pos=>{
-    uLat=pos.coords.latitude;uLng=pos.coords.longitude;
-    if(mapInitialized){
-      map.setView([uLat,uLng],14,{animate:true});
-      if(uMarker)map.removeLayer(uMarker);
-      uMarker=L.circleMarker([uLat,uLng],{radius:9,fillColor:'#0a8f5c',color:'#fff',weight:2.5,fillOpacity:1}).addTo(map).bindPopup('Vous êtes ici');
-    }
-    applyFilter();
-    showToast('Position trouvée ! 🎯');
-  },()=>{ showLocDeniedModal(); });
+    const lat=pos.coords.latitude, lng=pos.coords.longitude;
+    saveLastPosition(lat, lng);
+    applyPosition(lat, lng, silent);
+  }, err=>{
+    if(!silent) showLocDeniedModal();
+  }, {timeout:10000, maximumAge:60000});
 }
 function showLocDeniedModal(){
   const ua=navigator.userAgent;
@@ -2131,7 +2177,7 @@ async function fetchPrayers(lat, lng){
   const saved = loadSavedPrayerTimes();
   if(saved){
     renderPrayers(saved.times);
-    showToast('Pas de connexion — horaires du '+saved.date+' affichés');
+    // Cache du jour = pas besoin de toast, les horaires sont bons
   } else {
     renderPrayers(null);
     showToast('Connexion requise pour charger les horaires');
@@ -2952,6 +2998,7 @@ function applyTheme(theme){
     document.documentElement.style.setProperty('--border','#2c3a35');
     document.documentElement.style.setProperty('--gray-100','#232e29');
     document.documentElement.style.setProperty('--gray-200','#2c3a35');
+    document.documentElement.style.setProperty('--glass-bg','rgba(28,33,32,0.92)');
     // Vert éclairci pour être lisible sur fond sombre
     document.documentElement.style.setProperty('--green','#2ecc8a');
     document.documentElement.style.setProperty('--green-deep','#25a870');
@@ -2963,7 +3010,7 @@ function applyTheme(theme){
   } else {
     ['--white','--bg','--surface','--text','--text-2','--muted','--border',
      '--gray-100','--gray-200','--green','--green-deep','--green-mid',
-     '--green-light','--green-soft','--green-dark','--green-vivid'].forEach(v=>
+     '--green-light','--green-soft','--green-dark','--green-vivid','--glass-bg'].forEach(v=>
       document.documentElement.style.removeProperty(v)
     );
   }
@@ -2971,7 +3018,7 @@ function applyTheme(theme){
   const overlay = document.getElementById('install-overlay');
   if(overlay){
     const popup = overlay.querySelector('.install-popup');
-    if(popup) popup.style.background = theme==='dark'?'var(--white)':'';
+    if(popup) popup.style.background = '';
   }
 }
 
@@ -3177,6 +3224,7 @@ function requestLocationPermission(){
   if(!navigator.geolocation){ showToast('Géolocalisation non disponible'); return; }
   navigator.geolocation.getCurrentPosition(pos=>{
     uLat=pos.coords.latitude; uLng=pos.coords.longitude;
+    saveLastPosition(uLat, uLng);
     if(mapInitialized){
       map.setView([uLat,uLng],14,{animate:true});
       if(uMarker) map.removeLayer(uMarker);
@@ -3193,7 +3241,7 @@ function requestLocationPermission(){
     showToast('📍 Position trouvée !');
   },()=>{
     showToast('Localisation refusée — tu peux l\'activer via 📍 sur la carte');
-  });
+  }, {timeout:10000, maximumAge:60000});
 }
 // ============================================================
 // INSTALLATION PWA — Ajouter sur l'accueil
@@ -3307,7 +3355,24 @@ async function initApp(){
   updateDateBtn();
 
   const locAsked = localStorage.getItem('salati_loc_asked');
-  if(!locAsked) setTimeout(()=>showLocationPopup(), 800);
+  if(!locAsked){
+    setTimeout(()=>showLocationPopup(), 800);
+  } else {
+    // Visite suivante : utiliser la dernière position connue instantanément
+    const lastPos = loadLastPosition();
+    if(lastPos){
+      applyPosition(lastPos.lat, lastPos.lng, true);
+      // Rafraîchir en silence en arrière-plan
+      if(navigator.geolocation){
+        navigator.geolocation.getCurrentPosition(pos=>{
+          const lat=pos.coords.latitude, lng=pos.coords.longitude;
+          saveLastPosition(lat, lng);
+          applyPosition(lat, lng, true);
+          fetchPrayers(lat, lng);
+        }, ()=>{}, {timeout:10000, maximumAge:60000});
+      }
+    }
+  }
 
   // Gestion du retour depuis la page de paiement Stripe
   const params = new URLSearchParams(window.location.search);
@@ -3658,8 +3723,8 @@ async function openSourate(num){
       const vNum = v.verse_number;
       const arText = v.text_uthmani || '';
       // Translation 136 = Hamidullah FR, 57 = translittération
-      const frText = (v.translations||[]).find(t=>t.resource_id===136)?.text?.replace(/<[^>]*>/g,'') || '';
-      const translit = (v.translations||[]).find(t=>t.resource_id===57)?.text?.replace(/<[^>]*>/g,'') || '';
+      const frText = ((v.translations||[]).find(t=>t.resource_id===136)?.text||'').replace(/<[^>]*>/g,'').replace(/\s*\[\d+\]/g,'').trim();
+      const translit = ((v.translations||[]).find(t=>t.resource_id===57)?.text||'').replace(/<[^>]*>/g,'').replace(/\s*\[\d+\]/g,'').trim();
       const isRead = progress[vNum] || false;
       return `<div class="verset${isRead?' read':''}" id="v-${vNum}" data-v="${vNum}" onclick="selectVerset(this,${num},${vNum})">
         <div class="verset-num">${vNum}</div>
@@ -3834,25 +3899,49 @@ async function loadSourateIntro(num){
 
 function setupVersetObserver(num, total){
   if(quranObserver) quranObserver.disconnect();
-  quranObserver = new IntersectionObserver(entries=>{
-    entries.forEach(entry=>{
-      if(entry.isIntersecting){
-        const vNum = parseInt(entry.target.dataset.v);
-        const progress = getQuranProgress(num);
-        if(!progress[vNum]){
-          progress[vNum] = true;
-          saveQuranProgress(num, progress);
-          entry.target.classList.add('read');
-          // Met à jour la barre de progression
-          const pct = getSouratePct(num, total);
-          const bar = document.getElementById('s-progress');
-          if(bar) bar.style.width = pct+'%';
-        }
-      }
-    });
-  },{threshold:0.6});
+  quranObserver = null;
 
-  document.querySelectorAll('.verset[data-v]').forEach(el=>quranObserver.observe(el));
+  const screen = document.getElementById('screen-sourate');
+  if(!screen) return;
+
+  let _rafPending = false;
+  let _lastCenterV = -1;
+
+  function updateCenterVerset(){
+    const screenRect = screen.getBoundingClientRect();
+    const screenCenterY = screenRect.top + screenRect.height / 2;
+    const versets = screen.querySelectorAll('.verset[data-v]');
+    let bestEl = null, bestDist = Infinity;
+    versets.forEach(el=>{
+      const r = el.getBoundingClientRect();
+      const elCenterY = r.top + r.height / 2;
+      const d = Math.abs(elCenterY - screenCenterY);
+      if(d < bestDist){ bestDist = d; bestEl = el; }
+    });
+    if(!bestEl) return;
+    const vNum = parseInt(bestEl.dataset.v);
+    if(vNum === _lastCenterV) return;
+    _lastCenterV = vNum;
+    const progress = getQuranProgress(num);
+    if(!progress[vNum]){
+      progress[vNum] = true;
+      saveQuranProgress(num, progress);
+      bestEl.classList.add('read');
+      const pct = getSouratePct(num, total);
+      const bar = document.getElementById('s-progress');
+      if(bar) bar.style.width = pct+'%';
+    }
+  }
+
+  function onScroll(){
+    if(_rafPending) return;
+    _rafPending = true;
+    requestAnimationFrame(()=>{ _rafPending = false; updateCenterVerset(); });
+  }
+
+  screen.addEventListener('scroll', onScroll, {passive:true});
+  // Marquer le verset centre au chargement (après layout)
+  setTimeout(updateCenterVerset, 400);
 }
 
 function openSourateMenu(num){
