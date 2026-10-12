@@ -226,7 +226,23 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
   background:var(--glass-bg);position:relative;z-index:50;
   border:1px solid var(--border);border-radius:var(--radius-md);
   box-shadow:var(--shadow-md);padding:2px;
+  display:flex;align-items:center;
 }
+.sbar-filter-btn{
+  flex-shrink:0;width:42px;height:42px;display:flex;align-items:center;justify-content:center;
+  border:none;background:transparent;cursor:pointer;border-radius:var(--radius-sm);
+  color:var(--text-2);transition:all 0.15s;position:relative;margin-right:2px;
+}
+.sbar-filter-btn:active{background:var(--gray-100)}
+.sbar-filter-btn.on{color:var(--green-deep)}
+.sbar-filter-btn svg{width:20px;height:20px;stroke-width:2}
+.sbar-filter-dot{
+  position:absolute;top:7px;right:7px;width:8px;height:8px;
+  background:var(--green-vivid);border-radius:50%;border:1.5px solid var(--white);
+  display:none;
+}
+.sbar-filter-btn.on .sbar-filter-dot{display:block}
+.sbar-divider{width:1px;height:24px;background:var(--border);flex-shrink:0;margin:0 2px}
 @supports (backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px)){
   .sbar-float{backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);}
 }
@@ -246,20 +262,12 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
 .suggest-item .si-sub{font-size:10.5px;color:var(--muted);font-weight:500;margin-top:2px}
 .suggest-loading{padding:16px;text-align:center;font-size:12px;color:var(--muted);font-weight:500}
 .sinput{
-  width:100%;border:none;background:transparent;padding:13px 16px;font-size:15px;outline:none;
-  -webkit-appearance:none;color:var(--text);font-weight:500;
+  flex:1;border:none;background:transparent;padding:13px 16px;font-size:15px;outline:none;
+  -webkit-appearance:none;color:var(--text);font-weight:500;min-width:0;
 }
 .sinput::placeholder{color:var(--muted);font-weight:400}
 
 /* Filtres */
-.filters-row{display:flex}
-.filters-toggle{
-  display:flex;align-items:center;gap:7px;padding:8px 14px;border-radius:20px;
-  border:1px solid var(--border);font-size:12px;font-weight:700;cursor:pointer;
-  background:var(--white);color:var(--text-2);box-shadow:var(--shadow-xs);min-height:34px;
-  transition:all 0.15s;
-}
-.filters-toggle.on{background:var(--green-deep);color:#fff;border-color:var(--green-deep);box-shadow:0 4px 14px rgba(9,79,51,0.3)}
 .filter-badge{
   background:var(--green-vivid);color:#fff;font-size:10px;font-weight:800;min-width:17px;height:17px;
   border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;
@@ -1011,11 +1019,20 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
     <div class="float-controls">
       <div class="sbar-float">
         <input class="sinput" id="sinput" placeholder="🔍 Ville, adresse, nom de lieu..." oninput="onSearchInput()" onkeydown="if(event.key==='Enter'){event.preventDefault();selectFirstSuggestionOrSearch();}" autocomplete="off">
+        <div class="sbar-divider"></div>
+        <button class="sbar-filter-btn" id="filters-toggle-btn" onclick="toggleFiltersPanel()" aria-label="Filtres">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/>
+            <circle cx="8" cy="6" r="2" fill="currentColor" stroke="none"/>
+            <circle cx="16" cy="12" r="2" fill="currentColor" stroke="none"/>
+            <circle cx="10" cy="18" r="2" fill="currentColor" stroke="none"/>
+          </svg>
+          <span class="sbar-filter-dot"></span>
+        </button>
         <div class="suggest-list" id="suggest-list"></div>
       </div>
-      <div class="filters-row">
-        <button class="filters-toggle" id="filters-toggle-btn" onclick="toggleFiltersPanel()">
-          <span>🎛️ Filtres</span>
+      <div class="filters-row" style="display:none">
+        <button class="filters-toggle" id="filters-toggle-btn-legacy" style="display:none">
           <span class="filter-badge" id="filter-count-badge" style="display:none">0</span>
         </button>
       </div>
@@ -1963,21 +1980,17 @@ function setFilter(el,f){
 }
 
 function updateFilterBtnBadge(){
-  const badge=document.getElementById('filter-count-badge');
+  const btn=document.getElementById('filters-toggle-btn');
   const n=activeFilters.size;
-  if(n>0){
-    badge.textContent=n;
-    badge.style.display='flex';
-  } else {
-    badge.style.display='none';
-  }
+  if(btn) btn.classList.toggle('on', n>0 || (document.getElementById('filters-panel')?.classList.contains('show')));
 }
 
 function toggleFiltersPanel(){
   const panel=document.getElementById('filters-panel');
   const btn=document.getElementById('filters-toggle-btn');
   const isOpen=panel.classList.toggle('show');
-  btn.classList.toggle('on', isOpen);
+  // Le bouton est actif si panel ouvert OU filtres actifs
+  btn.classList.toggle('on', isOpen || activeFilters.size>0);
 }
 
 // ============================================================
@@ -2084,12 +2097,7 @@ function locateMe(){
   const locAsked = localStorage.getItem('salati_loc_asked');
   if(!locAsked){ showLocationPopup(); return; }
   if(!navigator.geolocation){showToast('Géolocalisation non disponible');return;}
-  if(navigator.permissions){
-    navigator.permissions.query({name:'geolocation'}).then(perm=>{
-      if(perm.state==='denied'){ location.reload(); return; }
-      doGetCurrentPosition();
-    }).catch(()=>doGetCurrentPosition());
-  } else { doGetCurrentPosition(); }
+  doGetCurrentPosition();
 }
 function saveLastPosition(lat, lng){
   try{ localStorage.setItem('salati_last_pos', JSON.stringify({lat, lng, ts: Date.now()})); }catch(e){}
@@ -2105,7 +2113,7 @@ function loadLastPosition(){
     return p;
   }catch(e){ return null; }
 }
-function applyPosition(lat, lng, silent){
+function applyPosition(lat, lng){
   uLat=lat; uLng=lng;
   if(mapInitialized){
     map.setView([uLat,uLng],14,{animate:true});
@@ -2113,37 +2121,36 @@ function applyPosition(lat, lng, silent){
     uMarker=L.circleMarker([uLat,uLng],{radius:9,fillColor:'#0a8f5c',color:'#fff',weight:2.5,fillOpacity:1}).addTo(map).bindPopup('Vous êtes ici');
   }
   applyFilter();
-  if(!silent) showToast('Position trouvée ! 🎯');
 }
 function doGetCurrentPosition(silent){
   if(isLocating) return;
   isLocating = true;
-  if(!silent) showToast('Localisation en cours... 📍');
+  if(!silent) showToast('Localisation en cours...');
   navigator.geolocation.getCurrentPosition(pos=>{
     isLocating = false;
     const lat=pos.coords.latitude, lng=pos.coords.longitude;
     saveLastPosition(lat, lng);
-    applyPosition(lat, lng, silent);
-    // Mise à jour du nom de ville via GPS
+    applyPosition(lat, lng);
     if(!silent){
       fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`)
         .then(r=>r.json()).then(d=>{
           const city=d.address?.city||d.address?.town||d.address?.village||null;
-          if(city){
-            prayerLat=lat; prayerLng=lng; prayerCityName=city;
-            document.getElementById('cityname').textContent='Ma position';
-            fetchPrayers(lat, lng);
-          }
+          prayerLat=lat; prayerLng=lng; prayerCityName=city||'Ma position';
+          document.getElementById('cityname').textContent='Ma position';
+          fetchPrayers(lat, lng);
+          showToast('Position trouvée ✓');
         }).catch(()=>{
           document.getElementById('cityname').textContent='Ma position';
           fetchPrayers(lat, lng);
+          showToast('Position trouvée ✓');
         });
     }
   }, err=>{
     isLocating = false;
     if(silent) return;
     if(err.code===1){ location.reload(); }
-    else { showToast('Position indisponible — réessaie ou entre une ville'); }
+    else if(err.code===2){ showToast('Active la localisation sur ton téléphone 📡'); }
+    else { showToast('Localisation impossible — réessaie'); }
   }, {timeout:8000, maximumAge:60000});
 }
 function showLocDeniedModal(){
@@ -2266,7 +2273,7 @@ async function usePreciseLocationForPrayer(){
   const locAsked = localStorage.getItem('salati_loc_asked');
   if(!locAsked){ showLocationPopup(); closeAuth(); return; }
   if(!navigator.geolocation){showToast('Géolocalisation non disponible');return;}
-  showToast('Localisation en cours... 📍');
+  showToast('Localisation en cours...');
   navigator.geolocation.getCurrentPosition(async pos=>{
     const lat=pos.coords.latitude, lng=pos.coords.longitude;
     let cityName='Ma position';
@@ -2277,14 +2284,18 @@ async function usePreciseLocationForPrayer(){
     }catch{}
     await setPrayerLocation(lat, lng, cityName);
     closeAuth();
-  }, ()=>{ showLocationPopup(); closeAuth(); });
+  }, err=>{
+    if(err.code===2){ showToast('Active la localisation sur ton téléphone 📡'); }
+    else { showLocationPopup(); }
+    closeAuth();
+  });
 }
 
 async function setPrayerLocation(lat, lng, cityName){
   prayerLat=lat; prayerLng=lng; prayerCityName=cityName;
   document.getElementById('cityname').textContent=cityName; // ville choisie = pas d'emoji 📍
   fetchPrayers(lat, lng);
-  showToast('📍 Horaires pour '+cityName);
+  showToast('Horaires mis à jour ✓');
 
   // Recherche silencieuse de la mosquée la plus proche (invisible pour l'utilisateur,
   // utile pour de futures fonctionnalités comme l'affichage des horaires Mawaqit réels)
@@ -3245,26 +3256,27 @@ function requestLocationPermission(){
   hideLocationPopup();
   localStorage.setItem('salati_loc_asked','1');
   if(!navigator.geolocation){ showToast('Géolocalisation non disponible'); return; }
+  showToast('Localisation en cours...');
   navigator.geolocation.getCurrentPosition(pos=>{
-    uLat=pos.coords.latitude; uLng=pos.coords.longitude;
-    saveLastPosition(uLat, uLng);
-    if(mapInitialized){
-      map.setView([uLat,uLng],14,{animate:true});
-      if(uMarker) map.removeLayer(uMarker);
-      uMarker=L.circleMarker([uLat,uLng],{radius:9,fillColor:'#0a8f5c',color:'#fff',weight:2.5,fillOpacity:1}).addTo(map).bindPopup('Vous êtes ici');
-    }
-    fetch(`https://nominatim.openstreetmap.org/reverse?lat=${uLat}&lon=${uLng}&format=json`)
+    const lat=pos.coords.latitude, lng=pos.coords.longitude;
+    saveLastPosition(lat, lng);
+    applyPosition(lat, lng);
+    fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`)
       .then(r=>r.json()).then(d=>{
         const city=d.address?.city||d.address?.town||d.address?.village||'Ma position';
-        prayerLat=uLat; prayerLng=uLng; prayerCityName=city;
+        prayerLat=lat; prayerLng=lng; prayerCityName=city;
         document.getElementById('cityname').textContent='Ma position';
-        fetchPrayers(uLat,uLng);
-      }).catch(()=>fetchPrayers(uLat,uLng));
-    applyFilter();
-    showToast('📍 Position trouvée !');
-  },()=>{
-    showToast('Localisation refusée — tu peux l\'activer via 📍 sur la carte');
-  }, {timeout:10000, maximumAge:60000});
+        fetchPrayers(lat, lng);
+        showToast('Position trouvée ✓');
+      }).catch(()=>{
+        fetchPrayers(lat, lng);
+        showToast('Position trouvée ✓');
+      });
+  }, err=>{
+    if(err.code===1){ location.reload(); }
+    else if(err.code===2){ showToast('Active la localisation sur ton téléphone 📡'); }
+    else { showToast('Localisation impossible — réessaie'); }
+  }, {timeout:8000, maximumAge:60000});
 }
 // ============================================================
 // INSTALLATION PWA — Ajouter sur l'accueil
