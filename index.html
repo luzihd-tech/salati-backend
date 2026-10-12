@@ -3723,8 +3723,8 @@ async function openSourate(num){
       const vNum = v.verse_number;
       const arText = v.text_uthmani || '';
       // Translation 136 = Hamidullah FR, 57 = translittération
-      const frText = ((v.translations||[]).find(t=>t.resource_id===136)?.text||'').replace(/<[^>]*>/g,'').replace(/\s*\[\d+\]/g,'').trim();
-      const translit = ((v.translations||[]).find(t=>t.resource_id===57)?.text||'').replace(/<[^>]*>/g,'').replace(/\s*\[\d+\]/g,'').trim();
+      const frText = ((v.translations||[]).find(t=>t.resource_id===136)?.text||'').replace(/<sup[^>]*>[\s\S]*?<\/sup>/gi,'').replace(/<[^>]*>/g,'').trim();
+      const translit = ((v.translations||[]).find(t=>t.resource_id===57)?.text||'').replace(/<sup[^>]*>[\s\S]*?<\/sup>/gi,'').replace(/<[^>]*>/g,'').trim();
       const isRead = progress[vNum] || false;
       return `<div class="verset${isRead?' read':''}" id="v-${vNum}" data-v="${vNum}" onclick="selectVerset(this,${num},${vNum})">
         <div class="verset-num">${vNum}</div>
