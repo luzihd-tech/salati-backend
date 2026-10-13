@@ -31,6 +31,9 @@
   --sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);
   --header-h:56px;--radius-sm:10px;--radius-md:16px;--radius-lg:22px;--radius-xl:28px;
 
+  /* Icon color token (adapts via JS for dark mode) */
+  --icon-color:rgba(40,70,55,0.72);
+
   /* Ombres minimalistes */
   --shadow-xs:0 1px 4px rgba(13,47,30,0.06);
   --shadow-sm:0 2px 12px rgba(13,47,30,0.08);
@@ -104,11 +107,17 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
   padding:14px 10px 6px;
 }
 .drawer-item{
-  display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--radius-md);
-  cursor:pointer;font-size:14px;font-weight:600;color:var(--text-2);transition:all 0.12s;margin-bottom:1px;
+  display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:100px;
+  cursor:pointer;font-size:14px;font-weight:600;color:var(--text-2);transition:all 0.12s;margin-bottom:2px;
 }
+.drawer-item:hover{background:var(--gray-100)}
+.drawer-item .d-ico svg{opacity:0.75;transition:opacity 0.12s}
+.drawer-item:hover .d-ico svg,.drawer-item.active .d-ico svg{opacity:1}
 .drawer-item:active,.drawer-item.active{background:var(--green-light);color:var(--green-deep)}
+.drawer-item.active .d-ico svg{stroke:var(--green-deep)}
+.drawer-item.active .d-ico svg [fill="currentColor"]{fill:var(--green-deep)}
 .drawer-item .d-ico{font-size:18px;width:24px;text-align:center;flex-shrink:0}
+.drawer-item .d-ico svg{color:var(--icon-color);stroke:var(--icon-color)}
 .drawer-item.active .d-ico-svg path{fill:var(--green-deep)}
 .drawer-sep{height:1px;background:var(--border);margin:8px 14px}
 .drawer-foot{padding:14px 20px calc(14px + var(--sab));font-size:10.5px;color:var(--muted);text-align:center;border-top:1px solid var(--border)}
@@ -178,12 +187,12 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
   display:flex;align-items:center;justify-content:space-between;
   padding:16px 16px 12px;border-bottom:1px solid var(--border);
 }
-.cal-toggle{display:flex;background:var(--gray-100);border-radius:8px;padding:3px;border:1px solid var(--border)}
+.cal-toggle{display:flex;background:var(--gray-100);border-radius:100px;padding:3px;border:1px solid var(--border)}
 .cal-toggle-btn{
-  padding:6px 14px;border-radius:6px;border:none;background:none;
+  padding:6px 14px;border-radius:100px;border:none;background:none;
   font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;transition:all 0.15s;
 }
-.cal-toggle-btn.active{background:var(--green-deep);color:#fff;box-shadow:0 2px 6px rgba(9,79,51,0.25)}
+.cal-toggle-btn.active{background:var(--green-deep);color:#fff;box-shadow:0 2px 8px rgba(13,110,71,0.28)}
 .cal-close{
   background:var(--gray-100);border:1px solid var(--border);width:28px;height:28px;
   border-radius:50%;cursor:pointer;font-size:12px;color:var(--muted);
@@ -285,19 +294,19 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
 .filters-section-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px}
 .filters-chips-grid{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
 .chip{
-  padding:7px 13px;border-radius:20px;border:1.5px solid var(--border);font-size:12.5px;cursor:pointer;
+  padding:7px 14px;border-radius:100px;border:1.5px solid var(--border);font-size:12.5px;cursor:pointer;
   white-space:nowrap;font-weight:600;display:flex;align-items:center;gap:6px;
-  background:var(--white);color:var(--text-2);transition:all 0.15s;
+  background:transparent;color:var(--text-2);transition:all 0.15s;
 }
 .chip-ico{width:16px;height:16px;flex-shrink:0;stroke:currentColor}
 .tag-ico{width:13px;height:13px;flex-shrink:0;stroke:currentColor;display:inline-block;vertical-align:middle;margin-right:2px}
 .mi-ico-svg{width:20px;height:20px;stroke:currentColor;flex-shrink:0}
 .tab-ico-svg{width:16px;height:16px;stroke:currentColor;vertical-align:middle;margin-right:4px;display:inline-block}
-.chip.on{background:var(--green-deep);color:#fff;border-color:var(--green-deep);box-shadow:0 3px 10px rgba(9,79,51,0.25)}
+.chip.on{background:var(--green-deep);color:#fff;border-color:var(--green-deep);box-shadow:0 4px 14px rgba(13,110,71,0.3)}
 .radius-chip{gap:5px;cursor:default;padding:7px 12px}
 .radius-chip select{border:none;background:none;font-size:12.5px;font-weight:700;color:var(--text-2);cursor:pointer;outline:none;padding:0}
 .filters-footer{display:flex;gap:8px;padding:12px 14px;border-top:1px solid var(--border);margin-top:2px}
-.filters-footer-btn{flex:1;padding:10px;border-radius:var(--radius-sm);font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all 0.15s}
+.filters-footer-btn{flex:1;padding:10px;border-radius:100px;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all 0.15s}
 .filters-reset-btn{background:var(--gray-100);color:var(--text-2)}
 .filters-reset-btn:active{background:var(--gray-200)}
 .filters-save-btn{background:var(--green-deep);color:#fff;box-shadow:0 3px 10px rgba(9,79,51,0.25)}
@@ -844,58 +853,116 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
 
 /* ─── MODALE INSTALLATION ────────────────────────────────── */
 .install-overlay{
-  position:fixed;inset:0;background:rgba(8,20,14,0.5);z-index:9000;
+  position:fixed;inset:0;background:rgba(8,20,14,0.55);z-index:9000;
   display:flex;align-items:flex-end;justify-content:center;
-  backdrop-filter:blur(4px);padding-bottom:var(--sab);
-  animation:fadeIn 0.25s ease;
+  backdrop-filter:blur(6px);padding-bottom:var(--sab);
+  animation:fadeIn 0.2s ease;
 }
 .install-popup{
-  background:var(--white);border-radius:var(--radius-xl) var(--radius-xl) 0 0;
-  padding:20px 24px calc(28px + var(--sab));width:100%;max-width:480px;
+  background:var(--white);border-radius:28px 28px 0 0;
+  padding:0 0 calc(28px + var(--sab));width:100%;max-width:480px;
   animation:slideUp 0.32s cubic-bezier(.2,.9,.3,1);
-  max-height:85vh;overflow-y:auto;
+  max-height:88vh;overflow-y:auto;
+}
+/* Drag handle */
+.install-handle{
+  width:36px;height:4px;background:var(--gray-300);border-radius:100px;
+  margin:12px auto 0;
 }
 .install-header{
   display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:16px;min-height:32px;
+  padding:16px 20px 0;margin-bottom:4px;min-height:36px;
 }
 .install-back{
   background:var(--gray-100);border:none;color:var(--text-2);
-  font-size:16px;cursor:pointer;padding:6px 10px;border-radius:var(--radius-sm);
+  width:32px;height:32px;border-radius:50%;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;transition:background 0.12s;
 }
+.install-back:active{background:var(--gray-200)}
 .install-close{
-  background:var(--gray-100);border:1px solid var(--border);width:30px;height:30px;
+  background:var(--gray-100);border:none;width:32px;height:32px;
   border-radius:50%;cursor:pointer;font-size:13px;color:var(--muted);
   display:flex;align-items:center;justify-content:center;
+  transition:background 0.12s;
 }
-.install-icon{font-size:44px;margin-bottom:10px;display:block;text-align:center}
-.install-title{font-size:17px;font-weight:800;font-family:'Outfit',sans-serif;color:var(--text);flex:1;text-align:center}
-.install-desc{font-size:13.5px;color:var(--muted);line-height:1.6;font-weight:500;margin-bottom:16px;text-align:center}
-.install-os-btns{display:flex;flex-direction:column;gap:10px;margin-bottom:4px}
+.install-close:active{background:var(--gray-200)}
+.install-body{padding:0 20px 0}
+/* Badge icône centré */
+.install-badge{
+  width:68px;height:68px;border-radius:20px;
+  background:linear-gradient(135deg,var(--green-deep),var(--green-mid));
+  display:flex;align-items:center;justify-content:center;
+  margin:16px auto 12px;
+  box-shadow:0 8px 24px rgba(13,110,71,0.3);
+}
+.install-badge svg{width:32px;height:32px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.install-title{font-size:18px;font-weight:800;font-family:'Outfit',sans-serif;color:var(--text);flex:1;text-align:center;letter-spacing:-0.3px}
+.install-subtitle{font-size:13px;color:var(--muted);line-height:1.55;font-weight:500;margin-bottom:20px;text-align:center}
+/* Cartes OS */
+.install-os-btns{display:flex;flex-direction:column;gap:8px;margin-bottom:4px}
 .install-os-btn{
-  display:flex;align-items:center;gap:14px;background:var(--gray-100);
-  border:1.5px solid var(--border);border-radius:var(--radius-md);
-  padding:14px 16px;cursor:pointer;font-size:14px;font-weight:700;color:var(--text);
-  transition:all 0.12s;text-align:left;
+  display:flex;align-items:center;gap:14px;
+  background:var(--gray-100);border:1.5px solid var(--border);
+  border-radius:16px;padding:14px 16px;cursor:pointer;
+  font-size:14px;font-weight:700;color:var(--text);
+  transition:all 0.12s;text-align:left;width:100%;
 }
-.install-os-btn:active{background:var(--green-light);border-color:var(--green-soft)}
-.install-os-icon{font-size:22px;width:28px;text-align:center;flex-shrink:0}
+.install-os-btn:active{background:var(--green-light);border-color:var(--green-deep)}
+.install-os-icon-wrap{
+  width:40px;height:40px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.install-os-icon-wrap.ios{background:linear-gradient(135deg,#1c1c1e,#3a3a3c)}
+.install-os-icon-wrap.android{background:linear-gradient(135deg,#3ddc84,#0d9e54)}
+.install-os-icon-wrap.chrome{background:linear-gradient(135deg,#ea4335,#fbbc04 40%,#34a853 70%,#4285f4)}
+.install-os-icon-wrap.samsung{background:linear-gradient(135deg,#1428a0,#00b0d3)}
+.install-os-icon-wrap.firefox{background:linear-gradient(135deg,#e66000,#ff9500)}
+.install-os-icon-wrap.other{background:var(--gray-200)}
+.install-os-icon-wrap svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.install-os-info{display:flex;flex-direction:column;gap:1px}
+.install-os-name{font-size:14px;font-weight:700;color:var(--text)}
+.install-os-sub{font-size:11.5px;font-weight:500;color:var(--muted)}
+.install-arrow{margin-left:auto;color:var(--muted);font-size:16px}
+/* Bouton install natif */
 .install-btn-main{
   width:100%;background:var(--green-deep);color:#fff;border:none;
-  padding:15px;border-radius:var(--radius-md);font-size:14px;font-weight:700;
-  cursor:pointer;box-shadow:0 4px 16px rgba(9,79,51,0.3);margin-bottom:8px;
+  padding:15px 20px;border-radius:100px;font-size:14px;font-weight:700;
+  cursor:pointer;box-shadow:0 4px 18px rgba(13,110,71,0.35);margin-bottom:8px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:transform 0.15s,box-shadow 0.15s;
 }
-.install-steps{display:flex;flex-direction:column;gap:10px;margin-bottom:8px}
+.install-btn-main:active{transform:translateY(1px);box-shadow:0 2px 10px rgba(13,110,71,0.25)}
+.install-btn-main svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* Étapes guides */
+.install-steps{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
 .install-step{
-  display:flex;align-items:center;gap:12px;background:var(--gray-100);
-  border-radius:var(--radius-md);padding:12px 14px;
+  display:flex;align-items:center;gap:12px;
+  background:var(--gray-100);border:1px solid var(--border);
+  border-radius:14px;padding:12px 14px;
 }
 .install-step-num{
-  width:24px;height:24px;border-radius:50%;background:var(--green-deep);
+  width:26px;height:26px;border-radius:50%;background:var(--green-deep);
   color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;
   justify-content:center;flex-shrink:0;
 }
-.install-step span:nth-child(2){font-size:13px;color:var(--text-2);flex:1;font-weight:500;line-height:1.4}
+.install-step-text{font-size:13px;color:var(--text-2);flex:1;font-weight:500;line-height:1.45}
+.install-step-text strong{color:var(--text);font-weight:700}
+/* Tag "déjà installé" */
+.install-already{
+  text-align:center;padding:24px 0 4px;
+  font-size:13px;color:var(--muted);font-weight:500;
+}
+.install-already strong{color:var(--green-deep);font-weight:700}
+/* Divider */
+.install-divider{height:1px;background:var(--border);margin:16px 0}
+/* Info tip */
+.install-tip{
+  background:var(--green-light);border-radius:12px;padding:10px 14px;
+  font-size:12px;color:var(--green-deep);font-weight:600;
+  display:flex;align-items:flex-start;gap:8px;margin-bottom:4px;line-height:1.5;
+}
 
 /* ─── POPUP LOCALISATION ─────────────────────────────────── */
 .loc-overlay{
@@ -932,10 +999,12 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
   padding:9px 14px;border-radius:11px;margin-bottom:20px;display:inline-block;
 }
 .loc-btn-main{
-  width:100%;background:linear-gradient(135deg,var(--green-deep),var(--green));color:#fff;
-  border:none;padding:16px;border-radius:15px;font-size:15px;font-weight:700;cursor:pointer;
-  margin-bottom:11px;box-shadow:0 6px 20px rgba(10,143,92,0.35);
-;display:flex;align-items:center;justify-content:center;gap:8px}
+  width:100%;background:var(--green-deep);color:#fff;
+  border:none;padding:16px;border-radius:100px;font-size:15px;font-weight:700;cursor:pointer;
+  margin-bottom:11px;box-shadow:0 4px 18px rgba(13,110,71,0.35);
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:transform 0.15s,box-shadow 0.15s;letter-spacing:0.01em}
+.loc-btn-main:active{transform:translateY(1px);box-shadow:0 2px 10px rgba(13,110,71,0.25)}
 .loc-btn-skip{
   width:100%;background:none;border:none;color:var(--muted);font-size:13px;font-weight:600;
   cursor:pointer;padding:8px;
@@ -947,7 +1016,7 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
 .leaflet-popup-content{margin:9px 13px;font-size:12.5px;min-width:130px}
 .ppname{font-weight:800;font-size:13.5px;margin-bottom:3px}
 .pptype{color:var(--muted);font-size:10.5px;margin-bottom:7px;font-weight:600}
-.ppbtn{background:linear-gradient(135deg,var(--green-deep),var(--green));color:#fff;border:none;padding:6px 11px;border-radius:9px;cursor:pointer;font-size:11.5px;width:100%;font-weight:700}
+.ppbtn{background:var(--green-deep);color:#fff;border:none;padding:6px 14px;border-radius:100px;cursor:pointer;font-size:11.5px;width:100%;font-weight:700;box-shadow:0 3px 10px rgba(13,110,71,0.28);transition:filter 0.15s}
 </style>
 </head>
 <body>
@@ -1027,9 +1096,9 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
       <span class="d-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/><path d="M12 16v-4M12 8h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
       <span>À propos</span>
     </div>
-    <div class="drawer-item" onclick="installApp()">
+    <div class="drawer-item" id="drawer-install-btn" onclick="installApp()">
       <span class="d-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3v13M8 12l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
-      <span>Ajouter l'App à l'accueil du téléphone</span>
+      <span>Ajouter l'App à l'accueil</span>
     </div>
   </div>
   <div class="drawer-foot">Prayer Spot · Qu'Allah facilite</div>
@@ -1407,109 +1476,197 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
 <!-- MODALE INSTALLATION APP -->
 <div class="install-overlay" id="install-overlay" style="display:none">
   <div class="install-popup">
+    <div class="install-handle"></div>
     <div class="install-header">
-      <button class="install-back" id="install-back" onclick="installBack()" style="display:none">←</button>
-      <h2 class="install-title" id="install-title">Ajouter sur l'accueil</h2>
-      <button class="install-close" onclick="closeInstallModal()">✕</button>
+      <button class="install-back" id="install-back" onclick="installBack()" style="display:none">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <h2 class="install-title" id="install-title">Installer l'app</h2>
+      <button class="install-close" onclick="closeInstallModal()">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
     </div>
 
-    <!-- ÉTAPE 1 : Choix OS -->
+    <div class="install-body">
+
+    <!-- ÉTAPE : Déjà installé -->
+    <div id="install-step-already" style="display:none">
+      <div class="install-badge">
+        <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      </div>
+      <div class="install-already">
+        <strong>Prayer Spot est déjà installé</strong><br>
+        Tu peux le retrouver directement sur ton écran d'accueil.
+      </div>
+    </div>
+
+    <!-- ÉTAPE : Détection auto — Chrome/Chromium avec prompt dispo -->
+    <div id="install-step-native" style="display:none">
+      <div class="install-badge">
+        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </div>
+      <p class="install-subtitle">Ajoute Prayer Spot à ton écran d'accueil pour y accéder comme une vraie app, sans ouvrir le navigateur.</p>
+      <button class="install-btn-main" onclick="triggerInstall()">
+        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Ajouter à l'écran d'accueil
+      </button>
+      <p style="font-size:11.5px;color:var(--muted);text-align:center;font-weight:500">Installation rapide · 0 donnée partagée</p>
+    </div>
+
+    <!-- ÉTAPE 1 : Choix OS (fallback si pas de prompt natif) -->
     <div id="install-step-os">
-      <div class="install-icon">📲</div>
-      <p class="install-desc">Sur quel téléphone es-tu ?</p>
+      <div class="install-badge">
+        <svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+      </div>
+      <p class="install-subtitle">Sur quel appareil es-tu ?</p>
       <div class="install-os-btns">
         <button class="install-os-btn" onclick="installChoose('ios')">
-          <span class="install-os-icon"> </span>
-          <span>iPhone / iPad</span>
+          <div class="install-os-icon-wrap ios">
+            <svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 1 3 3 3 3 0 0 1-3 3 3 3 0 0 1-3-3 3 3 0 0 1 3-3z"/><path d="M7 8c0 0-4 1-4 7s4 7 4 7h10s4-1 4-7-4-7-4-7"/></svg>
+          </div>
+          <div class="install-os-info">
+            <span class="install-os-name">iPhone / iPad</span>
+            <span class="install-os-sub">iOS · Safari</span>
+          </div>
+          <span class="install-arrow">›</span>
         </button>
         <button class="install-os-btn" onclick="installChoose('android')">
-          <span class="install-os-icon">🤖</span>
-          <span>Android</span>
+          <div class="install-os-icon-wrap android">
+            <svg viewBox="0 0 24 24"><path d="M5 16a7 7 0 0 1 14 0"/><line x1="12" y1="9" x2="12" y2="16"/><line x1="8" y1="7" x2="5.5" y2="4"/><line x1="16" y1="7" x2="18.5" y2="4"/><circle cx="8" cy="6" r="1" fill="#fff" stroke="none"/><circle cx="16" cy="6" r="1" fill="#fff" stroke="none"/></svg>
+          </div>
+          <div class="install-os-info">
+            <span class="install-os-name">Android</span>
+            <span class="install-os-sub">Chrome · Samsung · Firefox…</span>
+          </div>
+          <span class="install-arrow">›</span>
         </button>
       </div>
     </div>
 
-    <!-- ÉTAPE 2a : iOS (Safari uniquement) -->
+    <!-- ÉTAPE iOS -->
     <div id="install-step-ios" style="display:none">
-      <p class="install-desc">Avec <strong>Safari</strong>, appuie sur le bouton Partager :</p>
+      <p class="install-subtitle">Dans <strong>Safari</strong>, suis ces 3 étapes :</p>
       <div class="install-steps">
-        <div class="install-step"><span class="install-step-num">1</span><span>Appuie sur <strong>⬆️ Partager</strong> en bas de Safari</span></div>
-        <div class="install-step"><span class="install-step-num">2</span><span>Fais défiler et appuie sur <strong>"Sur l'écran d'accueil"</strong></span></div>
-        <div class="install-step"><span class="install-step-num">3</span><span>Appuie sur <strong>Ajouter</strong> en haut à droite</span></div>
+        <div class="install-step">
+          <span class="install-step-num">1</span>
+          <span class="install-step-text">Appuie sur l'icône <strong>Partager</strong> <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg> en bas de l'écran</span>
+        </div>
+        <div class="install-step">
+          <span class="install-step-num">2</span>
+          <span class="install-step-text">Fais défiler et appuie sur <strong>"Sur l'écran d'accueil"</strong></span>
+        </div>
+        <div class="install-step">
+          <span class="install-step-num">3</span>
+          <span class="install-step-text">Appuie sur <strong>Ajouter</strong> en haut à droite</span>
+        </div>
+      </div>
+      <div class="install-tip">
+        <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0;stroke-linecap:round;stroke-linejoin:round;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Cette page doit être ouverte dans Safari (pas Chrome iOS) pour que l'option apparaisse.
       </div>
     </div>
 
-    <!-- ÉTAPE 2b : Android choix navigateur -->
+    <!-- ÉTAPE Android : choix navigateur -->
     <div id="install-step-android" style="display:none">
-      <p class="install-desc">Quel navigateur utilises-tu ?</p>
+      <p class="install-subtitle">Quel navigateur utilises-tu ?</p>
       <div class="install-os-btns">
         <button class="install-os-btn" onclick="installChoose('android-chrome')">
-          <span class="install-os-icon"><svg class="lico sz-set" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg></span>
-          <span>Chrome</span>
+          <div class="install-os-icon-wrap chrome">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="21.17" y1="8" x2="12" y2="8"/><line x1="3.95" y1="6.06" x2="8.54" y2="14"/><line x1="10.88" y1="21.94" x2="15.46" y2="14"/></svg>
+          </div>
+          <div class="install-os-info">
+            <span class="install-os-name">Chrome</span>
+            <span class="install-os-sub">Installation directe disponible</span>
+          </div>
+          <span class="install-arrow">›</span>
         </button>
         <button class="install-os-btn" onclick="installChoose('android-samsung')">
-          <span class="install-os-icon">🔷</span>
-          <span>Samsung Internet</span>
+          <div class="install-os-icon-wrap samsung">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 12h8M12 8v8"/></svg>
+          </div>
+          <div class="install-os-info">
+            <span class="install-os-name">Samsung Internet</span>
+            <span class="install-os-sub">Via le menu du navigateur</span>
+          </div>
+          <span class="install-arrow">›</span>
         </button>
         <button class="install-os-btn" onclick="installChoose('android-firefox')">
-          <span class="install-os-icon">🦊</span>
-          <span>Firefox</span>
+          <div class="install-os-icon-wrap firefox">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2c3 3 4 6 3 10s-4 7-8 8"/></svg>
+          </div>
+          <div class="install-os-info">
+            <span class="install-os-name">Firefox</span>
+            <span class="install-os-sub">Via le menu du navigateur</span>
+          </div>
+          <span class="install-arrow">›</span>
         </button>
         <button class="install-os-btn" onclick="installChoose('android-other')">
-          <span class="install-os-icon">🌍</span>
-          <span>Autre</span>
+          <div class="install-os-icon-wrap other">
+            <svg viewBox="0 0 24 24" style="stroke:var(--text-2)"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          <div class="install-os-info">
+            <span class="install-os-name">Autre navigateur</span>
+            <span class="install-os-sub">Opera, Brave, Edge…</span>
+          </div>
+          <span class="install-arrow">›</span>
         </button>
       </div>
     </div>
 
-    <!-- ÉTAPE 3 : Android Chrome -->
+    <!-- Android Chrome -->
     <div id="install-step-android-chrome" style="display:none">
       <div id="install-chrome-native">
-        <p class="install-desc">Tu es sur Chrome — installation en un tap !</p>
-        <button class="install-btn-main" onclick="triggerInstall()">⬇️ Installer Prayer Spot</button>
+        <p class="install-subtitle">Installation en un seul tap !</p>
+        <button class="install-btn-main" onclick="triggerInstall()">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Ajouter à l'écran d'accueil
+        </button>
       </div>
       <div id="install-chrome-manual" style="display:none">
-        <p class="install-desc">Avec <strong>Chrome</strong> :</p>
+        <p class="install-subtitle">Dans <strong>Chrome</strong>, suis ces étapes :</p>
         <div class="install-steps">
-          <div class="install-step"><span class="install-step-num">1</span><span>Appuie sur les <strong>⋮ trois points</strong> en haut à droite</span></div>
-          <div class="install-step"><span class="install-step-num">2</span><span>Appuie sur <strong>"Ajouter à l'écran d'accueil"</strong></span></div>
-          <div class="install-step"><span class="install-step-num">3</span><span>Appuie sur <strong>Ajouter</strong></span></div>
+          <div class="install-step"><span class="install-step-num">1</span><span class="install-step-text">Appuie sur les <strong>⋮ trois points</strong> en haut à droite</span></div>
+          <div class="install-step"><span class="install-step-num">2</span><span class="install-step-text">Appuie sur <strong>"Ajouter à l'écran d'accueil"</strong></span></div>
+          <div class="install-step"><span class="install-step-num">3</span><span class="install-step-text">Confirme en appuyant sur <strong>Ajouter</strong></span></div>
         </div>
       </div>
     </div>
 
-    <!-- ÉTAPE 3 : Android Samsung Internet -->
+    <!-- Samsung Internet -->
     <div id="install-step-android-samsung" style="display:none">
-      <p class="install-desc">Avec <strong>Samsung Internet</strong> :</p>
+      <p class="install-subtitle">Dans <strong>Samsung Internet</strong> :</p>
       <div class="install-steps">
-        <div class="install-step"><span class="install-step-num">1</span><span>Appuie sur l'icône <strong>☰ Menu</strong> en bas à droite</span></div>
-        <div class="install-step"><span class="install-step-num">2</span><span>Appuie sur <strong>"Ajouter page à"</strong></span></div>
-        <div class="install-step"><span class="install-step-num">3</span><span>Sélectionne <strong>"Écran d'accueil"</strong></span></div>
-        <div class="install-step"><span class="install-step-num">4</span><span>Appuie sur <strong>Ajouter</strong></span></div>
+        <div class="install-step"><span class="install-step-num">1</span><span class="install-step-text">Appuie sur l'icône <strong>☰ Menu</strong> en bas à droite</span></div>
+        <div class="install-step"><span class="install-step-num">2</span><span class="install-step-text">Appuie sur <strong>"Ajouter page à"</strong></span></div>
+        <div class="install-step"><span class="install-step-num">3</span><span class="install-step-text">Sélectionne <strong>"Écran d'accueil"</strong> puis <strong>Ajouter</strong></span></div>
       </div>
     </div>
 
-    <!-- ÉTAPE 3 : Android Firefox -->
+    <!-- Firefox -->
     <div id="install-step-android-firefox" style="display:none">
-      <p class="install-desc">Avec <strong>Firefox</strong> :</p>
+      <p class="install-subtitle">Dans <strong>Firefox</strong> :</p>
       <div class="install-steps">
-        <div class="install-step"><span class="install-step-num">1</span><span>Appuie sur les <strong>⋮ trois points</strong> en bas à droite</span></div>
-        <div class="install-step"><span class="install-step-num">2</span><span>Appuie sur <strong>"Installer"</strong> ou <strong>"Ajouter à l'écran d'accueil"</strong></span></div>
-        <div class="install-step"><span class="install-step-num">3</span><span>Confirme en appuyant sur <strong>Ajouter</strong></span></div>
+        <div class="install-step"><span class="install-step-num">1</span><span class="install-step-text">Appuie sur les <strong>⋮ trois points</strong> en bas</span></div>
+        <div class="install-step"><span class="install-step-num">2</span><span class="install-step-text">Appuie sur <strong>"Installer"</strong> ou <strong>"Ajouter à l'écran d'accueil"</strong></span></div>
+        <div class="install-step"><span class="install-step-num">3</span><span class="install-step-text">Confirme en appuyant sur <strong>Ajouter</strong></span></div>
       </div>
     </div>
 
-    <!-- ÉTAPE 3 : Android autre navigateur -->
+    <!-- Autre navigateur -->
     <div id="install-step-android-other" style="display:none">
-      <p class="install-desc">Sur la plupart des navigateurs Android :</p>
+      <p class="install-subtitle">Sur la plupart des navigateurs Android :</p>
       <div class="install-steps">
-        <div class="install-step"><span class="install-step-num">1</span><span>Appuie sur le <strong>menu ⋮</strong> ou <strong>☰</strong> du navigateur</span></div>
-        <div class="install-step"><span class="install-step-num">2</span><span>Cherche <strong>"Ajouter à l'écran d'accueil"</strong></span></div>
-        <div class="install-step"><span class="install-step-num">3</span><span>Confirme en appuyant sur <strong>Ajouter</strong></span></div>
+        <div class="install-step"><span class="install-step-num">1</span><span class="install-step-text">Appuie sur le <strong>menu ⋮</strong> ou <strong>☰</strong> du navigateur</span></div>
+        <div class="install-step"><span class="install-step-num">2</span><span class="install-step-text">Cherche <strong>"Ajouter à l'écran d'accueil"</strong></span></div>
+        <div class="install-step"><span class="install-step-num">3</span><span class="install-step-text">Confirme en appuyant sur <strong>Ajouter</strong></span></div>
       </div>
-      <p style="font-size:12px;color:var(--muted);text-align:center;margin-top:10px">💡 Pour une meilleure expérience, utilise Chrome ou Samsung Internet</p>
+      <div class="install-tip">
+        <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0;stroke-linecap:round;stroke-linejoin:round;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Pour la meilleure expérience, ouvre avec Chrome ou Samsung Internet.
+      </div>
     </div>
 
+    </div><!-- /install-body -->
   </div>
 </div>
 <div class="loc-overlay" id="loc-overlay">
@@ -1559,7 +1716,10 @@ let uLat=48.8566, uLng=2.3522, filtered=[];
 let prayerLat=48.8566, prayerLng=2.3522, prayerCityName='Paris', nearestMosqueForPrayer=null;
 let markers={}, uMarker=null, mapInitialized=false;
 let listView='proximity';
-let settings={autoLocate:false};
+let settings=(function(){
+  try{ return JSON.parse(localStorage.getItem('ps_settings')||'{}'); }catch{ return {}; }
+})();
+if(settings.autoLocate === undefined) settings.autoLocate = false;
 let prayerTrackerEnabled = localStorage.getItem('salati_tracker_enabled')==='1';
 const SCREEN_LABELS={explorer:'Explorer',favoris:'Favoris',compte:'Compte',apropos:'À propos',parametres:'Paramètres',qibla:'Boussole Qibla','aide-priere':'Aide à la prière','comment-prier':'Comment prier','suivi-priere':'Suivi de prière'};
 const DRAWER_ROOT_SCREENS=['explorer','favoris','compte','apropos','qibla'];
@@ -1654,7 +1814,7 @@ function showScreen(name, skipPush){
   if(name==='explorer' && !mapInitialized){ initMap(); }
   else if(name==='explorer' && mapInitialized){ setTimeout(()=>map.invalidateSize(),50); }
   if(name==='favoris') renderFavoris();
-  if(name==='compte') renderCompte();
+  if(name==='compte'){ renderCompte(); if(session) syncSubscriptionStatus(); }
   if(name==='parametres') renderParametres();
   if(name==='aide-priere') renderAidePriere();
   if(name==='comment-prier') renderCommentPrier();
@@ -2200,10 +2360,18 @@ async function toggleFav(id){
 let isLocating = false;
 function locateMe(){
   if(isLocating) return;
+  if(!navigator.geolocation){ showToast('Géolocalisation non disponible'); return; }
   const locAsked = localStorage.getItem('salati_loc_asked');
-  if(!locAsked){ showLocationPopup(); return; }
-  if(!navigator.geolocation){showToast('Géolocalisation non disponible');return;}
-  doGetCurrentPosition();
+  if(!locAsked || locAsked === 'skipped'){ showLocationPopup(); return; }
+  // Vérifier si la permission est déjà bloquée (Permissions API)
+  if(navigator.permissions){
+    navigator.permissions.query({name:'geolocation'}).then(status=>{
+      if(status.state === 'denied'){ showLocDeniedModal(); return; }
+      doGetCurrentPosition();
+    }).catch(()=>doGetCurrentPosition());
+  } else {
+    doGetCurrentPosition();
+  }
 }
 function saveLastPosition(lat, lng){
   try{ localStorage.setItem('salati_last_pos', JSON.stringify({lat, lng, ts: Date.now()})); }catch(e){}
@@ -2395,9 +2563,9 @@ async function usePreciseLocationForPrayer(){
     await setPrayerLocation(lat, lng, cityName, true);
     closeAuth();
   }, err=>{
-    if(err.code===2){ showToast('Active la localisation sur ton téléphone 📡'); }
-    else { showLocationPopup(); }
-    closeAuth();
+    if(err.code===1){ closeAuth(); showLocDeniedModal(); }
+    else if(err.code===2){ showToast('Active la localisation sur ton téléphone 📡'); closeAuth(); }
+    else { closeAuth(); showLocationPopup(); }
   });
 }
 
@@ -2643,6 +2811,7 @@ function renderCompte(){
       <h4><svg class="lico sz-set" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 12H3a2 2 0 0 0 0 4h4"/><path d="M11 14H3a2 2 0 0 0 0 4h4"/><path d="M7 16v1a2 2 0 0 0 2 2h4"/><path d="M13 12v-2a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2v2"/><path d="M15 17a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4v-1h10v1z"/><path d="m21 12-4.6 4.6a2 2 0 0 1-1.4.4"/><path d="M17 12V8a2 2 0 0 0-4 0v4"/></svg> Merci pour ton soutien</h4>
       <p>Tu contribues chaque mois au développement de Prayer Spot. C'est une <b>Sadaqa Jariyah</b> dont la récompense continue tant que l'application aide des musulmans à prier, qu'Allah te récompense.</p>
       <div class="sub-active">✓ Abonnement actif — 1,99€/mois</div>
+      <button onclick="toggleSubscription()" style="margin-top:12px;background:none;border:1px solid var(--border);border-radius:100px;padding:8px 16px;font-size:12.5px;color:var(--muted);cursor:pointer;font-weight:600">Résilier l'abonnement</button>
     </div>`:`
     <div class="sub-card-light">
       <div class="sub-card-light-top">
@@ -3159,10 +3328,11 @@ function applyTheme(theme){
     document.documentElement.style.setProperty('--green-soft','#1e3a2e');
     document.documentElement.style.setProperty('--green-dark','#1a8f60');
     document.documentElement.style.setProperty('--green-vivid','#2ecc8a');
+    document.documentElement.style.setProperty('--icon-color','rgba(200,225,215,0.85)');
   } else {
     ['--white','--bg','--surface','--text','--text-2','--muted','--border',
      '--gray-100','--gray-200','--green','--green-deep','--green-mid',
-     '--green-light','--green-soft','--green-dark','--green-vivid','--glass-bg'].forEach(v=>
+     '--green-light','--green-soft','--green-dark','--green-vivid','--glass-bg','--icon-color'].forEach(v=>
       document.documentElement.style.removeProperty(v)
     );
   }
@@ -3190,6 +3360,7 @@ function confirmResetTracker(){
 
 function toggleSetting(key){
   settings[key]=!settings[key];
+  try{ localStorage.setItem('ps_settings', JSON.stringify(settings)); }catch{}
   renderParametres();
   showToast(settings[key]?'Activé':'Désactivé');
 }
@@ -3224,16 +3395,28 @@ async function submitChangePassword(){
   }
 }
 
-function toggleSubscription(){
+async function toggleSubscription(){
   if(isSubscribed){
-    if(confirm('Annuler ton abonnement de soutien ? Tu peux te réabonner à tout moment.')){
-      isSubscribed=false;
-      renderParametres();
-      showToast('Abonnement annulé');
-    }
+    if(!confirm('Annuler ton abonnement de soutien ? Tu peux te réabonner à tout moment.')) return;
+    try{
+      // Tenter d'accéder au portail Stripe pour annuler
+      const r = await fetch(`${API}/stripe/cancel`, {
+        method:'POST',
+        headers:{'Authorization':'Bearer '+token}
+      });
+      const data = await r.json();
+      if(r.ok){
+        isSubscribed = false;
+        renderCompte();
+        updateDrawerProfile();
+        showToast('Abonnement annulé — actif jusqu\'à la fin de la période en cours');
+        return;
+      }
+      throw new Error(data.error||'Erreur');
+    }catch(err){
+    showToast('Impossible d\'annuler : '+err.message);
   }else{
     subscribe();
-    setTimeout(renderParametres,1100);
   }
 }
 
@@ -3374,6 +3557,7 @@ function hideLocationPopup(){
 function requestLocationPermission(){
   hideLocationPopup();
   localStorage.setItem('salati_loc_asked','1');
+  sessionStorage.removeItem('loc_denied'); // reset au cas où
   if(!navigator.geolocation){ showToast('Géolocalisation non disponible'); return; }
   showToast('Localisation en cours...');
   navigator.geolocation.getCurrentPosition(pos=>{
@@ -3392,7 +3576,7 @@ function requestLocationPermission(){
         showToast('Position trouvée ✓');
       });
   }, err=>{
-    if(err.code===1){ location.reload(); }
+    if(err.code===1){ sessionStorage.setItem('loc_denied','1'); location.reload(); }
     else if(err.code===2){ showToast('Active la localisation sur ton téléphone 📡'); }
     else { showToast('Localisation impossible — réessaie'); }
   }, {timeout:8000, maximumAge:60000});
@@ -3408,28 +3592,65 @@ window.addEventListener('beforeinstallprompt', e => {
   deferredInstallPrompt = e;
 });
 
+// Cacher le bouton install si déjà installé en standalone
+(function(){
+  if(window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone){
+    document.addEventListener('DOMContentLoaded', ()=>{
+      const btn = document.getElementById('drawer-install-btn');
+      if(btn) btn.style.display = 'none';
+    });
+  }
+})();
+
 const INSTALL_STEPS = {
-  'os':              { title:'Ajouter sur l\'accueil', back:null },
-  'ios':             { title:'iPhone / iPad',          back:'os' },
-  'android':         { title:'Android',                back:'os' },
-  'android-chrome':  { title:'Chrome',                 back:'android' },
-  'android-samsung': { title:'Samsung Internet',       back:'android' },
-  'android-firefox': { title:'Firefox',                back:'android' },
-  'android-other':   { title:'Autre navigateur',       back:'android' },
+  'already':         { title:'Déjà installé',           back:null },
+  'native':          { title:'Installer l\'app',         back:null },
+  'os':              { title:'Installer l\'app',         back:null },
+  'ios':             { title:'iPhone / iPad',            back:'os' },
+  'android':         { title:'Android',                  back:'os' },
+  'android-chrome':  { title:'Chrome',                   back:'android' },
+  'android-samsung': { title:'Samsung Internet',         back:'android' },
+  'android-firefox': { title:'Firefox',                  back:'android' },
+  'android-other':   { title:'Autre navigateur',         back:'android' },
 };
 
 function installApp(){
   closeDrawer();
   installHistory = [];
+
+  // Déjà installé en mode standalone ?
+  if(window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone){
+    installShowStep('already');
+    document.getElementById('install-overlay').style.display = 'flex';
+    return;
+  }
+
+  // Détection auto iOS
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+  if(isIOS){
+    installShowStep('ios');
+    document.getElementById('install-title').textContent = 'iPhone / iPad';
+    document.getElementById('install-back').style.display = 'flex';
+    installHistory = ['ios'];
+    document.getElementById('install-overlay').style.display = 'flex';
+    return;
+  }
+
+  // Prompt natif disponible (Chrome, Samsung Internet, Brave, Opera…)
+  if(deferredInstallPrompt){
+    installShowStep('native');
+    document.getElementById('install-overlay').style.display = 'flex';
+    return;
+  }
+
+  // Fallback : choix manuel
   installShowStep('os');
   document.getElementById('install-overlay').style.display = 'flex';
 }
 
 function installChoose(step){
-  // Sur Android Chrome avec prompt dispo → on l'affiche directement
   if(step === 'android-chrome'){
     installShowStep(step);
-    // Affiche le bouton natif si disponible, sinon le tuto manuel
     document.getElementById('install-chrome-native').style.display = deferredInstallPrompt ? 'block' : 'none';
     document.getElementById('install-chrome-manual').style.display = deferredInstallPrompt ? 'none' : 'block';
     return;
@@ -3471,7 +3692,7 @@ async function triggerInstall(){
   deferredInstallPrompt.prompt();
   const { outcome } = await deferredInstallPrompt.userChoice;
   if(outcome === 'accepted'){
-    showToast('Prayer Spot ajouté à l\'accueil 🎉');
+    showToast('Prayer Spot ajouté à l\'écran d\'accueil !');
     deferredInstallPrompt = null;
   }
   closeInstallModal();
@@ -3489,7 +3710,7 @@ function closeInstallModal(){
 }
 
 function skipLocation(){
-  localStorage.setItem('salati_loc_asked','1');
+  localStorage.setItem('salati_loc_asked','skipped');
   hideLocationPopup();
 }
 
@@ -3509,21 +3730,39 @@ async function initApp(){
   updateDateBtn();
 
   const locAsked = localStorage.getItem('salati_loc_asked');
-  if(!locAsked){
-    setTimeout(()=>showLocationPopup(), 800);
+  // Si l'utilisateur vient de refuser et que la page a rechargé → montrer l'aide
+  if(sessionStorage.getItem('loc_denied')){
+    sessionStorage.removeItem('loc_denied');
+    setTimeout(()=>showLocDeniedModal(), 600);
+  } else if(!locAsked || locAsked === 'skipped'){
+    if(!locAsked) setTimeout(()=>showLocationPopup(), 800);
+    // Si skipped: on n'auto-localise pas, on attend que l'user clique
   } else {
     // Visite suivante : utiliser la dernière position connue instantanément
     const lastPos = loadLastPosition();
     if(lastPos){
       applyPosition(lastPos.lat, lastPos.lng, true);
-      // Rafraîchir en silence en arrière-plan
-      if(navigator.geolocation){
+    }
+    // Rafraîchir en silence en arrière-plan (ou auto-localiser si activé)
+    if(navigator.geolocation){
+      const doSilentRefresh = ()=>{
         navigator.geolocation.getCurrentPosition(pos=>{
           const lat=pos.coords.latitude, lng=pos.coords.longitude;
           saveLastPosition(lat, lng);
           applyPosition(lat, lng, true);
           fetchPrayers(lat, lng);
         }, ()=>{}, {timeout:10000, maximumAge:60000});
+      };
+      if(settings.autoLocate){
+        // Auto-localisation : tenter même sans lastPos
+        if(navigator.permissions){
+          navigator.permissions.query({name:'geolocation'}).then(s=>{
+            if(s.state==='granted') doSilentRefresh();
+            else if(s.state==='prompt' && !lastPos) setTimeout(()=>showLocationPopup(), 800);
+          }).catch(()=>{ if(lastPos) doSilentRefresh(); });
+        } else { doSilentRefresh(); }
+      } else if(lastPos){
+        doSilentRefresh();
       }
     }
   }
