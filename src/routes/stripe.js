@@ -25,7 +25,6 @@ router.post('/create-checkout', authMiddleware, async (req, res) => {
     if (!user) return res.status(404).json({ error: 'Utilisateur introuvable' });
     if (user.is_subscribed) return res.status(400).json({ error: 'Déjà abonné' });
 
-    // Crée ou récupère le customer Stripe
     let customerId = user.stripe_customer_id;
     if (!customerId) {
       const customer = await stripe.customers.create({
@@ -55,7 +54,74 @@ router.post('/create-checkout', authMiddleware, async (req, res) => {
   }
 });
 
-// POST /api/stripe/webhook — Événements Stripe (raw body requis)
+// POST /api/stripe/create-subscription-intent
+router.post('/create-subscription-intent', authMiddleware, async (req, res) => {
+  try {
+    const stripe = getStripe();
+    const { data: user } = await supabase.from('users').select('*').eq('id', req.user.id).maybeSingle();
+    if (!user) return res.status(404).json({ error: 'Utilisateur introuvable' });
+    if (user.is_subscribed) return res.status(400).json({ error: 'Déjà abonné' });
+
+    let customerId = user.stripe_customer_id;
+    if (!customerId) {
+      const customer = await stripe.customers.create({
+        email: user.email, name: user.name,
+        metadata: { salati_user_id: user.id }
+      });
+      customerId = customer.id;
+      await supabase.from('users').update({ stripe_customer_id: customerId }).eq('id', user.id);
+    }
+
+    const setupIntent = await stripe.setupIntents.create({
+      customer: customerId,
+      payment_method_types: ['card'],
+      metadata: { salati_user_id: user.id, price_id: STRIPE_PRICE_ID }
+    });
+
+    res.json({ client_secret: setupIntent.client_secret, customer_id: customerId });
+  } catch (err) {
+    console.error('Stripe intent error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/stripe/confirm-subscription
+router.post('/confirm-subscription', authMiddleware, async (req, res) => {
+  try {
+    const stripe = getStripe();
+    const { payment_method_id } = req.body;
+    const { data: user } = await supabase.from('users').select('*').eq('id', req.user.id).maybeSingle();
+    if (!user?.stripe_customer_id) return res.status(400).json({ error: 'Customer introuvable' });
+
+    await stripe.paymentMethods.attach(payment_method_id, { customer: user.stripe_customer_id });
+    await stripe.customers.update(user.stripe_customer_id, {
+      invoice_settings: { default_payment_method: payment_method_id }
+    });
+
+    const subscription = await stripe.subscriptions.create({
+      customer: user.stripe_customer_id,
+      items: [{ price: STRIPE_PRICE_ID }],
+      default_payment_method: payment_method_id,
+      expand: ['latest_invoice.payment_intent']
+    });
+
+    const isActive = subscription.status === 'active' || subscription.status === 'trialing';
+    if (isActive) {
+      await supabase.from('users').update({
+        is_subscribed: true,
+        stripe_subscription_id: subscription.id,
+        subscription_status: subscription.status
+      }).eq('id', user.id);
+    }
+
+    res.json({ success: isActive, status: subscription.status });
+  } catch (err) {
+    console.error('Confirm subscription error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/stripe/webhook
 router.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
   const stripe = getStripe();
   const sig = req.headers['stripe-signature'];
