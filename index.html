@@ -2357,22 +2357,180 @@ async function toggleFav(id){
 // ============================================================
 // GÉOLOCALISATION
 // ============================================================
+// ============================================================
+// LOCALISATION — logique unique
+// salati_loc_asked : null = jamais demandé | 'skipped' = continuer sans
+//                    '1' = autorisé       | 'denied'  = refusé
+// ============================================================
 let isLocating = false;
+let locGpsOffPending = false; // GPS du téléphone coupé → on retente quand l'user revient sur l'app
+
+function locState(){ try{ return localStorage.getItem('salati_loc_asked'); }catch(e){ return null; } }
+function setLocState(v){ try{ if(v===null) localStorage.removeItem('salati_loc_asked'); else localStorage.setItem('salati_loc_asked', v); }catch(e){} }
+
+// État réel de la permission côté navigateur : 'granted' | 'denied' | 'prompt' | null (inconnu)
+function queryLocPermission(){
+  if(!navigator.permissions || !navigator.permissions.query) return Promise.resolve(null);
+  return navigator.permissions.query({name:'geolocation'}).then(s=>s.state).catch(()=>null);
+}
+
+// Bouton 📍 et « Utiliser ma position actuelle » (horaires)
 function locateMe(){
   if(isLocating) return;
   if(!navigator.geolocation){ showToast('Géolocalisation non disponible'); return; }
-  const locAsked = localStorage.getItem('salati_loc_asked');
-  // Jamais demandé ou skippé → afficher le popup d'explication
-  if(!locAsked || locAsked === 'skipped'){ showLocationPopup(); return; }
-  // Déjà refusé → reload unique pour re-prompt, puis on gère le résultat
-  if(locAsked === 'denied'){
-    sessionStorage.setItem('retry_loc','1');
-    location.reload();
+  const st = locState();
+  if(!st || st==='skipped'){ showLocationPopup(); return; }
+  if(st==='denied'){
+    queryLocPermission().then(perm=>{
+      // Débloqué dans les réglages, ou le navigateur accepte de redemander → pas besoin de recharger
+      if(perm==='granted' || perm==='prompt'){ askPosition({fresh:true}); return; }
+      // Sinon : rechargement UNIQUE, la demande repart au chargement
+      try{ sessionStorage.setItem('retry_loc','1'); }catch(e){}
+      location.reload();
+    });
     return;
   }
-  // Permission accordée → localiser
-  doGetCurrentPosition();
+  askPosition();
 }
+
+// Bouton « Autoriser la localisation » du popup
+function requestLocationPermission(){
+  hideLocationPopup();
+  if(!navigator.geolocation){ showToast('Géolocalisation non disponible'); return; }
+  askPosition({fresh:true});
+}
+
+// Bouton « Continuer sans localisation »
+function skipLocation(){
+  setLocState('skipped');
+  hideLocationPopup();
+}
+
+// Demande la position au navigateur (déclenche la demande d'autorisation si besoin)
+// opts.silent : aucun message (rafraîchissement en arrière-plan)
+// opts.quietFail : message si succès, rien si échec (retour sur l'app)
+// opts.fresh : position neuve, pas de cache
+function askPosition(opts){
+  opts = opts || {};
+  if(isLocating) return;
+  isLocating = true;
+  // Sécurité : si le téléphone ne répond jamais, le bouton 📍 redevient utilisable
+  const unlock = setTimeout(()=>{ isLocating = false; }, 15000);
+  if(!opts.silent && !opts.quietFail) showToast('Localisation en cours...');
+  navigator.geolocation.getCurrentPosition(pos=>{
+    clearTimeout(unlock);
+    isLocating = false;
+    locGpsOffPending = false;
+    setLocState('1');
+    onPositionFound(pos.coords.latitude, pos.coords.longitude, !!opts.silent);
+  }, err=>{
+    clearTimeout(unlock);
+    isLocating = false;
+    hideLocationPopup();
+    handleLocError(err, !!(opts.silent || opts.quietFail));
+  }, {timeout:10000, maximumAge: opts.fresh ? 0 : 60000});
+}
+
+function onPositionFound(lat, lng, silent){
+  saveLastPosition(lat, lng);
+  applyPosition(lat, lng);
+  if(silent){ fetchPrayers(lat, lng); return; }
+  prayerLat=lat; prayerLng=lng; prayerCityName='Ma position';
+  const cn=document.getElementById('cityname'); if(cn) cn.textContent='Ma position';
+  const si=document.getElementById('sinput'); if(si){ si.value=''; si.placeholder='Ma position'; }
+  fetchPrayers(lat, lng);
+  try{ findNearestMosqueForPrayer(lat, lng); }catch(e){}
+  showToast('Position trouvée ✓');
+  fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`)
+    .then(r=>r.json()).then(d=>{
+      const city=d.address?.city||d.address?.town||d.address?.village;
+      if(city) prayerCityName=city;
+    }).catch(()=>{});
+}
+
+// Échec : vrai refus, ou localisation du téléphone coupée ?
+function handleLocError(err, quiet){
+  const prev = locState();
+  if(err.code!==1){
+    // La permission est OK, c'est la position qui manque (GPS coupé, pas de signal, délai)
+    setLocState('1');
+    if(err.code===2) locGpsOffPending = true;
+    if(!quiet) showToast(err.code===2 ? 'Active la localisation sur ton téléphone 📡' : 'Localisation impossible — réessaie');
+    return;
+  }
+  queryLocPermission().then(perm=>{
+    if(perm==='granted'){
+      // Le site a toujours l'autorisation → c'est le GPS du téléphone qui est coupé
+      setLocState('1');
+      locGpsOffPending = true;
+      if(!quiet) showToast('Active la localisation sur ton téléphone 📡');
+      return;
+    }
+    // Impossible de savoir (vieux iPhone) pendant un rafraîchissement silencieux → on ne touche à rien
+    if(perm===null && quiet && prev==='1') return;
+    // Refus
+    setLocState('denied');
+    // Il avait autorisé avant : sur iPhone, un GPS coupé remonte comme un refus
+    if(prev==='1' && !quiet) showToast('Active la localisation sur ton téléphone 📡');
+  });
+}
+
+// Détecte les changements faits dans les réglages pendant que l'app est ouverte
+function watchLocPermission(){
+  if(!navigator.permissions || !navigator.permissions.query) return;
+  navigator.permissions.query({name:'geolocation'}).then(s=>{
+    s.onchange = ()=>{
+      if(s.state==='granted' && locState()!=='1' && locState()!=='skipped') askPosition({fresh:true});
+      else if(s.state==='denied' && locState()==='1') setLocState('denied');
+    };
+  }).catch(()=>{});
+}
+
+// Retour sur l'app (ex : après avoir réactivé le GPS dans les réglages) → on retente
+document.addEventListener('visibilitychange', ()=>{
+  if(document.visibilityState!=='visible') return;
+  if(locGpsOffPending && locState()==='1' && navigator.geolocation) askPosition({fresh:true, quietFail:true});
+});
+
+// Au chargement de la page
+function initLocation(){
+  try{
+    if(!navigator.geolocation) return;
+    watchLocPermission();
+    // Retour du rechargement unique → on redemande tout de suite, une seule fois
+    let retry=false;
+    try{ retry = !!sessionStorage.getItem('retry_loc'); sessionStorage.removeItem('retry_loc'); }catch(e){}
+    if(retry){ askPosition({fresh:true}); return; }
+
+    const st = locState();
+    const lastPos = st==='1' ? loadLastPosition() : null;
+    if(lastPos) applyPosition(lastPos.lat, lastPos.lng);
+
+    queryLocPermission().then(perm=>{
+      const st2 = locState();
+      if(perm==='granted'){
+        if(st2==='skipped') return;                    // il a choisi « continuer sans » → on respecte
+        if(st2==='1') askPosition({silent:true});      // visite normale → rafraîchit en silence
+        else askPosition({fresh:true, quietFail:true}); // débloqué dans les réglages → on localise
+        return;
+      }
+      if(perm==='denied'){
+        if(st2==='1') setLocState('denied');           // autorisation retirée dans les réglages
+        return;                                         // jamais de popup si c'est bloqué
+      }
+      if(perm==='prompt'){
+        // Popup d'explication seulement à la toute première visite.
+        // Si déjà répondu (ex : iPhone réglé sur « Demander »), le 📍 redemandera.
+        if(!st2) setTimeout(()=>showLocationPopup(), 800);
+        return;
+      }
+      // Permissions API indisponible (anciens iPhone)
+      if(!st2) setTimeout(()=>showLocationPopup(), 800);
+      else if(st2==='1') askPosition({silent:true});
+    });
+  }catch(e){ console.error('initLocation', e); }
+}
+
 function saveLastPosition(lat, lng){
   try{ localStorage.setItem('salati_last_pos', JSON.stringify({lat, lng, ts: Date.now()})); }catch(e){}
 }
@@ -2396,85 +2554,8 @@ function applyPosition(lat, lng){
   }
   applyFilter();
 }
-function doGetCurrentPosition(silent){
-  if(isLocating) return;
-  isLocating = true;
-  if(!silent) showToast('Localisation en cours...');
-  navigator.geolocation.getCurrentPosition(pos=>{
-    isLocating = false;
-    const lat=pos.coords.latitude, lng=pos.coords.longitude;
-    saveLastPosition(lat, lng);
-    applyPosition(lat, lng);
-    if(!silent){
-      fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`)
-        .then(r=>r.json()).then(d=>{
-          const city=d.address?.city||d.address?.town||d.address?.village||null;
-          prayerLat=lat; prayerLng=lng; prayerCityName=city||'Ma position';
-          document.getElementById('cityname').textContent='Ma position';
-          const si=document.getElementById('sinput');
-          if(si){ si.value=''; si.placeholder='Ma position'; }
-          fetchPrayers(lat, lng);
-          showToast('Position trouvée ✓');
-        }).catch(()=>{
-          document.getElementById('cityname').textContent='Ma position';
-          const si=document.getElementById('sinput');
-          if(si){ si.value=''; si.placeholder='Ma position'; }
-          fetchPrayers(lat, lng);
-          showToast('Position trouvée ✓');
-        });
-    }
-  }, err=>{
-    isLocating = false;
-    if(silent) return;
-    if(err.code===1){ localStorage.setItem('salati_loc_asked','denied'); hideLocationPopup(); }
-    else if(err.code===2){ showToast('Active la localisation sur ton téléphone 📡'); }
-    else { showToast('Localisation impossible — réessaie'); }
-  }, {timeout:8000, maximumAge:60000});
-}
-function showLocDeniedModal(){
-  const ua=navigator.userAgent;
-  let instru="";
-  if(/safari/i.test(ua)&&!/chrome/i.test(ua)){
-    instru="Réglages → Vie privée & sécurité → Services de localisation → Safari → Lors de l'utilisation";
-  } else if(/chrome/i.test(ua)){
-    instru="Appuie sur l'icône 🔒 dans la barre d'adresse → Paramètres du site → Localisation → Autoriser";
-  } else if(/firefox/i.test(ua)){
-    instru="Appuie sur l'icône 🔒 → Plus d'informations → Autorisations → Accès à votre position → Autoriser";
-  } else {
-    instru="Dans les paramètres de ton navigateur, autorise l'accès à la localisation pour ce site.";
-  }
-  const overlay=document.createElement('div');
-  overlay.id='loc-denied-overlay';
-  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9999;display:flex;align-items:flex-end;justify-content:center';
-  overlay.innerHTML='<div style="background:var(--white);border-radius:24px 24px 0 0;padding:28px 24px 36px;width:100%;max-width:520px;box-shadow:0 -4px 32px rgba(0,0,0,0.18)"><div style="width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px;"></div><div style="font-size:32px;text-align:center;margin-bottom:12px"><svg class="lico sz-xl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg></div><div style="font-size:17px;font-weight:800;text-align:center;margin-bottom:8px;font-family:Outfit,sans-serif">Localisation bloquée</div><p style="font-size:13.5px;color:var(--muted);text-align:center;line-height:1.6;margin-bottom:12px">Tu as refusé la localisation. Pour l\'activer, va dans les réglages de ton navigateur, puis rappuie sur le bouton <b>📍</b> en bas à droite.</p><div style="background:var(--gray-100);border-radius:14px;padding:14px 16px;font-size:13px;color:var(--text);line-height:1.7;margin-bottom:20px">🔧 '+instru+'</div><button onclick="document.getElementById(\'loc-denied-overlay\').remove()" style="width:100%;padding:14px;background:var(--green-deep);color:#fff;border:none;border-radius:100px;font-size:15px;font-weight:700;cursor:pointer">Compris</button></div>';
-  overlay.onclick=function(e){if(e.target===overlay)overlay.remove();};
-  document.body.appendChild(overlay);
-}
+// Gère un échec de géolocalisation : vrai refus, ou GPS du téléphone coupé ?
 
-function retryLocation(){
-  // Appelé après le reload (depuis initApp quand retry_loc est set)
-  sessionStorage.removeItem('retry_loc');
-  if(!navigator.geolocation){ showToast('Géolocalisation non disponible'); return; }
-  showToast('Localisation en cours...');
-  navigator.geolocation.getCurrentPosition(pos=>{
-    localStorage.setItem('salati_loc_asked','1');
-    const lat=pos.coords.latitude, lng=pos.coords.longitude;
-    saveLastPosition(lat, lng);
-    applyPosition(lat, lng);
-    fetch('https://nominatim.openstreetmap.org/reverse?lat='+lat+'&lon='+lng+'&format=json')
-      .then(r=>r.json()).then(d=>{
-        const city=d.address?.city||d.address?.town||d.address?.village||'Ma position';
-        prayerLat=lat; prayerLng=lng; prayerCityName=city;
-        document.getElementById('cityname').textContent='Ma position';
-        fetchPrayers(lat, lng);
-        showToast('Position trouvée ✓');
-      }).catch(()=>{ fetchPrayers(lat, lng); showToast('Position trouvée ✓'); });
-  }, err=>{
-    // Toujours refusé après le reload → on laisse tomber, pas de boucle
-    if(err.code===1){ localStorage.setItem('salati_loc_asked','denied'); }
-    else { showToast('Localisation impossible — réessaie'); }
-  }, {timeout:8000, maximumAge:0});
-}
 
 // ============================================================
 // HORAIRES DE PRIÈRE — Mawaqit en priorité, aladhan en secours
@@ -2572,27 +2653,9 @@ async function selectPrayerCity(i){
   closeAuth();
 }
 
-async function usePreciseLocationForPrayer(){
-  const locAsked = localStorage.getItem('salati_loc_asked');
-  if(!locAsked || locAsked === 'skipped'){ showLocationPopup(); closeAuth(); return; }
-  if(locAsked === 'denied'){ closeAuth(); sessionStorage.setItem('retry_loc','1'); location.reload(); return; }
-  if(!navigator.geolocation){showToast('Géolocalisation non disponible');return;}
-  showToast('Localisation en cours...');
-  navigator.geolocation.getCurrentPosition(async pos=>{
-    const lat=pos.coords.latitude, lng=pos.coords.longitude;
-    let cityName='Ma position';
-    try{
-      const r=await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`);
-      const d=await r.json();
-      cityName=d.address?.city||d.address?.town||d.address?.village||'Ma position';
-    }catch{}
-    await setPrayerLocation(lat, lng, cityName, true);
-    closeAuth();
-  }, err=>{
-    if(err.code===1){ localStorage.setItem('salati_loc_asked','denied'); closeAuth(); }
-    else if(err.code===2){ showToast('Active la localisation sur ton téléphone 📡'); closeAuth(); }
-    else { closeAuth(); }
-  });
+function usePreciseLocationForPrayer(){
+  closeAuth();
+  locateMe();
 }
 
 async function setPrayerLocation(lat, lng, cityName, isGps=false){
@@ -3581,34 +3644,6 @@ function hideLocationPopup(){
   const el=document.getElementById('loc-overlay');
   if(el){ el.style.opacity='0'; el.style.transition='opacity 0.2s'; setTimeout(()=>{el.style.display='none';el.style.opacity='1';},200); }
 }
-function requestLocationPermission(){
-  hideLocationPopup();
-  if(!navigator.geolocation){ showToast('Géolocalisation non disponible'); return; }
-  showToast('Localisation en cours...');
-  navigator.geolocation.getCurrentPosition(pos=>{
-    localStorage.setItem('salati_loc_asked','1');
-    const lat=pos.coords.latitude, lng=pos.coords.longitude;
-    saveLastPosition(lat, lng);
-    applyPosition(lat, lng);
-    fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`)
-      .then(r=>r.json()).then(d=>{
-        const city=d.address?.city||d.address?.town||d.address?.village||'Ma position';
-        prayerLat=lat; prayerLng=lng; prayerCityName=city;
-        document.getElementById('cityname').textContent='Ma position';
-        fetchPrayers(lat, lng);
-        showToast('Position trouvée ✓');
-      }).catch(()=>{
-        fetchPrayers(lat, lng);
-        showToast('Position trouvée ✓');
-      });
-  }, err=>{
-    if(err.code===1){ localStorage.setItem('salati_loc_asked','denied'); return; }
-    // Permission accordée mais position indisponible
-    localStorage.setItem('salati_loc_asked','1');
-    if(err.code===2){ showToast('Active la localisation sur ton téléphone 📡'); }
-    else { showToast('Localisation impossible — réessaie'); }
-  }, {timeout:8000, maximumAge:60000});
-}
 // ============================================================
 // INSTALLATION PWA — Ajouter sur l'accueil
 // ============================================================
@@ -3737,53 +3772,7 @@ function closeInstallModal(){
   }, 200);
 }
 
-function skipLocation(){
-  localStorage.setItem('salati_loc_asked','skipped');
-  hideLocationPopup();
-}
 
-function initLocation(){
-  try{
-    const locAsked = localStorage.getItem('salati_loc_asked');
-    // Si on revient d'un retry_loc reload → relancer la géoloc directement
-    if(sessionStorage.getItem('retry_loc')){
-      retryLocation();
-    } else if(!locAsked){
-      // Première visite → popup d'explication
-      setTimeout(()=>showLocationPopup(), 800);
-    } else if(locAsked === 'skipped' || locAsked === 'denied'){
-      // Skippé ou refusé → on n'insiste pas, l'user cliquera sur le bouton FAB
-    } else {
-      // Visite suivante : utiliser la dernière position connue instantanément
-      const lastPos = loadLastPosition();
-      if(lastPos){
-        applyPosition(lastPos.lat, lastPos.lng, true);
-      }
-      // Rafraîchir en silence en arrière-plan (ou auto-localiser si activé)
-      if(navigator.geolocation){
-        const doSilentRefresh = ()=>{
-          navigator.geolocation.getCurrentPosition(pos=>{
-            const lat=pos.coords.latitude, lng=pos.coords.longitude;
-            saveLastPosition(lat, lng);
-            applyPosition(lat, lng, true);
-            fetchPrayers(lat, lng);
-          }, ()=>{}, {timeout:10000, maximumAge:60000});
-        };
-        if(settings.autoLocate){
-          // Auto-localisation : tenter même sans lastPos
-          if(navigator.permissions){
-            navigator.permissions.query({name:'geolocation'}).then(s=>{
-              if(s.state==='granted') doSilentRefresh();
-              else if(s.state==='prompt' && !lastPos) setTimeout(()=>showLocationPopup(), 800);
-            }).catch(()=>{ if(lastPos) doSilentRefresh(); });
-          } else { doSilentRefresh(); }
-        } else if(lastPos){
-          doSilentRefresh();
-        }
-      }
-    }
-  }catch(e){ console.error('initLocation', e); }
-}
 
 async function initApp(){
   // Localisation en premier : ne dépend ni du serveur ni de la carte
