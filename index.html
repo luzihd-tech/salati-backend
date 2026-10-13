@@ -967,7 +967,7 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
 /* ─── POPUP LOCALISATION ─────────────────────────────────── */
 .loc-overlay{
   position:fixed;inset:0;background:rgba(10,30,22,0.55);z-index:9000;
-  display:flex;align-items:flex-end;justify-content:center;
+  display:none;align-items:flex-end;justify-content:center;
   backdrop-filter:blur(3px);padding-bottom:var(--sab);
   animation:fadeIn 0.25s ease;
 }
@@ -3440,7 +3440,8 @@ async function toggleSubscription(){
       }
       throw new Error(data.error||'Erreur');
     }catch(err){
-    showToast('Impossible d\'annuler : '+err.message);
+      showToast('Impossible d\'annuler : '+err.message);
+    }
   }else{
     subscribe();
   }
@@ -3582,11 +3583,10 @@ function hideLocationPopup(){
 }
 function requestLocationPermission(){
   hideLocationPopup();
-  localStorage.setItem('salati_loc_asked','1');
-  sessionStorage.removeItem('loc_denied'); // reset au cas où
   if(!navigator.geolocation){ showToast('Géolocalisation non disponible'); return; }
   showToast('Localisation en cours...');
   navigator.geolocation.getCurrentPosition(pos=>{
+    localStorage.setItem('salati_loc_asked','1');
     const lat=pos.coords.latitude, lng=pos.coords.longitude;
     saveLastPosition(lat, lng);
     applyPosition(lat, lng);
@@ -3602,8 +3602,10 @@ function requestLocationPermission(){
         showToast('Position trouvée ✓');
       });
   }, err=>{
-    if(err.code===1){ localStorage.setItem('salati_loc_asked','denied'); }
-    else if(err.code===2){ showToast('Active la localisation sur ton téléphone 📡'); }
+    if(err.code===1){ localStorage.setItem('salati_loc_asked','denied'); return; }
+    // Permission accordée mais position indisponible
+    localStorage.setItem('salati_loc_asked','1');
+    if(err.code===2){ showToast('Active la localisation sur ton téléphone 📡'); }
     else { showToast('Localisation impossible — réessaie'); }
   }, {timeout:8000, maximumAge:60000});
 }
@@ -3740,10 +3742,55 @@ function skipLocation(){
   hideLocationPopup();
 }
 
+function initLocation(){
+  try{
+    const locAsked = localStorage.getItem('salati_loc_asked');
+    // Si on revient d'un retry_loc reload → relancer la géoloc directement
+    if(sessionStorage.getItem('retry_loc')){
+      retryLocation();
+    } else if(!locAsked){
+      // Première visite → popup d'explication
+      setTimeout(()=>showLocationPopup(), 800);
+    } else if(locAsked === 'skipped' || locAsked === 'denied'){
+      // Skippé ou refusé → on n'insiste pas, l'user cliquera sur le bouton FAB
+    } else {
+      // Visite suivante : utiliser la dernière position connue instantanément
+      const lastPos = loadLastPosition();
+      if(lastPos){
+        applyPosition(lastPos.lat, lastPos.lng, true);
+      }
+      // Rafraîchir en silence en arrière-plan (ou auto-localiser si activé)
+      if(navigator.geolocation){
+        const doSilentRefresh = ()=>{
+          navigator.geolocation.getCurrentPosition(pos=>{
+            const lat=pos.coords.latitude, lng=pos.coords.longitude;
+            saveLastPosition(lat, lng);
+            applyPosition(lat, lng, true);
+            fetchPrayers(lat, lng);
+          }, ()=>{}, {timeout:10000, maximumAge:60000});
+        };
+        if(settings.autoLocate){
+          // Auto-localisation : tenter même sans lastPos
+          if(navigator.permissions){
+            navigator.permissions.query({name:'geolocation'}).then(s=>{
+              if(s.state==='granted') doSilentRefresh();
+              else if(s.state==='prompt' && !lastPos) setTimeout(()=>showLocationPopup(), 800);
+            }).catch(()=>{ if(lastPos) doSilentRefresh(); });
+          } else { doSilentRefresh(); }
+        } else if(lastPos){
+          doSilentRefresh();
+        }
+      }
+    }
+  }catch(e){ console.error('initLocation', e); }
+}
+
 async function initApp(){
-  await restoreSession();
-  showScreen('explorer', true);
-  await loadPlaces();
+  // Localisation en premier : ne dépend ni du serveur ni de la carte
+  initLocation();
+  try{ await restoreSession(); }catch(e){ console.error('restoreSession', e); }
+  try{ showScreen('explorer', true); }catch(e){ console.error('showScreen', e); }
+  try{ await loadPlaces(); }catch(e){ console.error('loadPlaces', e); }
   fetchPrayers(prayerLat, prayerLng);
   findNearestMosqueForPrayer(prayerLat, prayerLng);
 
@@ -3755,44 +3802,6 @@ async function initApp(){
   if(savedRadius){ activeRadius = parseInt(savedRadius); const sel=document.getElementById('radius-select'); if(sel) sel.value=savedRadius; }
   updateDateBtn();
 
-  const locAsked = localStorage.getItem('salati_loc_asked');
-  // Si on revient d'un retry_loc reload → relancer la géoloc directement
-  if(sessionStorage.getItem('retry_loc')){
-    retryLocation();
-  } else if(!locAsked){
-    // Première visite → popup d'explication
-    setTimeout(()=>showLocationPopup(), 800);
-  } else if(locAsked === 'skipped' || locAsked === 'denied'){
-    // Skippé ou refusé → on n'insiste pas, l'user cliquera sur le bouton FAB
-  } else {
-    // Visite suivante : utiliser la dernière position connue instantanément
-    const lastPos = loadLastPosition();
-    if(lastPos){
-      applyPosition(lastPos.lat, lastPos.lng, true);
-    }
-    // Rafraîchir en silence en arrière-plan (ou auto-localiser si activé)
-    if(navigator.geolocation){
-      const doSilentRefresh = ()=>{
-        navigator.geolocation.getCurrentPosition(pos=>{
-          const lat=pos.coords.latitude, lng=pos.coords.longitude;
-          saveLastPosition(lat, lng);
-          applyPosition(lat, lng, true);
-          fetchPrayers(lat, lng);
-        }, ()=>{}, {timeout:10000, maximumAge:60000});
-      };
-      if(settings.autoLocate){
-        // Auto-localisation : tenter même sans lastPos
-        if(navigator.permissions){
-          navigator.permissions.query({name:'geolocation'}).then(s=>{
-            if(s.state==='granted') doSilentRefresh();
-            else if(s.state==='prompt' && !lastPos) setTimeout(()=>showLocationPopup(), 800);
-          }).catch(()=>{ if(lastPos) doSilentRefresh(); });
-        } else { doSilentRefresh(); }
-      } else if(lastPos){
-        doSilentRefresh();
-      }
-    }
-  }
 
   // Bouton retour Android — intercepte le geste/bouton natif pour naviguer dans l'app
   history.pushState({ps:true}, '');
