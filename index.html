@@ -972,6 +972,8 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
   animation:fadeIn 0.25s ease;
 }
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.leaflet-container .leaflet-control-attribution{font-size:9px;line-height:1.4;padding:1px 6px;border-radius:6px;margin-left:8px;background:var(--glass-bg,rgba(255,255,255,0.85));color:var(--muted)}
+.leaflet-container .leaflet-control-attribution a{color:var(--muted)}
 .loc-popup{
   background:#fff;border-radius:26px 26px 0 0;padding:32px 24px calc(28px + var(--sab));
   width:100%;max-width:480px;text-align:center;
@@ -1835,10 +1837,194 @@ function goBack(){
 // CARTE
 // ============================================================
 let map;
+// ============================================================
+// FOND DE CARTE — OpenFreeMap (vectoriel) aux couleurs Prayer Spot
+// Secours automatique : tuiles OpenStreetMap si OpenFreeMap ou WebGL indisponible
+// ============================================================
+const MAP_STYLE_URL = 'https://tiles.openfreemap.org/styles/positron';
+const MAPLIBRE_JS  = 'https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js';
+const MAPLIBRE_CSS = 'https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css';
+const MAPLIBRE_LEAFLET_JS = 'https://unpkg.com/@maplibre/maplibre-gl-leaflet@0.1.3/leaflet-maplibre-gl.js';
+const MAP_ATTRIB = '<a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> © <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener">OpenMapTiles</a> © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>';
+
+// Palettes : sol clair légèrement vert, rues blanches, grands axes vert sauge
+const MAP_PALETTES = {
+  light:{
+    land:'#e7efe8', residential:'#e7efe8', building:'#d6e3d9', buildingLine:'#c7d7cb',
+    park:'#cbe5d2', wood:'#c5e0cc', water:'#bfdcdb', waterLine:'#a9cfcd',
+    minor:'#ffffff', path:'#f3f7f4',
+    majorFill:'#c2e0cb', majorCase:'#a9d2b6', motorFill:'#acd8bb', motorCase:'#8fc6a2',
+    rail:'#cad7ce', railDash:'#f1f6f2', boundary:'#a9bdb1',
+    roadLabel:'#557063', placeLabel:'#1f382d', waterLabel:'#3f7b75', halo:'#eef4ef'
+  },
+  dark:{
+    land:'#111917', residential:'#111917', building:'#1c2723', buildingLine:'#24312c',
+    park:'#14281e', wood:'#142a20', water:'#0c2125', waterLine:'#123038',
+    minor:'#27332f', path:'#1e2925',
+    majorFill:'#2e4b3c', majorCase:'#1a2a23', motorFill:'#386650', motorCase:'#1c3429',
+    rail:'#27332e', railDash:'#141c19', boundary:'#3a4a43',
+    roadLabel:'#93ab9f', placeLabel:'#d3e2da', waterLabel:'#6fa7a1', halo:'#111917'
+  }
+};
+
+let baseLayer = null, baseKind = null, baseStyleJson = null, vectorFailed = false, vectorLibP = null;
+
+function mapThemeName(){
+  try{ return localStorage.getItem('ps_theme')==='dark' ? 'dark' : 'light'; }catch(e){ return 'light'; }
+}
+
+function loadVectorLibs(){
+  if(window.maplibregl && L.maplibreGL) return Promise.resolve();
+  if(vectorLibP) return vectorLibP;
+  const add = (tag, attrs)=>new Promise((res, rej)=>{
+    const el = document.createElement(tag); Object.assign(el, attrs);
+    el.onload = res; el.onerror = ()=>rej(new Error('chargement impossible : '+(attrs.src||attrs.href)));
+    document.head.appendChild(el);
+  });
+  add('link', {rel:'stylesheet', href:MAPLIBRE_CSS}).catch(()=>{}); // style non bloquant
+  vectorLibP = Promise.race([
+    add('script', {src:MAPLIBRE_JS}).then(()=>add('script', {src:MAPLIBRE_LEAFLET_JS})),
+    new Promise((_, rej)=>setTimeout(()=>rej(new Error('délai bibliothèques')), 15000))
+  ]).then(()=>{ if(!(window.maplibregl && L.maplibreGL)) throw new Error('bibliothèques absentes'); });
+  return vectorLibP;
+}
+
+// Multiplie les épaisseurs d'une expression line-width (rues plus généreuses, comme sur la maquette)
+function scaleWidth(v, k){
+  if(typeof v === 'number') return v*k;
+  if(v && Array.isArray(v.stops)) return Object.assign({}, v, {stops: v.stops.map(([z, w])=>[z, typeof w==='number' ? w*k : w])});
+  if(Array.isArray(v) && v[0]==='interpolate'){
+    const out = v.slice(0, 3);
+    for(let i = 3; i < v.length; i += 2){ out.push(v[i], typeof v[i+1]==='number' ? v[i+1]*k : v[i+1]); }
+    return out;
+  }
+  return v;
+}
+
+function themedMapStyle(base, theme){
+  const P = MAP_PALETTES[theme] || MAP_PALETTES.light;
+  const s = JSON.parse(JSON.stringify(base));
+  const byId = {}; s.layers.forEach(l=>{ byId[l.id] = l; });
+  const paint = (id, props)=>{ const l = byId[id]; if(l) l.paint = Object.assign(l.paint || {}, props); };
+  const widen = (id, k)=>{ const l = byId[id]; if(l && l.paint && l.paint['line-width'] !== undefined) l.paint['line-width'] = scaleWidth(l.paint['line-width'], k); };
+  const hide = (id)=>{ const l = byId[id]; if(l) l.layout = Object.assign(l.layout || {}, {visibility:'none'}); };
+
+  paint('background', {'background-color':P.land});
+  paint('park', {'fill-color':P.park});
+  paint('water', {'fill-color':P.water});
+  paint('landcover_ice_shelf', {'fill-color':P.land});
+  paint('landcover_glacier', {'fill-color':P.land});
+  paint('landuse_residential', {'fill-color':P.residential});
+  paint('landcover_wood', {'fill-color':P.wood});
+  paint('waterway', {'line-color':P.waterLine});
+  paint('building', {'fill-color':P.building, 'fill-outline-color':P.buildingLine});
+  paint('aeroway-taxiway', {'line-color':P.minor});
+  paint('aeroway-runway-casing', {'line-color':P.majorCase});
+  paint('aeroway-area', {'fill-color':P.residential});
+  paint('aeroway-runway', {'line-color':P.minor});
+  paint('road_area_pier', {'fill-color':P.land});
+  paint('road_pier', {'line-color':P.land});
+  paint('highway_path', {'line-color':P.path});
+  paint('highway_minor', {'line-color':P.minor});
+  paint('highway_major_casing', {'line-color':P.majorCase});
+  paint('highway_major_inner', {'line-color':P.majorFill});
+  paint('highway_major_subtle', {'line-color':P.majorFill});
+  paint('highway_motorway_casing', {'line-color':P.motorCase});
+  paint('highway_motorway_inner', {'line-color':P.motorFill});
+  paint('highway_motorway_subtle', {'line-color':P.motorFill});
+  paint('tunnel_motorway_casing', {'line-color':P.motorCase});
+  paint('tunnel_motorway_inner', {'line-color':P.motorFill});
+  paint('highway_motorway_bridge_casing', {'line-color':P.motorCase});
+  paint('highway_motorway_bridge_inner', {'line-color':P.motorFill});
+  ['railway_transit','railway_service','railway'].forEach(id=>paint(id, {'line-color':P.rail}));
+  ['railway_transit_dashline','railway_service_dashline','railway_dashline'].forEach(id=>paint(id, {'line-color':P.railDash}));
+  ['boundary_3','boundary_2','boundary_disputed'].forEach(id=>paint(id, {'line-color':P.boundary}));
+
+  // Rues plus larges, comme sur la maquette
+  widen('highway_minor', 1.7);
+  ['highway_major_casing','highway_major_inner','highway_major_subtle',
+   'highway_motorway_casing','highway_motorway_inner','highway_motorway_bridge_casing','highway_motorway_bridge_inner'].forEach(id=>widen(id, 1.45));
+
+  // Textes : discrets, dans les tons de l'app
+  s.layers.forEach(l=>{
+    if(l.type !== 'symbol') return;
+    l.paint = l.paint || {};
+    if(/^highway-name/.test(l.id) || l.id==='airport') l.paint['text-color'] = P.roadLabel;
+    else if(/^water/.test(l.id)) l.paint['text-color'] = P.waterLabel;
+    else if(/^label_/.test(l.id)) l.paint['text-color'] = P.placeLabel;
+    l.paint['text-halo-color'] = P.halo;
+  });
+  // Plus épuré : pas de panneaux de numéros de route
+  ['highway-shield-non-us','highway-shield-us-interstate','road_shield_us'].forEach(hide);
+  return s;
+}
+
+function useRasterBase(reason){
+  if(reason) console.warn('Fond de carte de secours (OpenStreetMap) :', reason);
+  vectorFailed = true;
+  if(!map) return;
+  if(baseKind === 'raster') return;
+  if(baseLayer){ try{ map.removeLayer(baseLayer); }catch(e){} }
+  try{ map.attributionControl && map.attributionControl.removeAttribution(MAP_ATTRIB); }catch(e){}
+  baseLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution:'© OpenStreetMap', maxZoom:19}).addTo(map);
+  baseLayer.bringToBack && baseLayer.bringToBack();
+  baseKind = 'raster';
+}
+
+function getBaseStyle(){
+  if(baseStyleJson) return Promise.resolve(baseStyleJson);
+  const ctl = ('AbortController' in window) ? new AbortController() : null;
+  const t = setTimeout(()=>ctl && ctl.abort(), 10000);
+  return fetch(MAP_STYLE_URL, ctl ? {signal:ctl.signal} : {})
+    .then(r=>{ clearTimeout(t); if(!r.ok) throw new Error('style HTTP '+r.status); return r.json(); })
+    .then(j=>{ if(!j || !Array.isArray(j.layers)) throw new Error('style invalide'); baseStyleJson = j; return j; });
+}
+
+// Installe (ou met à jour selon le thème) le fond de carte
+function setBaseMap(){
+  if(!map) return;
+  const theme = mapThemeName();
+  const el = document.getElementById('map');
+  if(el) el.style.background = MAP_PALETTES[theme].land;
+  if(vectorFailed){ useRasterBase(); return; }
+  loadVectorLibs().then(getBaseStyle).then(base=>{
+    if(vectorFailed) return;
+    const style = themedMapStyle(base, theme);
+    if(baseKind === 'vector' && baseLayer){
+      baseLayer.getMaplibreMap().setStyle(style, {diff:true});
+      return;
+    }
+    let layer;
+    try{
+      layer = L.maplibreGL({style, attribution:MAP_ATTRIB});
+      layer.addTo(map);
+    }catch(e){ useRasterBase('WebGL indisponible : '+e.message); return; }
+    const gl = layer.getMaplibreMap();
+    if(!gl){ useRasterBase('carte vectorielle non créée'); return; }
+    baseLayer = layer; baseKind = 'vector';
+    try{ map.attributionControl && map.attributionControl.addAttribution(MAP_ATTRIB); }catch(e){} // crédit OpenFreeMap / OSM
+    // Surveillance : si rien ne s'affiche (service en panne), on bascule sur le secours
+    let tilesOk = 0, tileErrors = 0, loaded = false;
+    const watchdog = setTimeout(()=>{ if(!loaded || tilesOk===0) useRasterBase('OpenFreeMap ne répond pas'); }, 15000);
+    gl.on('load', ()=>{ loaded = true; });
+    gl.on('data', e=>{ if(e && e.dataType==='source' && e.tile) tilesOk++; if(loaded && tilesOk>0) clearTimeout(watchdog); });
+    gl.on('error', e=>{
+      // On ne compte que les vrais échecs de chargement de tuiles (pas les polices, icônes ou avertissements)
+      const msg = String((e && e.error && (e.error.message || e.error.status)) || '');
+      const isTileFailure = !!(e && e.tile) || /AJAXError|Failed to fetch|NetworkError|Load failed|\b[45]\d\d\b/.test(msg);
+      if(!isTileFailure || /glyph|font|sprite|pbf\?/i.test(msg) && !(e && e.tile)) return;
+      tileErrors++;
+      if(tilesOk===0 && tileErrors>=6){ clearTimeout(watchdog); useRasterBase('erreur OpenFreeMap : '+((e && e.error && e.error.message) || 'inconnue')); }
+    });
+  }).catch(err=>useRasterBase(err && err.message));
+}
+
 function initMap(){
   map = L.map('map', {zoomControl:false, tap:true}).setView([uLat, uLng], 12);
   L.control.zoom({position:'bottomright'}).addTo(map);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution:'© OpenStreetMap', maxZoom:19 }).addTo(map);
+  if(map.attributionControl) map.attributionControl.setPosition('bottomleft'); // crédit visible, au-dessus du panneau
+  setTimeout(()=>{ try{ repositionFab(); }catch(e){} }, 0);
+  setBaseMap(); // OpenFreeMap aux couleurs Prayer Spot (secours OSM automatique)
   mapInitialized=true;
   applyFilter();
   initSheetDrag();
@@ -1865,8 +2051,9 @@ function mkIcon(type) {
   return L.divIcon({
     className:'',iconSize:[36,44],iconAnchor:[18,44],popupAnchor:[0,-44],
     html:`<div style="width:36px;height:44px;position:relative">
-      <div style="width:36px;height:36px;background:${c};border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2.5px solid #fff;box-shadow:0 4px 14px rgba(0,0,0,0.2);display:flex;align-items:center;justify-content:center">
-        <svg style="transform:rotate(45deg);width:18px;height:18px" viewBox="0 0 24 24" fill="none">${svgInner[type]||svgInner.other}</svg>
+      <div style="position:absolute;left:11px;bottom:-1px;width:14px;height:5px;border-radius:50%;background:rgba(0,0,0,0.18);filter:blur(1px)"></div>
+      <div style="position:absolute;left:2px;top:1px;width:32px;height:32px;background:${c};border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #fff;box-shadow:0 3px 10px rgba(0,0,0,0.18);display:flex;align-items:center;justify-content:center">
+        <svg style="transform:rotate(45deg);width:17px;height:17px" viewBox="0 0 24 24" fill="none">${svgInner[type]||svgInner.other}</svg>
       </div>
     </div>`
   });
@@ -1959,6 +2146,9 @@ function repositionFab(){
   const pct = sheetState==='expanded'?82:sheetState==='collapsed'?6:32;
   fab.style.bottom = `calc(${pct}% + 16px)`;
   if(zoomCtrl) zoomCtrl.style.marginBottom = `calc(${pct}% + 70px)`;
+  // Crédit de la carte : juste au-dessus du panneau du bas, toujours visible
+  const attrCorner=document.querySelector('#map .leaflet-bottom.leaflet-left');
+  if(attrCorner) attrCorner.style.bottom = `calc(${pct}% + 4px)`;
 }
 
 // ============================================================
@@ -2368,6 +2558,8 @@ let userLocating = false; // demande lancée par l'utilisateur en cours
 let bgLocating = false;   // rafraîchissement en arrière-plan en cours
 let locGpsOffPending = false; // échec à corriger dans les réglages → on retente au retour sur l'app
 
+function gpsWasOff(){ try{ return localStorage.getItem('salati_gps_off')==='1'; }catch(e){ return false; } }
+function setGpsWasOff(v){ try{ if(v) localStorage.setItem('salati_gps_off','1'); else localStorage.removeItem('salati_gps_off'); }catch(e){} }
 function locState(){ try{ return localStorage.getItem('salati_loc_asked'); }catch(e){ return null; } }
 function setLocState(v){ try{ if(v===null) localStorage.removeItem('salati_loc_asked'); else localStorage.setItem('salati_loc_asked', v); }catch(e){} }
 
@@ -2392,19 +2584,11 @@ function locPlatform(){
 function locateMe(){
   if(userLocating){ showToast('Localisation en cours...'); return; } // jamais ignoré en silence
   hideLocHelp();
-  if(!navigator.geolocation){ showLocHelp('unsupported'); return; }
+  if(!navigator.geolocation){ showToast('Localisation non disponible sur ce navigateur'); return; }
   const st = locState();
   if(!st || st==='skipped'){ showLocationPopup(); return; }
-  if(st==='denied'){
-    queryLocPermission().then(perm=>{
-      // Débloqué dans les réglages, ou le navigateur accepte de redemander → pas besoin de recharger
-      if(perm==='granted' || perm==='prompt'){ askPosition({fresh:true}); return; }
-      // Sinon : rechargement UNIQUE, la demande repart au chargement
-      reloadForLocation();
-    });
-    return;
-  }
-  askPosition({fresh:true});
+  if(st==='denied'){ showLocationPopup(); return; } // d'abord le menu pour autoriser
+  askPosition({fresh:true, allowReload:true}); // demande immédiate, dans l'appui (fenêtre native si GPS coupé)
 }
 
 // Rechargement unique : le signal passe dans l'adresse (fiable partout, même en PWA iPhone)
@@ -2437,8 +2621,8 @@ function consumeRetryFlag(){
 // Bouton « Autoriser la localisation » du popup
 function requestLocationPermission(){
   hideLocationPopup();
-  if(!navigator.geolocation){ showLocHelp('unsupported'); return; }
-  askPosition({fresh:true});
+  if(!navigator.geolocation){ showToast('Localisation non disponible sur ce navigateur'); return; }
+  askPosition({fresh:true, allowReload:true}); // demande immédiate, dans l'appui
 }
 
 // Bouton « Continuer sans localisation »
@@ -2465,14 +2649,15 @@ function askPosition(opts){
   const noAnswer = setTimeout(()=>{
     if(done) return;
     release();
-    if(!quiet) showLocHelp('noanswer');
-  }, 20000);
+    if(!quiet) showToast('La localisation ne répond pas — réessaie');
+  }, 30000);
   if(!quiet) showToast('Localisation en cours...');
   navigator.geolocation.getCurrentPosition(pos=>{
     done = true; clearTimeout(noAnswer);
     release();
     locGpsOffPending = false;
     setLocState('1');
+    setGpsWasOff(false);
     hideLocHelp();
     onPositionFound(pos.coords.latitude, pos.coords.longitude, !!opts.silent);
   }, err=>{
@@ -2481,8 +2666,8 @@ function askPosition(opts){
     release();
     if(!quiet) hideLocationPopup();
     const elapsed = Date.now()-t0;
-    permBefore.then(before=>handleLocError(err, quiet, elapsed, before));
-  }, {enableHighAccuracy:false, timeout:12000, maximumAge: opts.fresh ? 0 : 60000});
+    permBefore.then(before=>handleLocError(err, quiet, elapsed, before, !!opts.allowReload));
+  }, {enableHighAccuracy: !quiet, timeout: quiet ? 12000 : 20000, maximumAge: opts.fresh ? 0 : 60000});
 }
 
 function onPositionFound(lat, lng, silent){
@@ -2505,22 +2690,22 @@ function onPositionFound(lat, lng, silent){
 // Échec : on détecte la cause et on propose la solution
 // elapsed = temps écoulé : un humain qui répond à la fenêtre système met > 1 s,
 // un blocage (réglages / GPS coupé) répond instantanément.
-function handleLocError(err, quiet, elapsed, permBefore){
+function handleLocError(err, quiet, elapsed, permBefore, allowReload){
   if(err.code===2){                       // permission OK, GPS du téléphone coupé
-    setLocState('1'); locGpsOffPending = true;
-    if(!quiet) showLocHelp('off');
+    setLocState('1'); setGpsWasOff(true);
+    if(!quiet) showToast('Active la localisation de ton téléphone 📡');
     return;
   }
   if(err.code===3){                       // délai dépassé : GPS coupé ou pas de signal
-    setLocState('1'); locGpsOffPending = true;
-    if(!quiet) showLocHelp('timeout');
+    setLocState('1'); setGpsWasOff(true);
+    if(!quiet) showToast('Position introuvable — vérifie que ta localisation est activée');
     return;
   }
   // code 1 : refusé — volontairement, ou bloqué par les réglages / GPS coupé (iPhone)
   queryLocPermission().then(perm=>{
     if(perm==='granted'){                 // le site a toujours le droit → GPS du téléphone coupé
-      setLocState('1'); locGpsOffPending = true;
-      if(!quiet) showLocHelp('off');
+      setLocState('1'); setGpsWasOff(true);
+      if(!quiet) showToast('Active la localisation de ton téléphone 📡');
       return;
     }
     if(quiet) return;                     // arrière-plan : on ne change rien, on ne dérange pas
@@ -2533,9 +2718,11 @@ function handleLocError(err, quiet, elapsed, permBefore){
       showToast('Localisation refusée — appuie sur 📍 pour réessayer');
       return;
     }
-    // Refus instantané, sans fenêtre : bloqué dans les réglages ou localisation du tél. coupée
+    // Refus instantané, sans fenêtre : le navigateur a bloqué la localisation pour le site
+    // iPhone : Safari peut redemander après UN rechargement
+    if(allowReload && locPlatform().ios){ reloadForLocation(); return; }
     locGpsOffPending = true;
-    showLocHelp('blocked');
+    showLocHelp('blocked'); // seul cas où on explique : impossible de redemander autrement
   });
 }
 
@@ -2612,7 +2799,7 @@ function locHelpOpen(){
 }
 function retryFromHelp(){
   hideLocHelp();
-  if(!navigator.geolocation){ showLocHelp('unsupported'); return; }
+  if(!navigator.geolocation){ showToast('Localisation non disponible sur ce navigateur'); return; }
   askPosition({fresh:true});
 }
 function searchCityInstead(){
@@ -2636,7 +2823,7 @@ function watchLocPermission(){
 document.addEventListener('visibilitychange', ()=>{
   if(document.visibilityState!=='visible' || !navigator.geolocation) return;
   // Panneau d'aide ouvert, ou GPS coupé alors que l'autorisation est acquise
-  if(locHelpOpen() || (locGpsOffPending && locState()==='1')) askPosition({fresh:true, quietFail:true});
+  if(locHelpOpen()) askPosition({fresh:true, quietFail:true});
 });
 
 // Au chargement de la page
@@ -2655,7 +2842,8 @@ function initLocation(){
       const st2 = locState();
       if(perm==='granted'){
         if(st2==='skipped') return;                     // il a choisi « continuer sans » → on respecte
-        if(st2==='1') askPosition({silent:true});       // visite normale → rafraîchit en silence
+        // GPS coupé la dernière fois → on attend le 📍 (la fenêtre Android s'ouvrira à ce moment-là)
+        if(st2==='1'){ if(!gpsWasOff()) askPosition({silent:true}); return; }
         else askPosition({fresh:true, quietFail:true}); // débloqué dans les réglages → on localise
         return;
       }
@@ -2670,7 +2858,7 @@ function initLocation(){
       }
       // Permissions API indisponible (anciens iPhone)
       if(!st2) setTimeout(()=>showLocationPopup(), 800);
-      else if(st2==='1') askPosition({silent:true});
+      else if(st2==='1' && !gpsWasOff()) askPosition({silent:true});
     });
   }catch(e){ console.error('initLocation', e); }
 }
@@ -3569,6 +3757,8 @@ function applyTheme(theme){
       document.documentElement.style.removeProperty(v)
     );
   }
+  // Fond de carte assorti au thème
+  try{ if(typeof map!=='undefined' && map && typeof setBaseMap==='function') setBaseMap(); }catch(e){}
   // Fix modale install en mode sombre
   const overlay = document.getElementById('install-overlay');
   if(overlay){
