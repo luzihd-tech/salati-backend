@@ -2766,6 +2766,7 @@ function locHelpContent(type){
 function showLocHelp(type){
   const c = locHelpContent(type);
   let ov = document.getElementById('loc-help');
+  if(ov && ov.style.display !== 'none' && ov.dataset.type === type) return; // déjà affiché : rien ne bouge
   if(!ov){
     ov = document.createElement('div');
     ov.id = 'loc-help';
@@ -2783,6 +2784,7 @@ function showLocHelp(type){
     <p class="loc-desc">${c.text}</p>
     ${steps}
     <div style="height:10px"></div>
+    <div id="loc-help-msg" style="display:none;font-size:13.5px;font-weight:700;color:#c0392b;margin:0 0 12px">Active ta localisation sur ton téléphone</div>
     ${c.retry ? '<button class="loc-btn-main" id="loc-help-retry" onclick="retryFromHelp()">Réessayer</button>' : ''}
     <button class="loc-btn-skip" id="loc-help-city" onclick="searchCityInstead()" style="color:var(--green-deep);font-weight:700">Chercher une ville à la place</button>
     <button class="loc-btn-skip" id="loc-help-close" onclick="hideLocHelp()">Fermer</button>
@@ -2797,10 +2799,29 @@ function locHelpOpen(){
   const ov = document.getElementById('loc-help');
   return !!(ov && ov.style.display !== 'none');
 }
+let helpRetrying = false;
 function retryFromHelp(){
-  hideLocHelp();
-  if(!navigator.geolocation){ showToast('Localisation non disponible sur ce navigateur'); return; }
-  askPosition({fresh:true});
+  if(helpRetrying) return;                       // appuis répétés ignorés pendant la vérification
+  const btn = document.getElementById('loc-help-retry');
+  const msg = document.getElementById('loc-help-msg');
+  if(!navigator.geolocation){ if(msg){ msg.textContent='Localisation non disponible sur ce navigateur'; msg.style.display='block'; } return; }
+  helpRetrying = true;
+  if(btn){ btn.disabled = true; btn.textContent = 'Vérification…'; btn.style.opacity = '0.7'; }
+  if(msg) msg.style.display = 'none';
+  let done = false;
+  const finish = ok=>{
+    if(done) return; done = true; helpRetrying = false;
+    if(btn){ btn.disabled = false; btn.textContent = 'Réessayer'; btn.style.opacity = ''; }
+    if(!ok && msg){ msg.textContent = 'Active ta localisation sur ton téléphone'; msg.style.display = 'block'; }
+  };
+  const guard = setTimeout(()=>finish(false), 20000);
+  // Demande directe, pendant l'appui : laisse au téléphone la possibilité d'afficher sa fenêtre native
+  navigator.geolocation.getCurrentPosition(pos=>{
+    clearTimeout(guard); finish(true);
+    setLocState('1'); setGpsWasOff(false); locGpsOffPending = false;
+    hideLocHelp();
+    onPositionFound(pos.coords.latitude, pos.coords.longitude, false);
+  }, ()=>{ clearTimeout(guard); finish(false); }, {enableHighAccuracy:true, timeout:15000, maximumAge:0});
 }
 function searchCityInstead(){
   hideLocHelp();
