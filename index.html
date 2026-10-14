@@ -2361,9 +2361,12 @@ async function toggleFav(id){
 // LOCALISATION — logique unique
 // salati_loc_asked : null = jamais demandé | 'skipped' = continuer sans
 //                    '1' = autorisé       | 'denied'  = refusé
+// Règle : toute tentative lancée par l'utilisateur se termine par
+//   → une position, ou → un panneau d'aide qui explique quoi faire.
 // ============================================================
-let isLocating = false;
-let locGpsOffPending = false; // GPS du téléphone coupé → on retente quand l'user revient sur l'app
+let userLocating = false; // demande lancée par l'utilisateur en cours
+let bgLocating = false;   // rafraîchissement en arrière-plan en cours
+let locGpsOffPending = false; // échec à corriger dans les réglages → on retente au retour sur l'app
 
 function locState(){ try{ return localStorage.getItem('salati_loc_asked'); }catch(e){ return null; } }
 function setLocState(v){ try{ if(v===null) localStorage.removeItem('salati_loc_asked'); else localStorage.setItem('salati_loc_asked', v); }catch(e){} }
@@ -2374,10 +2377,22 @@ function queryLocPermission(){
   return navigator.permissions.query({name:'geolocation'}).then(s=>s.state).catch(()=>null);
 }
 
+function locPlatform(){
+  const ua = navigator.userAgent || '';
+  const ios = /iPhone|iPad|iPod/.test(ua) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+  const android = /Android/.test(ua);
+  const standalone = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone===true;
+  const chrome = /Chrome|CriOS/.test(ua) && !/EdgA|OPR|SamsungBrowser/.test(ua);
+  const samsung = /SamsungBrowser/.test(ua);
+  const firefox = /Firefox|FxiOS/.test(ua);
+  return {ios, android, standalone, chrome, samsung, firefox};
+}
+
 // Bouton 📍 et « Utiliser ma position actuelle » (horaires)
 function locateMe(){
-  if(isLocating) return;
-  if(!navigator.geolocation){ showToast('Géolocalisation non disponible'); return; }
+  if(userLocating){ showToast('Localisation en cours...'); return; } // jamais ignoré en silence
+  hideLocHelp();
+  if(!navigator.geolocation){ showLocHelp('unsupported'); return; }
   const st = locState();
   if(!st || st==='skipped'){ showLocationPopup(); return; }
   if(st==='denied'){
@@ -2385,18 +2400,44 @@ function locateMe(){
       // Débloqué dans les réglages, ou le navigateur accepte de redemander → pas besoin de recharger
       if(perm==='granted' || perm==='prompt'){ askPosition({fresh:true}); return; }
       // Sinon : rechargement UNIQUE, la demande repart au chargement
-      try{ sessionStorage.setItem('retry_loc','1'); }catch(e){}
-      location.reload();
+      reloadForLocation();
     });
     return;
   }
-  askPosition();
+  askPosition({fresh:true});
+}
+
+// Rechargement unique : le signal passe dans l'adresse (fiable partout, même en PWA iPhone)
+// + copie de secours dans le stockage permanent
+function reloadForLocation(){
+  try{ localStorage.setItem('salati_retry_loc', String(Date.now())); }catch(e){}
+  const u = new URL(location.href);
+  u.searchParams.set('retryloc', String(Date.now()));
+  location.replace(u.toString());
+}
+function consumeRetryFlag(){
+  let retry = false;
+  try{
+    const u = new URL(location.href);
+    if(u.searchParams.has('retryloc')){
+      retry = true;
+      u.searchParams.delete('retryloc');
+      history.replaceState(history.state, '', u.pathname + (u.search||'') + u.hash); // adresse propre
+    }
+  }catch(e){}
+  try{
+    const ts = parseInt(localStorage.getItem('salati_retry_loc')||'0', 10);
+    if(ts && Date.now()-ts < 60000) retry = true;   // secours : demandé il y a moins d'1 min
+    localStorage.removeItem('salati_retry_loc');
+  }catch(e){}
+  try{ sessionStorage.removeItem('retry_loc'); }catch(e){} // ancienne version
+  return retry;
 }
 
 // Bouton « Autoriser la localisation » du popup
 function requestLocationPermission(){
   hideLocationPopup();
-  if(!navigator.geolocation){ showToast('Géolocalisation non disponible'); return; }
+  if(!navigator.geolocation){ showLocHelp('unsupported'); return; }
   askPosition({fresh:true});
 }
 
@@ -2406,29 +2447,42 @@ function skipLocation(){
   hideLocationPopup();
 }
 
-// Demande la position au navigateur (déclenche la demande d'autorisation si besoin)
-// opts.silent : aucun message (rafraîchissement en arrière-plan)
+// Demande la position au navigateur (ouvre la demande d'autorisation si besoin)
+// opts.silent    : arrière-plan, aucun message
 // opts.quietFail : message si succès, rien si échec (retour sur l'app)
-// opts.fresh : position neuve, pas de cache
+// opts.fresh     : position neuve, pas de cache
 function askPosition(opts){
   opts = opts || {};
-  if(isLocating) return;
-  isLocating = true;
-  // Sécurité : si le téléphone ne répond jamais, le bouton 📍 redevient utilisable
-  const unlock = setTimeout(()=>{ isLocating = false; }, 15000);
-  if(!opts.silent && !opts.quietFail) showToast('Localisation en cours...');
+  const quiet = !!(opts.silent || opts.quietFail);
+  // Une demande de l'utilisateur passe TOUJOURS, même si un rafraîchissement tourne en fond
+  if(quiet){ if(bgLocating || userLocating) return; bgLocating = true; }
+  else { if(userLocating){ showToast('Localisation en cours...'); return; } userLocating = true; }
+  const release = ()=>{ if(quiet) bgLocating = false; else userLocating = false; };
+  const t0 = Date.now();
+  const permBefore = queryLocPermission(); // état AVANT la demande (une fenêtre peut-elle s'ouvrir ?)
+  let done = false;
+  // Le téléphone ne répond pas du tout → on libère le bouton et on propose une solution
+  const noAnswer = setTimeout(()=>{
+    if(done) return;
+    release();
+    if(!quiet) showLocHelp('noanswer');
+  }, 20000);
+  if(!quiet) showToast('Localisation en cours...');
   navigator.geolocation.getCurrentPosition(pos=>{
-    clearTimeout(unlock);
-    isLocating = false;
+    done = true; clearTimeout(noAnswer);
+    release();
     locGpsOffPending = false;
     setLocState('1');
+    hideLocHelp();
     onPositionFound(pos.coords.latitude, pos.coords.longitude, !!opts.silent);
   }, err=>{
-    clearTimeout(unlock);
-    isLocating = false;
-    hideLocationPopup();
-    handleLocError(err, !!(opts.silent || opts.quietFail));
-  }, {timeout:10000, maximumAge: opts.fresh ? 0 : 60000});
+    if(done) return;
+    done = true; clearTimeout(noAnswer);
+    release();
+    if(!quiet) hideLocationPopup();
+    const elapsed = Date.now()-t0;
+    permBefore.then(before=>handleLocError(err, quiet, elapsed, before));
+  }, {enableHighAccuracy:false, timeout:12000, maximumAge: opts.fresh ? 0 : 60000});
 }
 
 function onPositionFound(lat, lng, silent){
@@ -2448,31 +2502,124 @@ function onPositionFound(lat, lng, silent){
     }).catch(()=>{});
 }
 
-// Échec : vrai refus, ou localisation du téléphone coupée ?
-function handleLocError(err, quiet){
-  const prev = locState();
-  if(err.code!==1){
-    // La permission est OK, c'est la position qui manque (GPS coupé, pas de signal, délai)
-    setLocState('1');
-    if(err.code===2) locGpsOffPending = true;
-    if(!quiet) showToast(err.code===2 ? 'Active la localisation sur ton téléphone 📡' : 'Localisation impossible — réessaie');
+// Échec : on détecte la cause et on propose la solution
+// elapsed = temps écoulé : un humain qui répond à la fenêtre système met > 1 s,
+// un blocage (réglages / GPS coupé) répond instantanément.
+function handleLocError(err, quiet, elapsed, permBefore){
+  if(err.code===2){                       // permission OK, GPS du téléphone coupé
+    setLocState('1'); locGpsOffPending = true;
+    if(!quiet) showLocHelp('off');
     return;
   }
+  if(err.code===3){                       // délai dépassé : GPS coupé ou pas de signal
+    setLocState('1'); locGpsOffPending = true;
+    if(!quiet) showLocHelp('timeout');
+    return;
+  }
+  // code 1 : refusé — volontairement, ou bloqué par les réglages / GPS coupé (iPhone)
   queryLocPermission().then(perm=>{
-    if(perm==='granted'){
-      // Le site a toujours l'autorisation → c'est le GPS du téléphone qui est coupé
-      setLocState('1');
-      locGpsOffPending = true;
-      if(!quiet) showToast('Active la localisation sur ton téléphone 📡');
+    if(perm==='granted'){                 // le site a toujours le droit → GPS du téléphone coupé
+      setLocState('1'); locGpsOffPending = true;
+      if(!quiet) showLocHelp('off');
       return;
     }
-    // Impossible de savoir (vieux iPhone) pendant un rafraîchissement silencieux → on ne touche à rien
-    if(perm===null && quiet && prev==='1') return;
-    // Refus
+    if(quiet) return;                     // arrière-plan : on ne change rien, on ne dérange pas
     setLocState('denied');
-    // Il avait autorisé avant : sur iPhone, un GPS coupé remonte comme un refus
-    if(prev==='1' && !quiet) showToast('Active la localisation sur ton téléphone 📡');
+    // Refus volontaire seulement si une fenêtre système a pu s'ouvrir (permission « à demander »
+    // ou inconnue) ET qu'un humain a pris le temps d'y répondre.
+    const promptPossible = permBefore==='prompt' || permBefore===null || permBefore===undefined;
+    if(promptPossible && elapsed > 1200){
+      // Il a vu la fenêtre système et a refusé lui-même → on respecte, simple rappel
+      showToast('Localisation refusée — appuie sur 📍 pour réessayer');
+      return;
+    }
+    // Refus instantané, sans fenêtre : bloqué dans les réglages ou localisation du tél. coupée
+    locGpsOffPending = true;
+    showLocHelp('blocked');
   });
+}
+
+// ── Panneau d'aide ──────────────────────────────────────────
+function locHelpContent(type){
+  const p = locPlatform();
+  const gpsWhere = p.ios ? 'Réglages › Confidentialité et sécurité › <b>Service de localisation</b> : activé'
+                 : p.android ? 'Fais glisser le haut de l\'écran vers le bas et active <b>Localisation</b>'
+                 : 'Active la localisation dans les réglages de ton appareil';
+  let siteWhere;
+  if(p.ios && p.chrome) siteWhere = 'Réglages › Chrome › <b>Position</b> : Lorsque l\'app est active';
+  else if(p.ios && p.firefox) siteWhere = 'Réglages › Firefox › <b>Position</b> : Lorsque l\'app est active';
+  else if(p.ios) siteWhere = 'Réglages › Confidentialité et sécurité › Service de localisation › <b>Sites web Safari</b> : Lorsque l\'app est active';
+  else if(p.android && p.samsung) siteWhere = 'Internet Samsung › ☰ › Paramètres › Sites et téléchargements › <b>Autorisations des sites</b> › Position';
+  else if(p.android) siteWhere = 'Chrome › ⋮ › Paramètres › Paramètres des sites › <b>Position</b> › autorise prayerspot.fr';
+  else siteWhere = 'Clique sur le 🔒 à gauche de l\'adresse du site › <b>Position</b> › Autoriser';
+  switch(type){
+    case 'off': return {
+      title:'Ta localisation est désactivée',
+      text:'Active la localisation de ton téléphone, puis reviens ici.',
+      steps:[gpsWhere], retry:true };
+    case 'timeout': return {
+      title:'Position introuvable',
+      text:'Ton téléphone n\'arrive pas à te situer. Vérifie que la localisation est activée et que tu captes du réseau.',
+      steps:[gpsWhere], retry:true };
+    case 'noanswer': return {
+      title:'La localisation ne répond pas',
+      text:'Vérifie que la localisation de ton téléphone est activée, puis réessaie.',
+      steps:[gpsWhere], retry:true };
+    case 'unsupported': return {
+      title:'Localisation indisponible',
+      text:'Ton navigateur ne permet pas la localisation. Cherche ta ville pour voir les lieux et horaires.',
+      steps:[], retry:false };
+    default: return { // 'blocked'
+      title:'Impossible d\'accéder à ta position',
+      text:'Vérifie ces deux points, puis reviens ici :',
+      steps:['<b>1.</b> '+gpsWhere, '<b>2.</b> '+siteWhere], retry:true };
+  }
+}
+
+function showLocHelp(type){
+  const c = locHelpContent(type);
+  let ov = document.getElementById('loc-help');
+  if(!ov){
+    ov = document.createElement('div');
+    ov.id = 'loc-help';
+    ov.className = 'loc-overlay';
+    ov.onclick = e=>{ if(e.target===ov) hideLocHelp(); };
+    document.body.appendChild(ov);
+  }
+  ov.dataset.type = type;
+  ov.style.zIndex = '10000'; // au-dessus des messages en bas d'écran
+  const tst = document.getElementById('toast'); if(tst) tst.classList.remove('show');
+  const steps =c.steps.map(s=>`<div style="text-align:left;background:var(--gray-100);color:var(--text);border-radius:12px;padding:11px 13px;font-size:13px;line-height:1.55;margin-bottom:8px">${s}</div>`).join('');
+  ov.innerHTML = `<div class="loc-popup" style="background:var(--white);color:var(--text)">
+    <div style="width:40px;height:4px;background:var(--border);border-radius:2px;margin:-14px auto 18px"></div>
+    <h2 class="loc-title" style="color:var(--text)">${c.title}</h2>
+    <p class="loc-desc">${c.text}</p>
+    ${steps}
+    <div style="height:10px"></div>
+    ${c.retry ? '<button class="loc-btn-main" id="loc-help-retry" onclick="retryFromHelp()">Réessayer</button>' : ''}
+    <button class="loc-btn-skip" id="loc-help-city" onclick="searchCityInstead()" style="color:var(--green-deep);font-weight:700">Chercher une ville à la place</button>
+    <button class="loc-btn-skip" id="loc-help-close" onclick="hideLocHelp()">Fermer</button>
+  </div>`;
+  ov.style.display = 'flex';
+}
+function hideLocHelp(){
+  const ov = document.getElementById('loc-help');
+  if(ov) ov.style.display = 'none';
+}
+function locHelpOpen(){
+  const ov = document.getElementById('loc-help');
+  return !!(ov && ov.style.display !== 'none');
+}
+function retryFromHelp(){
+  hideLocHelp();
+  if(!navigator.geolocation){ showLocHelp('unsupported'); return; }
+  askPosition({fresh:true});
+}
+function searchCityInstead(){
+  hideLocHelp();
+  try{ if(typeof showScreen==='function' && document.getElementById('sinput') && !document.getElementById('sinput').offsetParent) showScreen('explorer'); }catch(e){}
+  const si = document.getElementById('sinput');
+  if(si){ si.placeholder='Ville, adresse, nom de lieu...'; setTimeout(()=>si.focus(), 150); }
 }
 
 // Détecte les changements faits dans les réglages pendant que l'app est ouverte
@@ -2480,16 +2627,16 @@ function watchLocPermission(){
   if(!navigator.permissions || !navigator.permissions.query) return;
   navigator.permissions.query({name:'geolocation'}).then(s=>{
     s.onchange = ()=>{
-      if(s.state==='granted' && locState()!=='1' && locState()!=='skipped') askPosition({fresh:true});
-      else if(s.state==='denied' && locState()==='1') setLocState('denied');
+      if(s.state==='granted' && locState()!=='1' && locState()!=='skipped') askPosition({fresh:true, quietFail:true});
     };
   }).catch(()=>{});
 }
 
-// Retour sur l'app (ex : après avoir réactivé le GPS dans les réglages) → on retente
+// Retour sur l'app (ex : après avoir activé la localisation dans les réglages) → on retente tout seul
 document.addEventListener('visibilitychange', ()=>{
-  if(document.visibilityState!=='visible') return;
-  if(locGpsOffPending && locState()==='1' && navigator.geolocation) askPosition({fresh:true, quietFail:true});
+  if(document.visibilityState!=='visible' || !navigator.geolocation) return;
+  // Panneau d'aide ouvert, ou GPS coupé alors que l'autorisation est acquise
+  if(locHelpOpen() || (locGpsOffPending && locState()==='1')) askPosition({fresh:true, quietFail:true});
 });
 
 // Au chargement de la page
@@ -2498,9 +2645,7 @@ function initLocation(){
     if(!navigator.geolocation) return;
     watchLocPermission();
     // Retour du rechargement unique → on redemande tout de suite, une seule fois
-    let retry=false;
-    try{ retry = !!sessionStorage.getItem('retry_loc'); sessionStorage.removeItem('retry_loc'); }catch(e){}
-    if(retry){ askPosition({fresh:true}); return; }
+    if(consumeRetryFlag()){ askPosition({fresh:true}); return; }
 
     const st = locState();
     const lastPos = st==='1' ? loadLastPosition() : null;
@@ -2509,20 +2654,19 @@ function initLocation(){
     queryLocPermission().then(perm=>{
       const st2 = locState();
       if(perm==='granted'){
-        if(st2==='skipped') return;                    // il a choisi « continuer sans » → on respecte
-        if(st2==='1') askPosition({silent:true});      // visite normale → rafraîchit en silence
+        if(st2==='skipped') return;                     // il a choisi « continuer sans » → on respecte
+        if(st2==='1') askPosition({silent:true});       // visite normale → rafraîchit en silence
         else askPosition({fresh:true, quietFail:true}); // débloqué dans les réglages → on localise
         return;
       }
-      if(perm==='denied'){
-        if(st2==='1') setLocState('denied');           // autorisation retirée dans les réglages
-        return;                                         // jamais de popup si c'est bloqué
-      }
       if(perm==='prompt'){
-        // Popup d'explication seulement à la toute première visite.
-        // Si déjà répondu (ex : iPhone réglé sur « Demander »), le 📍 redemandera.
-        if(!st2) setTimeout(()=>showLocationPopup(), 800);
+        if(!st2) setTimeout(()=>showLocationPopup(), 800); // popup seulement à la 1ère visite
         return;
+      }
+      if(perm==='denied'){
+        // 1ère visite : on montre quand même le popup ; « Autoriser » mènera au panneau d'aide
+        if(!st2) setTimeout(()=>showLocationPopup(), 800);
+        return;                   // sinon rien au chargement, le 📍 proposera la solution
       }
       // Permissions API indisponible (anciens iPhone)
       if(!st2) setTimeout(()=>showLocationPopup(), 800);
