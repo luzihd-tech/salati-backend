@@ -492,6 +492,7 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
   transition:all 0.15s;
 }
 .sub-btn-light:active{background:var(--green-soft)}
+.sub-card{
   background:var(--green-deep);border-radius:var(--radius-lg);padding:22px;
   color:#fff;margin-bottom:16px;position:relative;overflow:hidden;
 }
@@ -846,7 +847,7 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
   position:fixed;bottom:calc(var(--sab) + 28px);left:50%;transform:translateX(-50%);
   background:#0d1f18;color:#eef3f0;padding:11px 18px;border-radius:var(--radius-md);
   font-size:12.5px;font-weight:600;z-index:9999;opacity:0;transition:opacity 0.25s;pointer-events:none;
-  max-width:88vw;text-align:center;white-space:nowrap;border:1px solid rgba(255,255,255,0.08);
+  width:max-content;max-width:88vw;text-align:center;white-space:normal;line-height:1.4;border:1px solid rgba(255,255,255,0.08);
   box-shadow:0 4px 20px rgba(0,0,0,0.3);
 }
 .toast.show{opacity:1}
@@ -1019,6 +1020,23 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
 .ppname{font-weight:800;font-size:13.5px;margin-bottom:3px}
 .pptype{color:var(--muted);font-size:10.5px;margin-bottom:7px;font-weight:600}
 .ppbtn{background:var(--green-deep);color:#fff;border:none;padding:6px 14px;border-radius:100px;cursor:pointer;font-size:11.5px;width:100%;font-weight:700;box-shadow:0 3px 10px rgba(13,110,71,0.28);transition:filter 0.15s}
+
+/* ─── MODE SOMBRE : surcharges ciblées ─────────────────────── */
+html.theme-dark .loc-popup{background:var(--white)}
+html.theme-dark .sub-card{background:linear-gradient(135deg,#145c3d,#1b7a52)}
+html.theme-dark .compass-ring{background:radial-gradient(circle at 50% 40%,#2b3a34,#141b19);box-shadow:0 16px 40px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(46,204,138,0.18)}
+html.theme-dark .compass-marks span{color:#c4d4cc}
+html.theme-dark .compass-center-dot{box-shadow:0 0 0 4px var(--white),0 0 0 5px var(--border)}
+html.theme-dark .tb{background:rgba(74,144,226,0.16);color:#8ec2ff}
+html.theme-dark .to{background:rgba(230,140,60,0.16);color:#f3b27a}
+html.theme-dark .pico.t-shop,html.theme-dark .dimg.t-shop{background:rgba(201,150,58,0.18)}
+html.theme-dark .pico.t-restaurant,html.theme-dark .dimg.t-restaurant{background:rgba(181,51,74,0.22)}
+html.theme-dark .drawer-head,html.theme-dark .apropos-hero{background:linear-gradient(135deg,#145c3d,#1b7a52)}
+html.theme-dark .cal-toggle-btn.active,html.theme-dark .cal-day.today{background:#1b7a52}
+html.theme-dark #screen-comment-prier,html.theme-dark .cp-image-wrap{background:var(--bg)}
+html.theme-dark .danger-row,html.theme-dark .danger-row .set-ico{color:#ff7b6b}
+html.theme-dark #loc-help-msg{color:#ff7b6b!important}
+html.theme-dark #pay-error{color:#ff7b6b!important}
 </style>
 </head>
 <body>
@@ -1062,7 +1080,7 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
       <span>Explorer</span>
     </div>
     <div class="drawer-item" onclick="suggestPlace()">
-      <span class="d-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+      <span class="d-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19.914 11.105A7.298 7.298 0 0 0 20 10a8 8 0 0 0-16 0c0 4.993 5.539 10.193 7.399 11.799a1 1 0 0 0 1.202 0 32 32 0 0 0 .824-.738"/><circle cx="12" cy="10" r="3"/><path d="M16 18h6"/><path d="M19 15v6"/></svg></span>
       <span>Suggérer un lieu</span>
     </div>
     <div class="drawer-item" data-screen="favoris" onclick="navFromDrawer('favoris')">
@@ -1076,11 +1094,11 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
     <div class="drawer-sep"></div>
     <div class="drawer-section-label">Pratique</div>
     <div class="drawer-item" data-screen="aide-priere" onclick="navFromDrawer('aide-priere')">
-      <span class="d-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2l2 6h6l-5 4 2 6-5-4-5 4 2-6-5-4h6l2-6z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></span>
+      <span class="d-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /> <path d="M7 20h8l-4 -4v-7l4 3l2 -2" /></svg></span>
       <span>Aide à la prière</span>
     </div>
     <div class="drawer-item" data-screen="noble-coran" onclick="navFromDrawer('noble-coran')">
-      <span class="d-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 4h16v16H4z" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M8 4v16M12 4v16" stroke="currentColor" stroke-width="1.5"/><path d="M8 8h4M8 12h4M8 16h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></span>
+      <span class="d-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg></span>
       <span>Noble Coran</span>
     </div>
     <div class="drawer-sep"></div>
@@ -1099,7 +1117,7 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
       <span>À propos</span>
     </div>
     <div class="drawer-item" id="drawer-install-btn" onclick="installApp()">
-      <span class="d-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3v13M8 12l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+      <span class="d-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/><path d="M9 10h6"/><path d="M12 7v6"/></svg></span>
       <span>Ajouter l'App à l'accueil</span>
     </div>
   </div>
@@ -1272,7 +1290,7 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
 <!-- MENU SOURATE OPTIONS -->
 <div class="sourate-menu-overlay" id="sourate-menu-overlay" style="display:none" onclick="closeSourateMenu()">
   <div class="sourate-menu" id="sourate-menu" onclick="event.stopPropagation()">
-    <div class="sourate-menu-item" onclick="resetSourateProgress()">🔄 Réinitialiser la lecture</div>
+    <div class="sourate-menu-item" onclick="resetSourateProgress()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;vertical-align:-3px;margin-right:6px"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Réinitialiser la lecture</div>
     <div class="sourate-menu-item" onclick="restartSourate()">⏮️ Reprendre depuis le début</div>
     <div class="sourate-menu-item sourate-menu-cancel" onclick="closeSourateMenu()">Annuler</div>
   </div>
@@ -1352,8 +1370,8 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
     <div class="ap-signoff">Qu'Allah mette la baraka dans cette œuvre<br>et accepte de nous tous.</div>
     <div class="ap-divider"></div>
     <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;padding-bottom:8px">
-      <button onclick="openCGU('general')" style="background:none;border:1px solid var(--border);border-radius:10px;padding:8px 16px;font-size:12px;color:var(--muted);cursor:pointer;font-family:Outfit,sans-serif">📋 CGU — Application</button>
-      <button onclick="openCGU('subscription')" style="background:none;border:1px solid var(--border);border-radius:10px;padding:8px 16px;font-size:12px;color:var(--muted);cursor:pointer;font-family:Outfit,sans-serif">💳 CGU — Abonnement</button>
+      <button onclick="openCGU('general')" style="background:none;border:1px solid var(--border);border-radius:10px;padding:8px 16px;font-size:12px;color:var(--muted);cursor:pointer;font-family:Outfit,sans-serif"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;vertical-align:-3px;margin-right:6px"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>CGU — Application</button>
+      <button onclick="openCGU('subscription')" style="background:none;border:1px solid var(--border);border-radius:10px;padding:8px 16px;font-size:12px;color:var(--muted);cursor:pointer;font-family:Outfit,sans-serif"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;vertical-align:-3px;margin-right:6px"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/></svg>CGU — Abonnement</button>
     </div>
   </div>
 </div>
@@ -1385,17 +1403,17 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
       <div class="set-section-title" style="margin-top:0">Afficher / Masquer</div>
       <div class="menu-list" style="margin-bottom:18px">
         <div class="set-row">
-          <span class="set-ico"><svg class="lico sz-set" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h4"/><path d="M7 22V6a5 5 0 0 0-2-4 5 5 0 0 0-2 4v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M12.268 2a2 2 0 0 0 3.464 2"/><path d="M14 5v3"/><path d="M16 22v-3a2 2 0 0 0-4 0v3"/><path d="M21 13c-.663-1.497-1.667-2.754-2.9-3.63C16.826 8.47 15.422 8 14 8s-2.826.47-4.1 1.37C8.667 10.246 7.663 11.503 7 13"/></svg></span>
+          <span class="set-ico" style="font-family:serif;font-size:18px">ع</span>
           <div class="set-label">Texte arabe<div class="set-sub">النص العربي</div></div>
           <button class="toggle" id="qs-arabic" onclick="toggleQuranSetting('arabic')"></button>
         </div>
         <div class="set-row">
-          <span class="set-ico">🔤</span>
+          <span class="set-ico" style="font-style:italic;font-size:13px">abc</span>
           <div class="set-label">Prononciation<div class="set-sub">Translittération phonétique</div></div>
           <button class="toggle" id="qs-translit" onclick="toggleQuranSetting('translit')"></button>
         </div>
         <div class="set-row">
-          <span class="set-ico">🇫🇷</span>
+          <span class="set-ico" style="font-size:13px">fr</span>
           <div class="set-label">Traduction française<div class="set-sub">Muhammad Hamidullah</div></div>
           <button class="toggle" id="qs-french" onclick="toggleQuranSetting('french')"></button>
         </div>
@@ -1441,7 +1459,7 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
   <div class="tafsir-sheet">
     <div class="tafsir-sheet-head">
       <div>
-        <div class="tafsir-sheet-title">📖 Explication du verset</div>
+        <div class="tafsir-sheet-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px;vertical-align:-3px;margin-right:6px"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>Explication du verset</div>
         <div class="tafsir-sheet-sub" id="tafsir-ref"></div>
       </div>
       <button class="tafsir-sheet-close" onclick="closeTafsir()">✕</button>
@@ -1534,7 +1552,7 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
         </button>
         <button class="install-os-btn" onclick="installChoose('android')">
           <div class="install-os-icon-wrap android">
-            <svg viewBox="0 0 24 24"><path d="M5 16a7 7 0 0 1 14 0"/><line x1="12" y1="9" x2="12" y2="16"/><line x1="8" y1="7" x2="5.5" y2="4"/><line x1="16" y1="7" x2="18.5" y2="4"/><circle cx="8" cy="6" r="1" fill="#fff" stroke="none"/><circle cx="16" cy="6" r="1" fill="#fff" stroke="none"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M4.5 18a7.5 7.5 0 0 1 15 0z"/><line x1="8" y1="11" x2="6" y2="7.5"/><line x1="16" y1="11" x2="18" y2="7.5"/><circle cx="9.3" cy="14.6" r="1" fill="#fff" stroke="none"/><circle cx="14.7" cy="14.6" r="1" fill="#fff" stroke="none"/></svg>
           </div>
           <div class="install-os-info">
             <span class="install-os-name">Android</span>
@@ -1723,7 +1741,7 @@ let settings=(function(){
 })();
 if(settings.autoLocate === undefined) settings.autoLocate = false;
 let prayerTrackerEnabled = localStorage.getItem('salati_tracker_enabled')==='1';
-const SCREEN_LABELS={explorer:'Explorer',favoris:'Favoris',compte:'Compte',apropos:'À propos',parametres:'Paramètres',qibla:'Boussole Qibla','aide-priere':'Aide à la prière','comment-prier':'Comment prier','suivi-priere':'Suivi de prière'};
+const SCREEN_LABELS={explorer:'Explorer',favoris:'Favoris',compte:'Compte',apropos:'À propos',parametres:'Paramètres',qibla:'Boussole Qibla','aide-priere':'Aide à la prière','comment-prier':'Comment prier','suivi-priere':'Suivi de prière','noble-coran':'Noble Coran'};
 const DRAWER_ROOT_SCREENS=['explorer','favoris','compte','apropos','qibla'];
 let navStack=['explorer'];
 
@@ -2472,15 +2490,15 @@ function openDetail(id) {
       ${p.verified?'<span class="dtag tg">✓ Vérifié</span>':'<span class="dtag to">En attente</span>'}
     </div>
     <div class="ilist">
-      <div class="irow"><span class="iico"><svg class="lico sz-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span><span class="ilbl">Description</span><span class="ival" style="font-size:12px;font-weight:400;color:var(--muted)">${p.desc}</span></div>
-      <div class="irow"><span class="iico"><svg class="lico sz-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span class="ilbl">Horaires</span><span class="ival green">${p.hours}</span></div>
+      ${p.desc ? `      <div class="irow"><span class="iico"><svg class="lico sz-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span><span class="ilbl">Description</span><span class="ival" style="font-size:12px;font-weight:400;color:var(--muted)">${p.desc}</span></div>` : ''}
+      ${p.hours ? `      <div class="irow"><span class="iico"><svg class="lico sz-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span class="ilbl">Horaires</span><span class="ival green">${p.hours}</span></div>` : ''}
     </div>
     <div class="dactions">
       <button class="bnav" onclick="startNav(${p.lat},${p.lng})"><svg class="lico sz-set" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"/><path d="M15 5.764v15"/><path d="M9 3.236v15"/></svg> Lancer l'itinéraire</button>
       <button class="bfav" onclick="toggleFav('${p.id}')" id="favbtn">${isFav?'<svg class="lico sz-fav lico-fav-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>':'<svg class="lico sz-fav lico-fav-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>'}</button>
     </div>
-    <button class="share-btn" onclick="sharePlace('${p.name.replace(/'/g,"\\'")}','${p.address.replace(/'/g,"\\'")}',${p.lat},${p.lng})">🔗 Partager ce lieu</button>
-    <button class="report-link" onclick="reportPlaceIssue('${p.id}','${p.name.replace(/'/g,"\\'")}')">⚠️ Signaler un problème avec ce lieu</button>`;
+    <button class="share-btn" onclick="sharePlace('${p.name.replace(/'/g,"\\'")}','${p.address.replace(/'/g,"\\'")}',${p.lat},${p.lng})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;vertical-align:-3px;margin-right:6px"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98"/><path d="m15.41 6.51-6.82 3.98"/></svg>Partager ce lieu</button>
+    <button class="report-link" onclick="reportPlaceIssue('${p.id}','${p.name.replace(/'/g,"\\'")}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;vertical-align:-3px;margin-right:6px"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><path d="M4 22v-7"/></svg>Signaler un problème avec ce lieu</button>`;
   document.getElementById('dsheet').classList.add('open');
   const ov = document.getElementById('dsheet-overlay');
   if(ov) ov.style.display='block';
@@ -2757,9 +2775,8 @@ function locHelpContent(type){
       text:'Ton navigateur ne permet pas la localisation. Cherche ta ville pour voir les lieux et horaires.',
       steps:[], retry:false };
     default: return { // 'blocked'
-      title:'Impossible d\'accéder à ta position',
-      text:'Vérifie ces deux points, puis reviens ici :',
-      steps:['<b>1.</b> '+gpsWhere, '<b>2.</b> '+siteWhere], retry:true };
+      title:'Active ta localisation',
+      text:'', steps:[], retry:true };
   }
 }
 
@@ -2781,10 +2798,10 @@ function showLocHelp(type){
   ov.innerHTML = `<div class="loc-popup" style="background:var(--white);color:var(--text)">
     <div style="width:40px;height:4px;background:var(--border);border-radius:2px;margin:-14px auto 18px"></div>
     <h2 class="loc-title" style="color:var(--text)">${c.title}</h2>
-    <p class="loc-desc">${c.text}</p>
+    ${c.text ? `<p class="loc-desc">${c.text}</p>` : ''}
     ${steps}
     <div style="height:10px"></div>
-    <div id="loc-help-msg" style="display:none;font-size:13.5px;font-weight:700;color:#c0392b;margin:0 0 12px">Active ta localisation sur ton téléphone</div>
+    <div id="loc-help-msg" style="display:none;font-size:13.5px;font-weight:700;color:#c0392b;margin:0 0 12px">Localisation toujours désactivée</div>
     ${c.retry ? '<button class="loc-btn-main" id="loc-help-retry" onclick="retryFromHelp()">Réessayer</button>' : ''}
     <button class="loc-btn-skip" id="loc-help-city" onclick="searchCityInstead()" style="color:var(--green-deep);font-weight:700">Chercher une ville à la place</button>
     <button class="loc-btn-skip" id="loc-help-close" onclick="hideLocHelp()">Fermer</button>
@@ -2812,7 +2829,7 @@ function retryFromHelp(){
   const finish = ok=>{
     if(done) return; done = true; helpRetrying = false;
     if(btn){ btn.disabled = false; btn.textContent = 'Réessayer'; btn.style.opacity = ''; }
-    if(!ok && msg){ msg.textContent = 'Active ta localisation sur ton téléphone'; msg.style.display = 'block'; }
+    if(!ok && msg){ msg.textContent = 'Localisation toujours désactivée'; msg.style.display = 'block'; }
   };
   const guard = setTimeout(()=>finish(false), 20000);
   // Demande directe, pendant l'appui : laisse au téléphone la possibilité d'afficher sa fenêtre native
@@ -3253,7 +3270,7 @@ function renderCompte(){
       <h4><svg class="lico sz-set" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 12H3a2 2 0 0 0 0 4h4"/><path d="M11 14H3a2 2 0 0 0 0 4h4"/><path d="M7 16v1a2 2 0 0 0 2 2h4"/><path d="M13 12v-2a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2v2"/><path d="M15 17a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4v-1h10v1z"/><path d="m21 12-4.6 4.6a2 2 0 0 1-1.4.4"/><path d="M17 12V8a2 2 0 0 0-4 0v4"/></svg> Merci pour ton soutien</h4>
       <p>Tu contribues chaque mois au développement de Prayer Spot. C'est une <b>Sadaqa Jariyah</b> dont la récompense continue tant que l'application aide des musulmans à prier, qu'Allah te récompense.</p>
       <div class="sub-active">✓ Abonnement actif — 1,99€/mois</div>
-      <button onclick="toggleSubscription()" style="margin-top:12px;background:none;border:1px solid var(--border);border-radius:100px;padding:8px 16px;font-size:12.5px;color:var(--muted);cursor:pointer;font-weight:600">Résilier l'abonnement</button>
+      <button onclick="toggleSubscription()" style="margin-top:12px;background:none;border:1px solid rgba(255,255,255,0.35);border-radius:100px;padding:8px 16px;font-size:12.5px;color:rgba(255,255,255,0.85);cursor:pointer;font-weight:600">Résilier l'abonnement</button>
     </div>`:`
     <div class="sub-card-light">
       <div class="sub-card-light-top">
@@ -3278,13 +3295,13 @@ function renderAidePriere(){
   const c=document.getElementById('aide-priere-content');
   c.innerHTML=`
     <div style="padding:8px 0 18px;text-align:center">
-      <div style="margin-bottom:8px"><svg class="lico sz-xl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 12h2a2 2 0 0 0 2-2V6a2 2 0 1 0-4 0v1.5"/><path d="m11 12-2.5 2.5"/><path d="M9 12H7a2 2 0 0 0-2 2v1a2 2 0 0 0 2 2h1"/><path d="M13 18h1a2 2 0 0 0 2-2v-1a2 2 0 0 0-2-2h-2.5"/><path d="M9 18v1a2 2 0 0 0 4 0v-4a2 2 0 0 0-4 0v1"/></svg></div>
+      <div style="margin-bottom:8px"><svg class="lico sz-xl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /> <path d="M7 20h8l-4 -4v-7l4 3l2 -2" /></svg></div>
       <div style="font-size:17px;font-weight:800;font-family:'Outfit',sans-serif">Aide à la prière</div>
       <div style="font-size:12.5px;color:var(--muted);margin-top:3px">Tout pour t'accompagner dans ta pratique quotidienne</div>
     </div>
     <div class="menu-list">
-      <div class="menu-item" onclick="showScreen('comment-prier')"><span class="mi-ico"><svg class="mi-ico-svg" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 22 Q22 10 32 8 Q42 10 42 22"/><line x1="13" y1="14" x2="13" y2="8"/><line x1="11" y1="8" x2="15" y2="8"/><path d="M10 18 Q10 14 13 14 Q16 14 16 18"/><line x1="51" y1="14" x2="51" y2="8"/><line x1="49" y1="8" x2="53" y2="8"/><path d="M48 18 Q48 14 51 14 Q54 14 54 18"/><rect x="8" y="22" width="48" height="28" rx="2"/><path d="M26 50 L26 36 Q26 30 32 30 Q38 30 38 36 L38 50"/><path d="M14 34 Q14 30 17 30 Q20 30 20 34"/><path d="M44 34 Q44 30 47 30 Q50 30 50 34"/><line x1="4" y1="50" x2="60" y2="50"/></svg></span><span>Comment prier</span><span class="mi-arrow">›</span></div>
-      <div class="menu-item" onclick="showScreen('suivi-priere')"><span class="mi-ico"><svg class="lico sz-mi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span>Suivi de prière</span>
+      <div class="menu-item" onclick="showScreen('comment-prier')"><span class="mi-ico"><svg class="lico sz-mi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 12h11"/><path d="M10 18h11"/><path d="M10 6h11"/><path d="M4 10h2"/><path d="M4 6h1v4"/><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></span><span>Comment prier</span><span class="mi-arrow">›</span></div>
+      <div class="menu-item" onclick="showScreen('suivi-priere')"><span class="mi-ico"><svg class="lico sz-mi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/></svg></span><span>Suivi de prière</span>
         <button class="toggle${prayerTrackerEnabled?' on':''}" onclick="event.stopPropagation();toggleSuiviPriere()" style="margin-left:auto"></button>
       </div>
     </div>
@@ -3304,10 +3321,6 @@ function toggleSuiviPriere(){
 function renderCommentPrier(){
   const c=document.getElementById('comment-prier-content');
   c.innerHTML=`
-    <div style="padding:16px 16px 0;display:flex;align-items:center;gap:10px;background:var(--white)">
-      <button onclick="showScreen('aide-priere')" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--text)">‹</button>
-      <div style="font-size:17px;font-weight:800;font-family:Outfit,sans-serif;color:var(--text)">Comment prier</div>
-    </div>
     <div style="display:flex;gap:0;padding:16px 16px 0;border-bottom:1px solid var(--border);background:var(--white)">
       <button id="tab-ablutions" onclick="switchPrayerTab('ablutions')" style="flex:1;padding:10px;background:none;border:none;border-bottom:2.5px solid var(--green-deep);font-size:14px;font-weight:700;color:var(--green-deep);cursor:pointer;font-family:Outfit,sans-serif"><svg class="tab-ico-svg" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M32 8c0 0-14 12-14 24a14 14 0 0028 0C46 20 32 8 32 8z"/><path d="M24 36c0 4 3.6 8 8 8"/></svg> Ablutions</button>
       <button id="tab-priere" onclick="switchPrayerTab('priere')" style="flex:1;padding:10px;background:none;border:none;border-bottom:2.5px solid transparent;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;font-family:Outfit,sans-serif"><svg class="tab-ico-svg" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 22 Q22 10 32 8 Q42 10 42 22"/><line x1="13" y1="14" x2="13" y2="8"/><line x1="11" y1="8" x2="15" y2="8"/><path d="M10 18 Q10 14 13 14 Q16 14 16 18"/><line x1="51" y1="14" x2="51" y2="8"/><line x1="49" y1="8" x2="53" y2="8"/><path d="M48 18 Q48 14 51 14 Q54 14 54 18"/><rect x="8" y="22" width="48" height="28" rx="2"/><path d="M26 50 L26 36 Q26 30 32 30 Q38 30 38 36 L38 50"/><path d="M14 34 Q14 30 17 30 Q20 30 20 34"/><path d="M44 34 Q44 30 47 30 Q50 30 50 34"/><line x1="4" y1="50" x2="60" y2="50"/></svg> Prière</button>
@@ -3647,9 +3660,213 @@ function togglePrayer(key){
 function togglePrayerDone(key){ togglePrayer(key); }
 function todayKey_old(){ return todayKey(); }
 
+// ============================================================
+// ABONNEMENT — paiement intégré dans l'app (Stripe Payment Element)
+// Les données de carte sont saisies dans le formulaire sécurisé de Stripe :
+// elles ne passent jamais par le serveur Prayer Spot.
+// ============================================================
+const STRIPE_PK = 'pk_live_51TnS250UyBARfvAyY0S8c960hAyWjuVg4kB7BSy1uNbpeUuuP95srQPstcMNN1d9Wyl6f5qr4KCQCqHnzdub5miS00O5xGVPJu';
+let stripeJsP = null, stripeObj = null, payElements = null, payBusy = false, payReadyTimer = null;
+
+function loadStripeJs(){
+  if(window.Stripe) return Promise.resolve(window.Stripe);
+  if(stripeJsP) return stripeJsP;
+  stripeJsP = new Promise((res, rej)=>{
+    const s = document.createElement('script');
+    s.src = 'https://js.stripe.com/v3/'; s.async = true;
+    s.onload = ()=> window.Stripe ? res(window.Stripe) : rej(new Error('Stripe indisponible'));
+    s.onerror = ()=> rej(new Error('Stripe indisponible'));
+    document.head.appendChild(s);
+    setTimeout(()=> rej(new Error('Délai dépassé')), 12000);
+  }).catch(e=>{ stripeJsP = null; throw e; });
+  return stripeJsP;
+}
+function getStripeObj(){
+  if(!stripeObj) stripeObj = window.Stripe(STRIPE_PK, {locale:'fr'});
+  return stripeObj;
+}
+function payAppearance(){
+  const dark = document.documentElement.classList.contains('theme-dark');
+  return {
+    theme: dark ? 'night' : 'stripe',
+    variables: {
+      colorPrimary: dark ? '#2ecc8a' : '#0d6e47',
+      colorBackground: dark ? '#232e29' : '#ffffff',
+      colorText: dark ? '#eef3f0' : '#14201b',
+      colorDanger: dark ? '#ff7b6b' : '#c0392b',
+      borderRadius: '12px',
+      fontFamily: 'Inter, -apple-system, "Segoe UI", sans-serif'
+    },
+    rules: { '.Input': { border: dark ? '1px solid #2c3a35' : '1px solid #dfe7e2' } }
+  };
+}
+// Messages d'erreur en français (Stripe renvoie un code pour chaque refus)
+function payErrorText(err, fromServer){
+  const code = err && (err.decline_code || err.code);
+  const map = {
+    card_declined: 'Carte refusée par ta banque.',
+    generic_decline: 'Carte refusée par ta banque.',
+    insufficient_funds: 'Fonds insuffisants sur la carte.',
+    expired_card: 'Carte expirée.',
+    incorrect_cvc: 'Code de sécurité (CVC) incorrect.',
+    incorrect_number: 'Numéro de carte incorrect.',
+    lost_card: 'Carte refusée par ta banque.',
+    stolen_card: 'Carte refusée par ta banque.',
+    processing_error: 'Erreur de traitement, réessaie dans un instant.',
+    authentication_required: 'La validation bancaire est requise, réessaie.',
+    payment_intent_authentication_failure: 'La validation bancaire a échoué ou a été annulée.',
+    setup_intent_authentication_failure: 'La validation bancaire a échoué ou a été annulée.'
+  };
+  if(code && map[code]) return map[code];
+  if(fromServer) return "Le paiement n'a pas abouti. Vérifie ta carte ou essaie une autre carte.";
+  return (err && err.message) || "Le paiement n'a pas abouti.";
+}
+
+function payShowSheet(){
+  let ov = document.getElementById('pay-sheet');
+  if(!ov){
+    ov = document.createElement('div');
+    ov.id = 'pay-sheet'; ov.className = 'loc-overlay'; ov.style.zIndex = '10001';
+    ov.onclick = e=>{ if(e.target===ov && !payBusy) closePaySheet(); };
+    document.body.appendChild(ov);
+  }
+  ov.innerHTML = `<div class="loc-popup" style="background:var(--white);color:var(--text);text-align:left;max-height:92vh;overflow-y:auto">
+    <div style="width:40px;height:4px;background:var(--border);border-radius:2px;margin:-14px auto 18px"></div>
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+      <div>
+        <div style="font-size:18px;font-weight:800;font-family:Outfit,sans-serif;color:var(--text)">Soutenir Prayer Spot</div>
+        <div style="font-size:13px;color:var(--muted);margin-top:3px">1,99 € par mois · Résiliable à tout moment</div>
+      </div>
+      <button id="pay-close" onclick="closePaySheet()" aria-label="Fermer" style="flex-shrink:0;width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--gray-100);color:var(--muted);font-size:14px;cursor:pointer">✕</button>
+    </div>
+    <div id="pay-loading" style="padding:30px 0 18px;text-align:center;color:var(--muted);font-size:13.5px">Chargement du paiement sécurisé…</div>
+    <div id="pay-element" style="margin:16px 0 4px"></div>
+    <div id="pay-error" style="display:none;font-size:13px;font-weight:600;color:#c0392b;margin:10px 0 0"></div>
+    <button class="loc-btn-main" id="pay-btn" onclick="payConfirm()" disabled style="margin-top:16px;opacity:0.6">Payer 1,99 €</button>
+    <div style="display:flex;align-items:center;justify-content:center;gap:6px;font-size:11.5px;color:var(--muted)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Paiement sécurisé par Stripe
+    </div>
+  </div>`;
+  ov.style.display = 'flex';
+}
+function closePaySheet(force){
+  if(payBusy && !force) return;
+  clearTimeout(payReadyTimer);
+  const ov = document.getElementById('pay-sheet');
+  if(ov){ ov.style.display = 'none'; ov.innerHTML = ''; }
+  payElements = null;
+}
+function setPayBtn(text, disabled){
+  const b = document.getElementById('pay-btn'); if(!b) return;
+  b.textContent = text; b.disabled = !!disabled; b.style.opacity = disabled ? '0.6' : '';
+}
+function payShowError(msg, withFallback){
+  const e = document.getElementById('pay-error'); if(!e) return;
+  e.innerHTML = '';
+  e.appendChild(document.createTextNode(msg));
+  if(withFallback){
+    const a = document.createElement('button');
+    a.textContent = 'Ouvrir la page de paiement Stripe';
+    a.style.cssText = 'display:block;margin-top:8px;background:none;border:none;padding:0;color:var(--green-deep);font-weight:700;font-size:13px;cursor:pointer;text-decoration:underline';
+    a.onclick = ()=>{ closePaySheet(true); subscribeViaCheckout(); };
+    e.appendChild(a);
+  }
+  e.style.display = 'block';
+}
+function payHideError(){ const e = document.getElementById('pay-error'); if(e) e.style.display = 'none'; }
+function payLoaded(){ const l = document.getElementById('pay-loading'); if(l) l.style.display = 'none'; }
+
+// Bouton « Soutenir le projet »
 async function subscribe(){
   if(!session){ showToast('Connecte-toi pour souscrire'); navStack=['compte']; showScreen('compte',true); return; }
-  const btn = document.querySelector('.sub-btn');
+  if(payBusy) return;
+  payShowSheet();
+  try{
+    const intentP = fetch(`${API}/stripe/create-subscription-intent`, {
+      method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+token}
+    }).then(async r=>{
+      const d = await r.json().catch(()=>({}));
+      if(!r.ok){ const e = new Error(d.error || 'Erreur serveur'); e.api = true; throw e; }
+      return d;
+    });
+    const [, intent] = await Promise.all([loadStripeJs(), intentP]);
+    if(!document.getElementById('pay-element')) return; // panneau fermé entre-temps
+    payElements = getStripeObj().elements({
+      clientSecret: intent.client_secret,
+      appearance: payAppearance(),
+      locale: 'fr',
+      fonts: [{ cssSrc: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap' }]
+    });
+    const el = payElements.create('payment', { layout: 'tabs' });
+    el.on('ready', ()=>{ clearTimeout(payReadyTimer); payLoaded(); setPayBtn('Payer 1,99 €', false); });
+    el.on('change', ev=>{ if(!ev.error) payHideError(); });
+    el.mount('#pay-element');
+    payReadyTimer = setTimeout(()=>{ payLoaded(); payShowError('Le formulaire de paiement met du temps à s\'afficher.', true); }, 15000);
+  }catch(err){
+    if(err && err.api){
+      payLoaded();
+      if(/déjà abonné/i.test(err.message)){ closePaySheet(true); syncSubscriptionStatus(); showToast('Tu es déjà abonné ✓'); return; }
+      payShowError('Impossible de préparer le paiement : ' + err.message);
+      return;
+    }
+    // Stripe ne se charge pas (réseau, bloqueur…) → ancienne page de paiement Stripe
+    closePaySheet(true);
+    subscribeViaCheckout();
+  }
+}
+
+// Bouton « Payer 1,99 € »
+async function payConfirm(){
+  if(payBusy || !payElements) return;
+  payBusy = true; setPayBtn('Paiement en cours…', true); payHideError();
+  try{
+    const { error, setupIntent } = await getStripeObj().confirmSetup({
+      elements: payElements,
+      redirect: 'if_required',
+      confirmParams: { return_url: location.origin + location.pathname + '?pay_return=1' }
+    });
+    if(error) throw new Error(payErrorText(error));
+    const pm = typeof setupIntent.payment_method === 'string' ? setupIntent.payment_method : setupIntent.payment_method.id;
+    await payFinish(pm);
+  }catch(e){
+    payBusy = false;
+    payShowError(e.message);
+    setPayBtn('Réessayer', false);
+  }
+}
+
+// Crée l'abonnement côté serveur (+ validation bancaire si la banque la redemande)
+async function payFinish(pm){
+  const headers = {'Content-Type':'application/json','Authorization':'Bearer '+token};
+  const r = await fetch(`${API}/stripe/confirm-subscription`, { method:'POST', headers, body: JSON.stringify({ payment_method_id: pm }) });
+  const d = await r.json().catch(()=>({}));
+  if(d.success) return paySuccess();
+  if(d.requires_action && d.client_secret){
+    const res = await getStripeObj().confirmCardPayment(d.client_secret);
+    if(res.error) throw new Error(payErrorText(res.error));
+    for(let i = 0; i < 6; i++){ // Stripe active l'abonnement en quelques secondes
+      const s = await fetch(`${API}/stripe/sync-subscription`, { method:'POST', headers }).then(x=>x.json()).catch(()=>({}));
+      if(s.active) return paySuccess();
+      await new Promise(ok=>setTimeout(ok, 1500));
+    }
+    throw new Error("Paiement validé : l'activation prend un peu plus de temps. Reviens sur ton compte dans une minute.");
+  }
+  throw new Error(payErrorText({ code: d.code, message: d.error }, true));
+}
+function paySuccess(){
+  payBusy = false;
+  closePaySheet(true);
+  isSubscribed = true;
+  try{ renderCompte(); updateDrawerProfile(); }catch(e){}
+  showToast("Merci pour ta Sadaqa Jariyah 🤲 Qu'Allah te récompense");
+  syncSubscriptionStatus();
+}
+
+// Ancienne méthode (page Stripe externe) — gardée en secours
+async function subscribeViaCheckout(){
+  if(!session){ showToast('Connecte-toi pour souscrire'); navStack=['compte']; showScreen('compte',true); return; }
+  const btn = document.querySelector('.sub-btn-light');
   if(btn){ btn.textContent='Chargement...'; btn.disabled=true; }
   try{
     const r = await fetch(`${API}/stripe/create-checkout`, {
@@ -3658,11 +3875,10 @@ async function subscribe(){
     });
     const data = await r.json();
     if(!r.ok) throw new Error(data.error||'Erreur');
-    // Redirige vers la page de paiement Stripe
     window.location.href = data.url;
   }catch(err){
     showToast('Impossible d\'accéder au paiement : '+err.message);
-    if(btn){ btn.textContent='Souscrire au soutien'; btn.disabled=false; }
+    if(btn){ btn.textContent='Soutenir le projet'; btn.disabled=false; }
   }
 }
 
@@ -3719,17 +3935,17 @@ function renderParametres(){
     <div class="set-section-title">À propos de l'app</div>
     <div class="menu-list">
       <div class="set-row" onclick="showScreen('apropos')" style="cursor:pointer"><span class="set-ico"><svg class="lico sz-set" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span><div class="set-label">Notre mission</div><span class="mi-arrow">›</span></div>
-      <div class="set-row"><span class="set-ico">📱</span><div class="set-label">Version</div><span style="color:var(--muted);font-size:12px">1.0.0</span></div>
+      <div class="set-row"><span class="set-ico"><svg class="lico sz-set" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2"/><path d="M12 18h.01"/></svg></span><div class="set-label">Version</div><span style="color:var(--muted);font-size:12px">1.0.0</span></div>
     </div>
 
     <div class="set-section-title">Zone sensible</div>
     <div class="menu-list">
       <div class="set-row danger-row" onclick="confirmResetTracker()" style="cursor:pointer">
-        <span class="set-ico">🔄</span>
+        <span class="set-ico"><svg class="lico sz-set" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></span>
         <div class="set-label">Réinitialiser le suivi de prière<div class="set-sub">Effacer tout l'historique de prières</div></div>
       </div>
       <div class="set-row danger-row" onclick="confirmDeleteAccount()" style="cursor:pointer">
-        <span class="set-ico">🗑️</span>
+        <span class="set-ico"><svg class="lico sz-set" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><path d="M10 11v6"/><path d="M14 11v6"/></svg></span>
         <div class="set-label">Supprimer mon compte</div>
       </div>
     </div>
@@ -3751,6 +3967,7 @@ function setTheme(val){
 }
 
 function applyTheme(theme){
+  document.documentElement.classList.toggle('theme-dark', theme==='dark');
   if(theme==='dark'){
     document.documentElement.style.setProperty('--white','#1c2120');
     document.documentElement.style.setProperty('--bg','#141918');
@@ -4174,6 +4391,20 @@ async function initApp(){
   } else if(params.get('subscription') === 'cancelled'){
     showToast('Paiement annulé — tu peux réessayer quand tu veux');
     window.history.replaceState({}, '', window.location.pathname);
+  }
+  if(params.get('setup_intent_client_secret')){
+    window.history.replaceState({}, '', window.location.pathname);
+    navStack=['compte']; showScreen('compte', true);
+    if(params.get('redirect_status') === 'succeeded' && token){
+      try{
+        await loadStripeJs();
+        const { setupIntent } = await getStripeObj().retrieveSetupIntent(params.get('setup_intent_client_secret'));
+        const pm = setupIntent && (typeof setupIntent.payment_method === 'string' ? setupIntent.payment_method : setupIntent.payment_method && setupIntent.payment_method.id);
+        if(pm){ payBusy = true; await payFinish(pm); }
+      }catch(e){ payBusy = false; showToast(e.message || "Le paiement n'a pas abouti"); }
+    } else {
+      showToast('Paiement annulé — tu peux réessayer quand tu veux');
+    }
   }
 }
 
