@@ -86,17 +86,37 @@ router.post('/create-subscription-intent', authMiddleware, async (req, res) => {
 });
 
 // POST /api/stripe/confirm-subscription
+// Appelée après la saisie de la carte dans l'app (SetupIntent confirmé côté navigateur)
 router.post('/confirm-subscription', authMiddleware, async (req, res) => {
   try {
     const stripe = getStripe();
-    const { payment_method_id } = req.body;
+    const { payment_method_id } = req.body || {};
+    if (!payment_method_id) return res.status(400).json({ error: 'Moyen de paiement manquant' });
     const { data: user } = await supabase.from('users').select('*').eq('id', req.user.id).maybeSingle();
     if (!user?.stripe_customer_id) return res.status(400).json({ error: 'Customer introuvable' });
 
-    await stripe.paymentMethods.attach(payment_method_id, { customer: user.stripe_customer_id });
+    // La carte est déjà rattachée au client par le SetupIntent : on ignore l'erreur « déjà rattachée »
+    try {
+      await stripe.paymentMethods.attach(payment_method_id, { customer: user.stripe_customer_id });
+    } catch (e) {
+      if (!/already been attached|already attached/i.test(e.message || '')) throw e;
+    }
     await stripe.customers.update(user.stripe_customer_id, {
       invoice_settings: { default_payment_method: payment_method_id }
     });
+
+    // Anti-doublon : abonnement déjà actif → on s'arrête ; essai précédent resté « incomplet » → annulé
+    const existing = await stripe.subscriptions.list({ customer: user.stripe_customer_id, status: 'all', limit: 10 });
+    const alreadyActive = existing.data.find(s => s.status === 'active' || s.status === 'trialing');
+    if (alreadyActive) {
+      await supabase.from('users').update({
+        is_subscribed: true, stripe_subscription_id: alreadyActive.id, subscription_status: alreadyActive.status
+      }).eq('id', user.id);
+      return res.json({ success: true, status: alreadyActive.status });
+    }
+    for (const s of existing.data.filter(s => s.status === 'incomplete')) {
+      try { await stripe.subscriptions.cancel(s.id); } catch (e) { /* déjà expiré */ }
+    }
 
     const subscription = await stripe.subscriptions.create({
       customer: user.stripe_customer_id,
@@ -106,17 +126,45 @@ router.post('/confirm-subscription', authMiddleware, async (req, res) => {
     });
 
     const isActive = subscription.status === 'active' || subscription.status === 'trialing';
-    if (isActive) {
-      await supabase.from('users').update({
-        is_subscribed: true,
-        stripe_subscription_id: subscription.id,
-        subscription_status: subscription.status
-      }).eq('id', user.id);
-    }
+    await supabase.from('users').update({
+      is_subscribed: isActive,
+      stripe_subscription_id: subscription.id,
+      subscription_status: subscription.status
+    }).eq('id', user.id);
 
-    res.json({ success: isActive, status: subscription.status });
+    if (isActive) return res.json({ success: true, status: subscription.status });
+
+    // La banque redemande une validation (3D Secure) pour le premier prélèvement
+    const pi = subscription.latest_invoice && subscription.latest_invoice.payment_intent;
+    if (pi && pi.status === 'requires_action') {
+      return res.json({ success: false, requires_action: true, client_secret: pi.client_secret, status: subscription.status });
+    }
+    const reason = (pi && pi.last_payment_error && pi.last_payment_error.message) || "Le paiement n'a pas abouti";
+    return res.json({ success: false, status: subscription.status, error: reason, code: pi && pi.last_payment_error && (pi.last_payment_error.decline_code || pi.last_payment_error.code) });
   } catch (err) {
     console.error('Confirm subscription error:', err);
+    if (err.type === 'StripeCardError') return res.status(402).json({ error: err.message, code: err.decline_code || err.code });
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/stripe/sync-subscription
+// Après une validation bancaire : relit l'abonnement chez Stripe et met le compte à jour
+router.post('/sync-subscription', authMiddleware, async (req, res) => {
+  try {
+    const stripe = getStripe();
+    const { data: user } = await supabase.from('users').select('id, stripe_customer_id').eq('id', req.user.id).maybeSingle();
+    if (!user?.stripe_customer_id) return res.status(400).json({ error: 'Customer introuvable' });
+    const subs = await stripe.subscriptions.list({ customer: user.stripe_customer_id, status: 'all', limit: 5 });
+    const sub = subs.data.find(s => s.status === 'active' || s.status === 'trialing') || subs.data[0];
+    if (!sub) return res.json({ active: false, status: null });
+    const isActive = sub.status === 'active' || sub.status === 'trialing';
+    await supabase.from('users').update({
+      is_subscribed: isActive, stripe_subscription_id: sub.id, subscription_status: sub.status
+    }).eq('id', user.id);
+    res.json({ active: isActive, status: sub.status });
+  } catch (err) {
+    console.error('Sync subscription error:', err);
     res.status(500).json({ error: err.message });
   }
 });
