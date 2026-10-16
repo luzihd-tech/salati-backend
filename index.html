@@ -316,7 +316,7 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
 .locate-fab{
   position:absolute;right:14px;z-index:400;bottom:calc(32% + 16px);
   background:var(--white);border:1px solid var(--border);width:44px;height:44px;border-radius:50%;
-  box-shadow:var(--shadow-md);font-size:18px;
+  box-shadow:var(--shadow-md);font-size:18px;color:var(--green-deep);
   display:flex;align-items:center;justify-content:center;cursor:pointer;
   transition:bottom 0.25s ease;
 }
@@ -343,6 +343,8 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
 .vt-pill.shift{transform:translateX(100%)}
 .vt-btn{flex:1;position:relative;z-index:1;background:none;border:none;padding:8px 6px;border-radius:8px;font-size:11.5px;font-weight:700;cursor:pointer;color:var(--muted);transition:color 0.15s;white-space:nowrap}
 .vt-btn.active{color:#fff}
+.vt-btn{display:inline-flex;align-items:center;justify-content:center;gap:5px}
+.vt-btn .mi-ico-svg{width:16px;height:16px}
 .badge{background:var(--green-light);color:var(--green-deep);font-size:10.5px;font-weight:800;padding:3px 10px;border-radius:10px}
 .plist{overflow-y:auto;flex:1;padding:0 10px 10px}
 
@@ -595,6 +597,10 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
 .ap-list .ap-li{display:flex;gap:11px;align-items:flex-start;font-size:13.5px;line-height:1.6;margin-bottom:9px;color:var(--text);font-weight:450}
 .ap-list .ap-li .bullet{color:var(--green);font-size:15px;flex-shrink:0;margin-top:1px}
 .ap-divider{height:1px;background:var(--border);margin:26px 0}
+.ap-credits{text-align:center;font-size:11.5px;line-height:1.7;color:var(--muted);padding:14px 4px 6px}
+.ap-credits-title{font-weight:700;color:var(--text-2);margin-bottom:4px;font-size:12px}
+.ap-credits p{margin:0}
+.ap-credits a{color:var(--muted);text-decoration:underline}
 .ap-signoff{text-align:center;font-size:13.5px;color:var(--green-deep);font-weight:700;margin-top:22px;line-height:1.75}
 
 /* ─── COMMENT PRIER ──────────────────────────────────────── */
@@ -975,6 +981,10 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .leaflet-container .leaflet-control-attribution{font-size:9px;line-height:1.4;padding:1px 6px;border-radius:6px;margin-left:8px;background:var(--glass-bg,rgba(255,255,255,0.85));color:var(--muted)}
 .leaflet-container .leaflet-control-attribution a{color:var(--muted)}
+.leaflet-bottom.leaflet-left .leaflet-control-attribution{max-width:calc(100vw - 92px);cursor:pointer;transition:opacity .2s}
+.leaflet-container .leaflet-control-attribution.attr-collapsed{font-size:0;width:22px;height:22px;padding:0;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-xs)}
+.leaflet-container .leaflet-control-attribution.attr-collapsed *{display:none}
+.leaflet-container .leaflet-control-attribution.attr-collapsed::before{content:'i';font-size:12px;font-weight:700;font-style:italic;font-family:Georgia,serif;color:var(--muted);line-height:1}
 .loc-popup{
   background:#fff;border-radius:26px 26px 0 0;padding:32px 24px calc(28px + var(--sab));
   width:100%;max-width:480px;text-align:center;
@@ -1372,6 +1382,12 @@ html.theme-dark #pay-error{color:#ff7b6b!important}
     <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;padding-bottom:8px">
       <button onclick="openCGU('general')" style="background:none;border:1px solid var(--border);border-radius:10px;padding:8px 16px;font-size:12px;color:var(--muted);cursor:pointer;font-family:Outfit,sans-serif"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;vertical-align:-3px;margin-right:6px"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>CGU — Application</button>
       <button onclick="openCGU('subscription')" style="background:none;border:1px solid var(--border);border-radius:10px;padding:8px 16px;font-size:12px;color:var(--muted);cursor:pointer;font-family:Outfit,sans-serif"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;vertical-align:-3px;margin-right:6px"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/></svg>CGU — Abonnement</button>
+    </div>
+    <div class="ap-credits" id="ap-credits">
+      <div class="ap-credits-title">Crédits de la carte</div>
+      <p>Fond de carte : <a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> · <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener">© OpenMapTiles</a></p>
+      <p>Données cartographiques : <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© les contributeurs d'OpenStreetMap</a>, sous licence ODbL</p>
+      <p>Affichage de la carte : <a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a> et <a href="https://maplibre.org" target="_blank" rel="noopener">MapLibre</a></p>
     </div>
   </div>
 </div>
@@ -1967,6 +1983,8 @@ function themedMapStyle(base, theme){
   s.layers.forEach(l=>{
     if(l.type !== 'symbol') return;
     l.paint = l.paint || {};
+    const tf = l.layout && l.layout['text-field'];
+    if(tf && JSON.stringify(tf).indexOf('name_en') !== -1) l.layout['text-field'] = ['coalesce', ['get','name:fr'], ['get','name:latin'], ['get','name']]; // noms en français
     if(/^highway-name/.test(l.id) || l.id==='airport') l.paint['text-color'] = P.roadLabel;
     else if(/^water/.test(l.id)) l.paint['text-color'] = P.waterLabel;
     else if(/^label_/.test(l.id)) l.paint['text-color'] = P.placeLabel;
@@ -1984,7 +2002,7 @@ function useRasterBase(reason){
   if(baseKind === 'raster') return;
   if(baseLayer){ try{ map.removeLayer(baseLayer); }catch(e){} }
   try{ map.attributionControl && map.attributionControl.removeAttribution(MAP_ATTRIB); }catch(e){}
-  baseLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution:'© OpenStreetMap', maxZoom:19}).addTo(map);
+  baseLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution:'<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a>', maxZoom:19}).addTo(map);
   baseLayer.bringToBack && baseLayer.bringToBack();
   baseKind = 'raster';
 }
@@ -2014,7 +2032,7 @@ function setBaseMap(){
     }
     let layer;
     try{
-      layer = L.maplibreGL({style, attribution:MAP_ATTRIB});
+      layer = L.maplibreGL({style, attributionControl:{customAttribution:''}}); // crédit ajouté une seule fois ci-dessous (pas de doublon)
       layer.addTo(map);
     }catch(e){ useRasterBase('WebGL indisponible : '+e.message); return; }
     const gl = layer.getMaplibreMap();
@@ -2037,10 +2055,26 @@ function setBaseMap(){
   }).catch(err=>useRasterBase(err && err.message));
 }
 
+// Crédit de la carte (OpenStreetMap / OpenMapTiles / OpenFreeMap) : affiché à l'ouverture,
+// replié en petit (i) après 5 secondes ; un appui sur (i) le réaffiche. Détails complets dans « À propos ».
+let creditTimer = null;
+function initMapCredit(){
+  const el = map.attributionControl.getContainer();
+  if(!el) return;
+  const collapse = ()=>el.classList.add('attr-collapsed');
+  const expand = ()=>{ el.classList.remove('attr-collapsed'); clearTimeout(creditTimer); creditTimer = setTimeout(collapse, 6000); };
+  el.setAttribute('title', 'Crédits de la carte');
+  el.addEventListener('click', e=>{
+    if(el.classList.contains('attr-collapsed')){ e.preventDefault(); e.stopPropagation(); expand(); }
+    else if(!e.target.closest('a')){ clearTimeout(creditTimer); collapse(); }
+  });
+  creditTimer = setTimeout(collapse, 5000);
+}
+
 function initMap(){
   map = L.map('map', {zoomControl:false, tap:true}).setView([uLat, uLng], 12);
   L.control.zoom({position:'bottomright'}).addTo(map);
-  if(map.attributionControl) map.attributionControl.setPosition('bottomleft'); // crédit visible, au-dessus du panneau
+  if(map.attributionControl){ map.attributionControl.setPosition('bottomleft'); map.attributionControl.setPrefix(false); initMapCredit(); } // crédit visible, au-dessus du panneau
   setTimeout(()=>{ try{ repositionFab(); }catch(e){} }, 0);
   setBaseMap(); // OpenFreeMap aux couleurs Prayer Spot (secours OSM automatique)
   mapInitialized=true;
