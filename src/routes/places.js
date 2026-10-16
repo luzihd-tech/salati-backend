@@ -18,7 +18,11 @@ router.get('/', async (req, res) => {
     if (type && type !== 'all') query = query.eq('type', type);
     if (ablution === 'true') query = query.eq('ablution', true);
     if (city) query = query.ilike('city', `%${city}%`);
-    if (q) query = query.or(`name.ilike.%${q}%,address.ilike.%${q}%,description.ilike.%${q}%`);
+    if (q) {
+      // Retire les caractères qui ont un sens spécial dans le filtre de recherche (virgules, parenthèses…)
+      const term = String(q).replace(/[,()*%\\"]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 100);
+      if (term) query = query.or(`name.ilike.%${term}%,address.ilike.%${term}%,description.ilike.%${term}%`);
+    }
 
     const { data, error } = await query;
     if (error) throw error;

@@ -594,8 +594,12 @@ async function loadUsers(){
 
 // ─── RENDER ──────────────────────────────────────────────────
 function typeLabel(t){ return {mosque:'Mosquée',shop:'Commerce',restaurant:'Restaurant',other:'Autre'}[t]||t; }
-function typeBadge(t){ return `<span class="badge-type badge-${t}">${typeLabel(t)}</span>`; }
-function photoCell(p){ return p.photo_url ? `<img class="place-photo" src="${p.photo_url}" alt="" onerror="this.style.display='none'">` : `<div class="place-photo-placeholder">${{mosque:'🕌',shop:'🏪',restaurant:'🍽️',other:'📍'}[p.type]||'📍'}</div>`; }
+// Affiche les données comme du texte simple : un nom ou une adresse ne peut jamais exécuter de code
+function esc(v){ return String(v==null?'':v).replace(/[&<>"'`]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','`':'&#96;'}[c])); }
+function safeId(v){ return String(v==null?'':v).replace(/[^\w-]/g,''); }
+function safeUrl(u){ return /^https?:\/\//i.test(String(u||'')) ? esc(u) : ''; }
+function typeBadge(t){ return `<span class="badge-type badge-${safeId(t)}">${esc(typeLabel(t))}</span>`; }
+function photoCell(p){ return safeUrl(p.photo_url) ? `<img class="place-photo" src="${safeUrl(p.photo_url)}" alt="" onerror="this.style.display='none'">` : `<div class="place-photo-placeholder">${{mosque:'🕌',shop:'🏪',restaurant:'🍽️',other:'📍'}[p.type]||'📍'}</div>`; }
 function yesNo(v, yes='✅', no='—'){ return v ? yes : no; }
 function dateStr(s){ return s ? new Date(s).toLocaleDateString('fr-FR') : '—'; }
 
@@ -606,12 +610,12 @@ function renderRecentPlaces(){
   tbody.innerHTML = recent.map(p=>`
     <tr>
       <td>${photoCell(p)}</td>
-      <td><div class="place-name">${p.name}</div><div class="place-addr">${p.address||''}</div></td>
+      <td><div class="place-name">${esc(p.name)}</div><div class="place-addr">${esc(p.address||'')}</div></td>
       <td>${typeBadge(p.type)}</td>
-      <td style="color:var(--muted);font-size:12px">${p.city||'—'}</td>
+      <td style="color:var(--muted);font-size:12px">${esc(p.city||'—')}</td>
       <td><div class="actions-cell">
-        <button class="btn btn-secondary btn-sm" onclick="editPlace('${p.id}')">Modifier</button>
-        <button class="btn btn-danger btn-sm" onclick="askDelete('${p.id}')">Supprimer</button>
+        <button class="btn btn-secondary btn-sm" onclick="editPlace('${safeId(p.id)}')">Modifier</button>
+        <button class="btn btn-danger btn-sm" onclick="askDelete('${safeId(p.id)}')">Supprimer</button>
       </div></td>
     </tr>`).join('');
 }
@@ -629,14 +633,14 @@ function renderPlaces(){
   tbody.innerHTML = filtered.map(p=>`
     <tr>
       <td>${photoCell(p)}</td>
-      <td><div class="place-name">${p.name}</div><div class="place-addr">${p.address||''}</div></td>
+      <td><div class="place-name">${esc(p.name)}</div><div class="place-addr">${esc(p.address||'')}</div></td>
       <td>${typeBadge(p.type)}</td>
-      <td style="color:var(--muted);font-size:12px">${p.city||'—'}</td>
+      <td style="color:var(--muted);font-size:12px">${esc(p.city||'—')}</td>
       <td style="text-align:center">${yesNo(p.ablution)}</td>
       <td style="text-align:center">${yesNo(p.verified)}</td>
       <td><div class="actions-cell">
-        <button class="btn btn-secondary btn-sm" onclick="editPlace('${p.id}')">Modifier</button>
-        <button class="btn btn-danger btn-sm" onclick="askDelete('${p.id}')">Supprimer</button>
+        <button class="btn btn-secondary btn-sm" onclick="editPlace('${safeId(p.id)}')">Modifier</button>
+        <button class="btn btn-danger btn-sm" onclick="askDelete('${safeId(p.id)}')">Supprimer</button>
       </div></td>
     </tr>`).join('');
 }
@@ -648,8 +652,8 @@ function renderUsers(){
   if(!filtered.length){ tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><span class="e-ico">👤</span><p>Aucun utilisateur</p></div></td></tr>`; return; }
   tbody.innerHTML = filtered.map(u=>`
     <tr>
-      <td style="font-weight:600">${u.name||'—'}</td>
-      <td style="color:var(--muted);font-size:12.5px">${u.email}</td>
+      <td style="font-weight:600">${esc(u.name||'—')}</td>
+      <td style="color:var(--muted);font-size:12.5px">${esc(u.email)}</td>
       <td>${u.role==='admin'?'<span class="badge-type badge-mosque">Admin</span>':'<span class="badge-type badge-other">Utilisateur</span>'}</td>
       <td>${u.is_subscribed?'<span class="badge-type badge-mosque">✅ Abonné</span>':'<span style="color:var(--muted);font-size:12px">Non</span>'}</td>
       <td style="color:var(--muted);font-size:12px">${dateStr(u.created_at)}</td>
