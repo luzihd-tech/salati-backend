@@ -981,10 +981,9 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .leaflet-container .leaflet-control-attribution{font-size:9px;line-height:1.4;padding:1px 6px;border-radius:6px;margin-left:8px;background:var(--glass-bg,rgba(255,255,255,0.85));color:var(--muted)}
 .leaflet-container .leaflet-control-attribution a{color:var(--muted)}
-.leaflet-bottom.leaflet-left .leaflet-control-attribution{max-width:calc(100vw - 92px);cursor:pointer;transition:opacity .2s}
-.leaflet-container .leaflet-control-attribution.attr-collapsed{font-size:0;width:22px;height:22px;padding:0;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-xs)}
-.leaflet-container .leaflet-control-attribution.attr-collapsed *{display:none}
-.leaflet-container .leaflet-control-attribution.attr-collapsed::before{content:'i';font-size:12px;font-weight:700;font-style:italic;font-family:Georgia,serif;color:var(--muted);line-height:1}
+.leaflet-bottom.leaflet-left .leaflet-control-attribution{max-width:calc(100vw - 92px);font-size:8px;line-height:1.35;padding:1px 5px;color:var(--text-2);white-space:nowrap;pointer-events:none;transition:opacity .6s ease}
+.leaflet-bottom.leaflet-left .leaflet-control-attribution a{color:var(--text-2);text-decoration:none;pointer-events:none}
+.leaflet-container .leaflet-control-attribution.attr-hidden{opacity:0;visibility:hidden;transition:opacity .6s ease,visibility 0s linear .6s}
 .loc-popup{
   background:#fff;border-radius:26px 26px 0 0;padding:32px 24px calc(28px + var(--sab));
   width:100%;max-width:480px;text-align:center;
@@ -2005,6 +2004,7 @@ function useRasterBase(reason){
   baseLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution:'<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a>', maxZoom:19}).addTo(map);
   baseLayer.bringToBack && baseLayer.bringToBack();
   baseKind = 'raster';
+  try{ showMapCredit(); }catch(e){}
 }
 
 function getBaseStyle(){
@@ -2055,21 +2055,18 @@ function setBaseMap(){
   }).catch(err=>useRasterBase(err && err.message));
 }
 
-// Crédit de la carte (OpenStreetMap / OpenMapTiles / OpenFreeMap) : affiché à l'ouverture,
-// replié en petit (i) après 5 secondes ; un appui sur (i) le réaffiche. Détails complets dans « À propos ».
+// Crédit de la carte (OpenStreetMap / OpenMapTiles / OpenFreeMap) — règles OpenStreetMap :
+// affiché en petit à l'ouverture pendant 5 secondes, non cliquable (aucun appui par erreur),
+// puis il disparaît. Les crédits complets avec les liens sont dans « À propos » (menu).
 let creditTimer = null;
-function initMapCredit(){
-  const el = map.attributionControl.getContainer();
+function showMapCredit(){
+  const el = map && map.attributionControl && map.attributionControl.getContainer();
   if(!el) return;
-  const collapse = ()=>el.classList.add('attr-collapsed');
-  const expand = ()=>{ el.classList.remove('attr-collapsed'); clearTimeout(creditTimer); creditTimer = setTimeout(collapse, 6000); };
-  el.setAttribute('title', 'Crédits de la carte');
-  el.addEventListener('click', e=>{
-    if(el.classList.contains('attr-collapsed')){ e.preventDefault(); e.stopPropagation(); expand(); }
-    else if(!e.target.closest('a')){ clearTimeout(creditTimer); collapse(); }
-  });
-  creditTimer = setTimeout(collapse, 5000);
+  el.classList.remove('attr-hidden');
+  clearTimeout(creditTimer);
+  creditTimer = setTimeout(()=>el.classList.add('attr-hidden'), 5000);
 }
+function initMapCredit(){ showMapCredit(); }
 
 function initMap(){
   map = L.map('map', {zoomControl:false, tap:true}).setView([uLat, uLng], 12);
