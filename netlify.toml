@@ -1,0 +1,4 @@
+# Netlify ne remet l'app en ligne que si l'app elle-même a changé
+# (un changement du serveur ou de la liste des lieux ne consomme pas de crédit Netlify)
+[build]
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- index.html admin.html manifest.webmanifest sw.js icons/"

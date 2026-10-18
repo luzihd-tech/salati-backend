@@ -36,4 +36,6 @@ app.use((req, res) => res.status(404).json({ error: 'Route introuvable' }));
 app.listen(PORT, () => {
   console.log(`🕌 Salati API démarrée sur http://localhost:${PORT}`);
   console.log(`Stripe: ${process.env.STRIPE_SECRET_KEY ? '✅ configuré' : '⚠️ STRIPE_SECRET_KEY manquant'}`);
+  // Ajout automatique des lieux listés dans data/lieux-a-ajouter.json (doublons ignorés)
+  setTimeout(() => { require('./import-places').runPlacesImport().catch(e => console.error('Import lieux :', e.message)); }, 3000);
 });
