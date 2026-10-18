@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#ffffff">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Prayer Spot">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Prayer Spot — Trouver un lieu de prière</title>
@@ -858,6 +862,18 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
 }
 .toast.show{opacity:1}
 
+/* ─── BANDEAU « Installer Prayer Spot » ─────────────────── */
+.install-banner{position:fixed;left:12px;right:12px;bottom:calc(var(--sab) + 12px);z-index:9500;display:none;align-items:center;gap:12px;max-width:480px;margin:0 auto;background:var(--white);border:1px solid var(--border);border-radius:16px;padding:12px 10px 12px 12px;box-shadow:0 10px 30px rgba(13,47,30,0.18);transform:translateY(160%);transition:transform .35s cubic-bezier(.2,.9,.3,1)}
+.install-banner.show{transform:none}
+.ib-icon{width:42px;height:42px;border-radius:11px;flex-shrink:0;display:block}
+.ib-text{flex:1;min-width:0}
+.ib-title{font-size:14px;font-weight:800;color:var(--text);font-family:'Outfit',sans-serif;line-height:1.25}
+.ib-sub{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.3}
+.ib-add{background:var(--green-deep);color:#fff;border:none;border-radius:10px;padding:9px 14px;font-size:13px;font-weight:700;cursor:pointer;flex-shrink:0}
+.ib-add:active{opacity:.85}
+.ib-close{background:none;border:none;color:var(--muted);font-size:15px;width:30px;height:30px;border-radius:50%;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+html.theme-dark .install-banner{box-shadow:0 10px 30px rgba(0,0,0,0.55)}
+
 /* ─── MODALE INSTALLATION ────────────────────────────────── */
 .install-overlay{
   position:fixed;inset:0;background:rgba(8,20,14,0.55);z-index:9000;
@@ -1509,6 +1525,12 @@ html.theme-dark #pay-error{color:#ff7b6b!important}
 </div>
 
 <!-- MODALE INSTALLATION APP -->
+<div class="install-banner" id="install-banner" role="dialog" aria-label="Installer Prayer Spot">
+  <img class="ib-icon" src="icons/icon-192.png" alt="">
+  <div class="ib-text"><div class="ib-title">Installer Prayer Spot</div><div class="ib-sub">Accès en un appui depuis ton écran d'accueil</div></div>
+  <button class="ib-add" id="ib-add" onclick="installBannerAdd()">Ajouter</button>
+  <button class="ib-close" id="ib-close" onclick="installBannerClose()" aria-label="Fermer">✕</button>
+</div>
 <div class="install-overlay" id="install-overlay" style="display:none">
   <div class="install-popup">
     <div class="install-handle"></div>
@@ -4302,10 +4324,9 @@ function installApp(){
     return;
   }
 
-  // Prompt natif disponible (Chrome, Samsung Internet, Brave, Opera…)
+  // Fenêtre d'installation du téléphone disponible (Chrome, Samsung Internet, Edge…) → directement
   if(deferredInstallPrompt){
-    installShowStep('native');
-    document.getElementById('install-overlay').style.display = 'flex';
+    promptNativeInstall();
     return;
   }
 
@@ -4355,13 +4376,99 @@ async function triggerInstall(){
     document.getElementById('install-chrome-manual').style.display = 'block';
     return;
   }
-  deferredInstallPrompt.prompt();
-  const { outcome } = await deferredInstallPrompt.userChoice;
-  if(outcome === 'accepted'){
-    showToast('Prayer Spot ajouté à l\'écran d\'accueil !');
-    deferredInstallPrompt = null;
-  }
   closeInstallModal();
+  promptNativeInstall();
+}
+
+// Ouvre la vraie fenêtre « Installer Prayer Spot » du téléphone (Android / Chrome)
+async function promptNativeInstall(){
+  const ev = deferredInstallPrompt;
+  if(!ev){ installApp(); return; }
+  deferredInstallPrompt = null; // le navigateur n'autorise qu'un seul appel par fenêtre
+  hideInstallBanner();
+  try{
+    ev.prompt();
+    const choice = await ev.userChoice;
+    if(choice && choice.outcome === 'accepted'){
+      ibSet(IB_KEYS.installed, '1');
+      showToast("Prayer Spot ajouté à ton écran d'accueil ✓");
+      const b = document.getElementById('drawer-install-btn'); if(b) b.style.display = 'none';
+    } else {
+      ibSet(IB_KEYS.dismissed, String(Date.now()));
+    }
+  }catch(e){ installApp(); }
+}
+
+// ─── Bandeau « Installer Prayer Spot » ───────────────────────
+// Proposé à partir de la 2e visite, après 30 s d'utilisation, jamais par-dessus une fenêtre ;
+// fermé → pas avant 30 jours ; 3 fois maximum ; jamais si l'app est déjà installée.
+const IB_KEYS = { visits:'ps_visits', lastVisit:'ps_last_visit', dismissed:'ps_install_dismissed', shown:'ps_install_shown', installed:'ps_installed' };
+const IB_DELAY = 30000, IB_RETRY = 10000, IB_MAX_SHOWS = 3, IB_SNOOZE = 30*24*3600*1000;
+let ibTimer = null, ibTries = 0;
+function ibGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function ibSet(k, v){ try{ localStorage.setItem(k, v); }catch(e){} }
+function isStandaloneApp(){ return (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true; }
+function isIOSDevice(){ return /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); }
+function isMobileDevice(){ return isIOSDevice() || /android/i.test(navigator.userAgent); }
+
+function countVisit(){
+  const now = Date.now(), last = +ibGet(IB_KEYS.lastVisit) || 0;
+  if(now - last > 30*60*1000) ibSet(IB_KEYS.visits, String((+ibGet(IB_KEYS.visits) || 0) + 1)); // une visite = 30 min d'écart
+  ibSet(IB_KEYS.lastVisit, String(now));
+}
+function installBannerEligible(){
+  if(isStandaloneApp() || ibGet(IB_KEYS.installed)) return false;
+  if((+ibGet(IB_KEYS.visits) || 0) < 2) return false;
+  if((+ibGet(IB_KEYS.shown) || 0) >= IB_MAX_SHOWS) return false;
+  const d = +ibGet(IB_KEYS.dismissed) || 0;
+  if(d && Date.now() - d < IB_SNOOZE) return false;
+  if(!isMobileDevice() && !deferredInstallPrompt) return false; // ordinateur : seulement si le navigateur sait installer
+  return true;
+}
+function screenBusy(){
+  const exp = document.getElementById('screen-explorer');
+  if(!exp || !exp.classList.contains('active')) return true;          // seulement sur la carte
+  if(document.querySelector('.drawer.open, #dsheet.open')) return true; // menu ou fiche d'un lieu ouverts
+  return ['loc-overlay','loc-help','install-overlay','pay-sheet','authov','cal-overlay','cgu-overlay',
+          'quran-settings-overlay','sourate-menu-overlay','tafsir-overlay'].some(id=>{
+    const el = document.getElementById(id); if(!el) return false;
+    const cs = getComputedStyle(el); return cs.display !== 'none' && cs.visibility !== 'hidden'; // ouverte, même pendant son animation d'apparition
+  });
+}
+function scheduleInstallBanner(delay){
+  clearTimeout(ibTimer);
+  ibTimer = setTimeout(tryShowInstallBanner, delay);
+}
+function tryShowInstallBanner(){
+  if(!installBannerEligible()) return;
+  if(screenBusy()){ if(++ibTries <= 12) scheduleInstallBanner(IB_RETRY); return; }
+  const bn = document.getElementById('install-banner'); if(!bn) return;
+  ibSet(IB_KEYS.shown, String((+ibGet(IB_KEYS.shown) || 0) + 1));
+  bn.style.display = 'flex';
+  requestAnimationFrame(()=>requestAnimationFrame(()=>bn.classList.add('show')));
+}
+function hideInstallBanner(){
+  const bn = document.getElementById('install-banner'); if(!bn || bn.style.display !== 'flex') return;
+  bn.classList.remove('show');
+  setTimeout(()=>{ if(!bn.classList.contains('show')) bn.style.display = 'none'; }, 350);
+}
+function installBannerAdd(){
+  hideInstallBanner();
+  if(deferredInstallPrompt) promptNativeInstall();  // Android : vraie fenêtre d'installation
+  else installApp();                                 // iPhone et autres : les étapes à suivre
+}
+function installBannerClose(){
+  hideInstallBanner();
+  ibSet(IB_KEYS.dismissed, String(Date.now()));
+}
+window.addEventListener('appinstalled', ()=>{
+  ibSet(IB_KEYS.installed, '1');
+  hideInstallBanner();
+  const b = document.getElementById('drawer-install-btn'); if(b) b.style.display = 'none';
+});
+// Petit fichier technique exigé par Chrome pour proposer « Installer » (aucune mise en cache)
+if('serviceWorker' in navigator && (location.protocol === 'https:' || /^(localhost|127\.0\.0\.1)$/.test(location.hostname))){
+  window.addEventListener('load', ()=>{ navigator.serviceWorker.register('sw.js').catch(()=>{}); });
 }
 
 function closeInstallModal(){
@@ -4380,6 +4487,7 @@ function closeInstallModal(){
 async function initApp(){
   // Localisation en premier : ne dépend ni du serveur ni de la carte
   initLocation();
+  try{ countVisit(); scheduleInstallBanner(IB_DELAY); }catch(e){}
   try{ await restoreSession(); }catch(e){ console.error('restoreSession', e); }
   try{ showScreen('explorer', true); }catch(e){ console.error('showScreen', e); }
   try{ await loadPlaces(); }catch(e){ console.error('loadPlaces', e); }
