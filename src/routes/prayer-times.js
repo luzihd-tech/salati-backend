@@ -23,11 +23,22 @@ function nodeFetch(url, timeoutMs = 6000) {
   });
 }
 
-function parseMawaqitTimes(data) {
+// Date du jour demandée par l'app (JJ-MM-AAAA, heure du téléphone),
+// sinon la date à Paris — le serveur est en heure UTC et se tromperait de jour après minuit
+function requestedDate(q) {
+  if (typeof q === 'string' && /^\d{1,2}-\d{1,2}-\d{4}$/.test(q)) {
+    const [d, m, y] = q.split('-').map(Number);
+    if (d >= 1 && d <= 31 && m >= 1 && m <= 12) return { d, m, y };
+  }
+  const parts = new Intl.DateTimeFormat('fr-FR', { timeZone: 'Europe/Paris', day: 'numeric', month: 'numeric', year: 'numeric' }).formatToParts(new Date());
+  const get = t => +parts.find(p => p.type === t).value;
+  return { d: get('day'), m: get('month'), y: get('year') };
+}
+
+function parseMawaqitTimes(data, day) {
   const times = data.times || data.calendar?.[0] || null;
   if (!times || !times.length) return null;
-  const today = new Date().getDate() - 1;
-  const todayTimes = Array.isArray(times[0]) ? times[today] : times;
+  const todayTimes = Array.isArray(times[0]) ? times[day - 1] : times;
   if (!todayTimes || todayTimes.length < 5) return null;
   return {
     Fajr:     todayTimes[0],
@@ -39,51 +50,49 @@ function parseMawaqitTimes(data) {
   };
 }
 
-// GET /api/prayer-times?mawaqit_id=xxx   — horaires par ID mosquée Mawaqit
-// GET /api/prayer-times?lat=xx&lng=xx    — horaires par géoloc (mosquée la plus proche)
+// Petit cache (6 h) : même zone (~1 km) + même jour = mêmes horaires
+const cache = new Map();
+const CACHE_MS = 6 * 3600 * 1000;
+function cacheGet(k) { const e = cache.get(k); if (e && Date.now() - e.t < CACHE_MS) return e.v; cache.delete(k); return null; }
+function cacheSet(k, v) { if (cache.size > 2000) cache.clear(); cache.set(k, { t: Date.now(), v }); }
+
+// GET /api/prayer-times?lat=xx&lng=xx[&date=JJ-MM-AAAA][&mawaqit_id=xxx]
+// - mawaqit_id : horaires de la mosquée sur Mawaqit si leur service répond (accès privé, souvent refusé)
+// - sinon : calcul Aladhan, méthode 2 (ISNA, 15°), selon la position
 router.get('/', async (req, res) => {
   const { mawaqit_id, lat, lng } = req.query;
+  const date = requestedDate(req.query.date);
 
-  // 1. Par mawaqit_id
-  if (mawaqit_id) {
+  // 1. Mosquée liée à Mawaqit
+  if (mawaqit_id && /^[\w-]{1,80}$/.test(String(mawaqit_id))) {
     try {
-      const r = await nodeFetch(`https://mawaqit.net/api/2.0/mosque/${mawaqit_id}/prayer-times`);
+      const r = await nodeFetch(`https://mawaqit.net/api/2.0/mosque/${encodeURIComponent(mawaqit_id)}/prayer-times`, 4000);
       if (r.ok) {
-        const times = parseMawaqitTimes(r.json());
+        const times = parseMawaqitTimes(r.json(), date.d);
         if (times) return res.json({ source: 'mawaqit_id', times });
       }
     } catch(e) { console.error('Mawaqit ID error:', e.message); }
+    // pas de réponse → on continue avec le calcul ci-dessous (jamais d'horaires vides)
   }
 
-  // 2. Par géoloc Mawaqit
-  if (lat && lng) {
+  // 2. Calcul selon la position (méthode 15°)
+  const la = parseFloat(lat), ln = parseFloat(lng);
+  if (Number.isFinite(la) && Number.isFinite(ln) && Math.abs(la) <= 90 && Math.abs(ln) <= 180) {
+    const key = `${la.toFixed(2)},${ln.toFixed(2)},${date.d}-${date.m}-${date.y}`;
+    const hit = cacheGet(key);
+    if (hit) return res.json(hit);
     try {
-      const r = await nodeFetch(`https://mawaqit.net/api/2.0/mosque/nearests?lat=${lat}&lon=${lng}&language=fr`);
-      if (r.ok) {
-        const mosques = r.json();
-        if (mosques && mosques.length && mosques[0].uuid) {
-          const r2 = await nodeFetch(`https://mawaqit.net/api/2.0/mosque/${mosques[0].uuid}/prayer-times`);
-          if (r2.ok) {
-            const times = parseMawaqitTimes(r2.json());
-            if (times) return res.json({ source: 'mawaqit_geo', times });
-          }
-        }
-      }
-    } catch(e) { console.error('Mawaqit geo error:', e.message); }
-
-    // 3. Fallback Aladhan
-    try {
-      const d = new Date();
-      const date = `${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}`;
-      const r = await nodeFetch(`https://api.aladhan.com/v1/timings/${date}?latitude=${lat}&longitude=${lng}&method=2`);
+      const r = await nodeFetch(`https://api.aladhan.com/v1/timings/${date.d}-${date.m}-${date.y}?latitude=${la}&longitude=${ln}&method=2`);
       if (r.ok) {
         const data = r.json();
         if (data.code === 200) {
           const t = data.data.timings;
-          return res.json({ source: 'aladhan', times: {
+          const out = { source: 'aladhan', method: 'ISNA 15°', times: {
             Fajr: t.Fajr, Chourouk: t.Sunrise, Dhohr: t.Dhuhr,
             Asr: t.Asr, Maghrib: t.Maghrib, Icha: t.Isha
-          }});
+          }};
+          cacheSet(key, out);
+          return res.json(out);
         }
       }
     } catch(e) { console.error('Aladhan error:', e.message); }

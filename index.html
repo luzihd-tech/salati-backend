@@ -532,54 +532,104 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
 .danger-row .set-ico{color:#c0392b;opacity:0.8}
 
 /* ─── QIBLA SCREEN (boussole) ────────────────────────────── */
-.qibla-hero{text-align:center;padding:8px 0 22px}
+.qibla-hero{text-align:center;padding:8px 0 18px}
 .qibla-hero h2{font-size:19px;font-weight:800;margin-bottom:5px;font-family:'Outfit',sans-serif}
 .qibla-hero p{font-size:12.5px;color:var(--muted);font-weight:500;line-height:1.5}
-.compass-wrap{display:flex;flex-direction:column;align-items:center;padding:10px 0 28px}
+.compass-wrap{display:flex;flex-direction:column;align-items:center;padding:6px 0 28px}
 .compass-ring{
-  position:relative;width:260px;height:260px;border-radius:50%;
+  position:relative;width:270px;height:270px;border-radius:50%;
   background:radial-gradient(circle at 50% 40%,#fff,var(--green-light));
   box-shadow:0 16px 40px rgba(10,61,44,0.16), inset 0 0 0 1px rgba(10,143,92,0.1);
-  display:flex;align-items:center;justify-content:center;
+  transition:box-shadow .3s ease, background .3s ease;
 }
-.compass-marks{position:absolute;inset:0}
-.compass-marks span{
-  position:absolute;font-size:11px;font-weight:800;color:var(--muted);
-}
-.compass-needle{
-  position:relative;width:100%;height:100%;transition:transform 0.15s ease-out;
-}
-.qibla-pointer{
-  position:absolute;top:14px;left:50%;transform:translateX(-50%);
-  display:flex;flex-direction:column;align-items:center;
-}
-.qibla-pointer .kaaba{font-size:30px;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.15))}
-.qibla-pointer .arrow-line{width:3px;height:88px;background:linear-gradient(180deg,var(--gold),transparent);border-radius:2px;margin-top:2px}
+.compass-ring.aligned{box-shadow:0 16px 40px rgba(10,143,92,0.30), inset 0 0 0 3px var(--green-deep)}
+/* Repère fixe : la direction vers laquelle pointe le haut du téléphone */
+.compass-top-mark{position:absolute;top:-13px;left:50%;transform:translateX(-50%);width:0;height:0;
+  border-left:10px solid transparent;border-right:10px solid transparent;border-top:14px solid var(--text);z-index:3}
+.compass-ring.aligned .compass-top-mark{border-top-color:var(--green-deep)}
+/* Cadran : tourne comme une vraie boussole (le N indique le vrai Nord) */
+.compass-dial{position:absolute;inset:0;border-radius:50%;will-change:transform}
+.compass-dial svg.ticks{position:absolute;inset:0;width:100%;height:100%;color:var(--muted)}
+.compass-card{position:absolute;inset:0}
+.compass-card span{position:absolute;left:50%;top:50%;font-size:13px;font-weight:800;color:var(--muted);width:20px;height:20px;margin:-10px 0 0 -10px;
+  display:flex;align-items:center;justify-content:center}
+.compass-card span.n{color:#d0453a;font-size:15px}
+.qibla-pointer{position:absolute;left:50%;top:50%;width:0;height:0}
+.qibla-pointer .qp-line{position:absolute;left:-1.5px;bottom:0;width:3px;height:92px;border-radius:2px;
+  background:linear-gradient(0deg,transparent,var(--gold))}
+.qibla-pointer .kaaba{position:absolute;left:-17px;bottom:90px;width:34px;height:34px;font-size:28px;line-height:34px;text-align:center;
+  filter:drop-shadow(0 3px 6px rgba(0,0,0,0.2))}
 .compass-center-dot{
   position:absolute;top:50%;left:50%;width:14px;height:14px;background:var(--green-deep);
-  border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 0 4px #fff,0 0 0 5px var(--border);
+  border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 0 4px #fff,0 0 0 5px var(--border);z-index:2;
 }
-.compass-n{position:absolute;top:12px;left:50%;transform:translateX(-50%);font-size:13px;font-weight:800;color:var(--green-deep)}
 .qibla-status{
   margin-top:24px;background:var(--white);border-radius:16px;padding:16px 20px;text-align:center;
-  box-shadow:var(--shadow-sm);width:100%;max-width:280px;
+  box-shadow:var(--shadow-sm);width:100%;max-width:300px;
 }
 .qibla-deg{font-size:26px;font-weight:800;color:var(--green-deep);letter-spacing:-0.5px}
-.qibla-label{font-size:12px;color:var(--muted);font-weight:600;margin-top:2px}
-.qibla-aligned{color:var(--green-deep);font-weight:700;font-size:12.5px;margin-top:8px;display:none;align-items:center;justify-content:center;gap:6px}
+.qibla-label{font-size:12.5px;color:var(--text);font-weight:700;margin-top:2px}
+.qibla-src{font-size:11.5px;color:var(--muted);font-weight:500;margin-top:6px;line-height:1.45}
+.qibla-src button{background:none;border:none;padding:0;color:var(--green-deep);font-weight:700;font-size:11.5px;cursor:pointer;text-decoration:underline}
+.qibla-guide{font-size:13px;font-weight:700;color:var(--text);margin-top:10px;min-height:18px}
+.qibla-aligned{color:var(--green-deep);font-weight:800;font-size:13.5px;margin-top:10px;display:none;align-items:center;justify-content:center;gap:6px}
 .qibla-aligned.show{display:flex}
 .qibla-permission{
-  background:var(--gold-light);border:1px solid #ecd9a8;border-radius:16px;padding:18px;text-align:center;margin-top:10px;
+  background:var(--gold-light);border:1px solid #ecd9a8;border-radius:16px;padding:18px;text-align:center;margin-top:14px;width:100%;max-width:300px;
 }
 .qibla-permission p{font-size:12.5px;color:#7a5e1f;margin-bottom:12px;font-weight:600;line-height:1.5}
 .qibla-permission button{
   background:var(--gold);color:#fff;border:none;padding:11px 22px;border-radius:12px;font-weight:700;
   font-size:13px;cursor:pointer;
 }
+.qibla-unavailable{margin-top:14px;width:100%;max-width:300px;background:var(--gray-100);border:1px solid var(--border);border-radius:14px;
+  padding:12px 14px;font-size:12px;color:var(--text-2);line-height:1.55;text-align:center}
 .qibla-info{
   margin-top:18px;background:var(--green-light);border-radius:14px;padding:14px 16px;font-size:12px;
-  color:var(--green-deep);font-weight:500;line-height:1.6;display:flex;gap:10px;
+  color:var(--green-deep);font-weight:500;line-height:1.6;display:flex;gap:10px;max-width:340px;
 }
+.qibla-calib{margin-top:10px;font-size:11.5px;color:var(--muted);text-align:center;line-height:1.5;max-width:320px}
+
+/* ─── SUGGÉRER UN LIEU ───────────────────────────────────── */
+#screen-suggerer{overflow-y:auto;padding:0;padding-bottom:var(--sab)}
+.sg-stat{background:var(--green-light);color:var(--green-deep);border-radius:12px;padding:10px 14px;font-size:13px;font-weight:600;margin:0 0 6px;text-align:center}
+.sg-stat b{font-size:15px;font-weight:800}
+.sg-types{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px}
+.sg-type{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:3px;min-width:0}
+.sg-type .sg-ti{font-size:20px;line-height:1}
+.sg-type b{font-size:13.5px;color:var(--text)}
+.sg-type span:last-child{font-size:11.5px;color:var(--muted);line-height:1.35}
+.sg-steps{display:flex;flex-direction:column;gap:10px;margin-bottom:6px}
+.sg-step{display:flex;align-items:center;gap:12px;font-size:13.5px;color:var(--text);line-height:1.4}
+.sg-num{width:26px;height:26px;border-radius:50%;background:var(--green-deep);color:#fff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sg-form{display:flex;flex-direction:column}
+.sg-label{font-size:12.5px;font-weight:700;color:var(--text);margin:14px 0 6px}
+.sg-label i{color:#c0392b;font-style:normal}
+.sg-opt{font-weight:500;color:var(--muted)}
+.sg-input{width:100%;border:1px solid var(--border);background:var(--white);color:var(--text);border-radius:12px;padding:12px 13px;font-size:15px;font-family:inherit;outline:none;transition:border-color .15s}
+.sg-input:focus{border-color:var(--green)}
+.sg-input.bad{border-color:#c0392b}
+.sg-area{resize:vertical;min-height:84px;line-height:1.45}
+.sg-chips{display:flex;flex-wrap:wrap;gap:8px}
+.sg-chips.bad span{border-color:#c0392b}
+.sg-chips label{cursor:pointer}
+.sg-chips input{position:absolute;opacity:0;pointer-events:none}
+.sg-chips span{display:inline-block;border:1px solid var(--border);background:var(--white);color:var(--text);border-radius:100px;padding:8px 14px;font-size:13px;font-weight:600;transition:all .15s}
+.sg-chips input:checked + span{background:var(--green-deep);border-color:var(--green-deep);color:#fff}
+.sg-chips input:focus-visible + span{outline:2px solid var(--green);outline-offset:2px}
+.sg-sep{height:1px;background:var(--border);margin:20px 0 4px}
+.sg-hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.sg-err{color:#c0392b;font-size:13px;font-weight:600;margin-top:14px;display:none;line-height:1.45}
+.sg-submit{margin-top:18px;background:var(--green-deep);color:#fff;border:none;border-radius:14px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;width:100%}
+.sg-submit:disabled{opacity:.6}
+.sg-mail{margin-top:10px;background:none;border:1px solid var(--border);color:var(--text);border-radius:14px;padding:12px;font-size:14px;font-weight:600;cursor:pointer;width:100%}
+.sg-privacy{font-size:11.5px;color:var(--muted);line-height:1.5;margin:12px 0 0;text-align:center}
+.sg-done{text-align:center;padding:10px 0 20px}
+.sg-done-ico{color:var(--green-deep);margin-bottom:8px}
+.sg-done-title{font-size:19px;font-weight:800;color:var(--green-deep);font-family:'Outfit',sans-serif;margin-bottom:8px}
+.sg-done p{font-size:14px;color:var(--text);line-height:1.6;margin:0 0 6px}
+html.theme-dark .sg-err, html.theme-dark .sg-label i{color:#ff7b6b}
+html.theme-dark .sg-input.bad, html.theme-dark .sg-chips.bad span{border-color:#ff7b6b}
 
 /* ─── A PROPOS ───────────────────────────────────────────── */
 #screen-apropos{overflow-y:auto;padding:0;padding-bottom:var(--sab)}
@@ -1050,7 +1100,11 @@ html.theme-dark .install-banner{box-shadow:0 10px 30px rgba(0,0,0,0.55)}
 html.theme-dark .loc-popup{background:var(--white)}
 html.theme-dark .sub-card{background:linear-gradient(135deg,#145c3d,#1b7a52)}
 html.theme-dark .compass-ring{background:radial-gradient(circle at 50% 40%,#2b3a34,#141b19);box-shadow:0 16px 40px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(46,204,138,0.18)}
-html.theme-dark .compass-marks span{color:#c4d4cc}
+html.theme-dark .compass-card span{color:#c4d4cc}
+html.theme-dark .compass-card span.n{color:#ff7b6b}
+html.theme-dark .compass-dial svg.ticks{color:#9fb3a9}
+html.theme-dark .qibla-permission{background:#2a2414;border-color:#5a4a22}
+html.theme-dark .qibla-permission p{color:#e8cf8f}
 html.theme-dark .compass-center-dot{box-shadow:0 0 0 4px var(--white),0 0 0 5px var(--border)}
 html.theme-dark .tb{background:rgba(74,144,226,0.16);color:#8ec2ff}
 html.theme-dark .to{background:rgba(230,140,60,0.16);color:#f3b27a}
@@ -1104,7 +1158,7 @@ html.theme-dark #pay-error{color:#ff7b6b!important}
       <span class="d-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z" fill="currentColor" fill-opacity="0.7"/></svg></span>
       <span>Explorer</span>
     </div>
-    <div class="drawer-item" onclick="suggestPlace()">
+    <div class="drawer-item" data-screen="suggerer" onclick="suggestPlace()">
       <span class="d-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19.914 11.105A7.298 7.298 0 0 0 20 10a8 8 0 0 0-16 0c0 4.993 5.539 10.193 7.399 11.799a1 1 0 0 0 1.202 0 32 32 0 0 0 .824-.738"/><circle cx="12" cy="10" r="3"/><path d="M16 18h6"/><path d="M19 15v6"/></svg></span>
       <span>Suggérer un lieu</span>
     </div>
@@ -1239,36 +1293,137 @@ html.theme-dark #pay-error{color:#ff7b6b!important}
 <div class="screen" id="screen-qibla">
   <div class="qibla-hero">
     <h2><svg class="lico sz-tab" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg> Boussole Qibla</h2>
-    <p>Oriente ton téléphone à plat pour trouver<br>la direction de la Kaaba à La Mecque</p>
+    <p>Tiens ton téléphone à plat et tourne sur toi-même<br>jusqu'à ce que la 🕋 arrive sous le repère du haut</p>
   </div>
   <div class="compass-wrap" id="compass-wrap">
-    <div class="compass-ring">
-      <div class="compass-marks">
-        <span style="top:8px;left:50%;transform:translateX(-50%)">N</span>
-        <span style="top:50%;right:10px;transform:translateY(-50%)">E</span>
-        <span style="bottom:8px;left:50%;transform:translateX(-50%)">S</span>
-        <span style="top:50%;left:10px;transform:translateY(-50%)">O</span>
-      </div>
-      <div class="compass-needle" id="compass-needle">
-        <div class="qibla-pointer">
+    <div class="compass-ring" id="compass-ring">
+      <div class="compass-top-mark" aria-hidden="true"></div>
+      <div class="compass-dial" id="compass-dial">
+        <svg class="ticks" viewBox="0 0 270 270" aria-hidden="true" id="compass-ticks"></svg>
+        <div class="compass-card" id="compass-card"></div>
+        <div class="qibla-pointer" id="qibla-pointer">
+          <div class="qp-line"></div>
           <span class="kaaba">🕋</span>
-          <div class="arrow-line"></div>
         </div>
       </div>
       <div class="compass-center-dot"></div>
     </div>
     <div class="qibla-status">
       <div class="qibla-deg" id="qibla-deg">--°</div>
-      <div class="qibla-label">Direction de la Qibla</div>
+      <div class="qibla-label" id="qibla-label">Direction de la Qibla</div>
+      <div class="qibla-src" id="qibla-src"></div>
+      <div class="qibla-guide" id="qibla-guide"></div>
       <div class="qibla-aligned" id="qibla-aligned"><svg class="lico sz-vt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg> Tu fais face à la Qibla</div>
     </div>
-    <div class="qibla-permission" id="qibla-permission">
+    <div class="qibla-permission" id="qibla-permission" style="display:none">
       <p>Autorise l'accès aux capteurs de mouvement pour activer la boussole</p>
       <button onclick="requestCompassPermission()">Activer la boussole</button>
     </div>
+    <div class="qibla-unavailable" id="qibla-unavailable" style="display:none">
+      <b>Boussole non disponible sur cet appareil.</b><br>Le cadran est affiché Nord en haut : la 🕋 indique la direction de la Qibla depuis le Nord.
+      <button type="button" onclick="qiblaRetry()" style="display:block;margin:8px auto 0;background:none;border:none;color:var(--green-deep);font-weight:700;font-size:12.5px;cursor:pointer;text-decoration:underline">Réessayer</button>
+    </div>
     <div class="qibla-info" id="qibla-info" style="display:none">
       <span><svg class="lico sz-vt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span>
-      <span>Pose ton téléphone à plat dans ta main et pivote sur toi-même jusqu'à ce que l'icône 🕋 soit alignée avec le haut de l'écran.</span>
+      <span>Le cadran tourne comme une vraie boussole : le <b>N</b> indique le Nord. Éloigne-toi des objets métalliques et des appareils électriques pour plus de précision.</span>
+    </div>
+    <div class="qibla-calib" id="qibla-calib" style="display:none">L'aiguille bouge toute seule ou semble fausse ? Fais lentement un « 8 » dans l'air avec ton téléphone pour calibrer la boussole.</div>
+  </div>
+</div>
+
+<!-- SUGGÉRER UN LIEU -->
+<div class="screen" id="screen-suggerer">
+  <div class="apropos-hero">
+    <div class="emoji"><svg class="lico sz-xl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19.4 10.6C19.8 9.8 20 8.9 20 8a8 8 0 0 0-16 0c0 4.993 5.539 10.193 7.399 11.799a1 1 0 0 0 1.202 0"/><circle cx="12" cy="8" r="3"/><path d="M16 18h6"/><path d="M19 15v6"/></svg></div>
+    <h2>Suggérer un lieu</h2>
+    <div class="sub">Aide tes frères et sœurs à trouver où prier</div>
+  </div>
+  <div class="apropos-body">
+    <p class="ap-text">Chaque jour, des musulmans cherchent un endroit pour prier à l'heure : au travail, en déplacement, en ville. Tu connais une mosquée, une salle de prière ou un commerce qui laisse prier ? Partage-le : il pourra servir à toute la communauté.</p>
+    <div class="sg-stat" id="sg-stat" style="display:none"></div>
+
+    <div class="ap-quote">
+      « Celui qui indique un bien a la même récompense que celui qui le fait. »
+      <span class="src">— Rapporté par Muslim</span>
+    </div>
+
+    <div class="ap-section-title">Ce que tu peux suggérer</div>
+    <div class="sg-types">
+      <div class="sg-type"><span class="sg-ti pico t-mosque" data-ico="mosque"></span><b>Mosquée</b><span>avec ou sans salle pour les sœurs</span></div>
+      <div class="sg-type"><span class="sg-ti pico t-other" data-ico="other"></span><b>Salle de prière</b><span>association, lieu de travail, centre commercial…</span></div>
+      <div class="sg-type"><span class="sg-ti pico t-shop" data-ico="shop"></span><b>Commerce</b><span>qui laisse un espace pour prier</span></div>
+      <div class="sg-type"><span class="sg-ti pico t-restaurant" data-ico="restaurant"></span><b>Restaurant</b><span>qui accueille pour la prière</span></div>
+    </div>
+
+    <div class="ap-section-title">Comment ça marche</div>
+    <div class="sg-steps">
+      <div class="sg-step"><span class="sg-num">1</span><span>Tu suggères le lieu avec le formulaire ci-dessous</span></div>
+      <div class="sg-step"><span class="sg-num">2</span><span>On vérifie les informations</span></div>
+      <div class="sg-step"><span class="sg-num">3</span><span>Le lieu apparaît sur la carte, in shâ Allah</span></div>
+    </div>
+
+    <div class="ap-section-title" id="sg-form-title">Ta suggestion</div>
+    <form class="sg-form" id="sg-form" onsubmit="submitSuggestion(event)" novalidate>
+      <label class="sg-label" for="sg-name">Nom du lieu <i>*</i></label>
+      <input class="sg-input" id="sg-name" name="name" maxlength="120" placeholder="Ex. : Mosquée Al-Houda" autocomplete="off">
+
+      <div class="sg-label">Type de lieu <i>*</i></div>
+      <div class="sg-chips" data-field="type">
+        <label><input type="radio" name="type" value="mosque"><span>Mosquée</span></label>
+        <label><input type="radio" name="type" value="other"><span>Salle de prière</span></label>
+        <label><input type="radio" name="type" value="shop"><span>Commerce</span></label>
+        <label><input type="radio" name="type" value="restaurant"><span>Restaurant</span></label>
+      </div>
+
+      <label class="sg-label" for="sg-address">Adresse <i>*</i></label>
+      <input class="sg-input" id="sg-address" name="address" maxlength="200" placeholder="Ex. : 12 rue de la Paix" autocomplete="street-address">
+      <label class="sg-label" for="sg-city">Ville ou code postal <i>*</i></label>
+      <input class="sg-input" id="sg-city" name="city" maxlength="80" placeholder="Ex. : 75002 Paris" autocomplete="address-level2">
+
+      <div class="sg-label">Ablutions possibles ?</div>
+      <div class="sg-chips" data-field="ablution">
+        <label><input type="radio" name="ablution" value="oui"><span>Oui</span></label>
+        <label><input type="radio" name="ablution" value="non"><span>Non</span></label>
+        <label><input type="radio" name="ablution" value="?"><span>Je ne sais pas</span></label>
+      </div>
+      <div class="sg-label">Toilettes ?</div>
+      <div class="sg-chips" data-field="wc">
+        <label><input type="radio" name="wc" value="oui"><span>Oui</span></label>
+        <label><input type="radio" name="wc" value="non"><span>Non</span></label>
+        <label><input type="radio" name="wc" value="?"><span>Je ne sais pas</span></label>
+      </div>
+      <div class="sg-label">Accès</div>
+      <div class="sg-chips" data-field="genre">
+        <label><input type="radio" name="genre" value="mixte"><span>Hommes et femmes</span></label>
+        <label><input type="radio" name="genre" value="hommes"><span>Hommes</span></label>
+        <label><input type="radio" name="genre" value="femmes"><span>Femmes</span></label>
+        <label><input type="radio" name="genre" value="?"><span>Je ne sais pas</span></label>
+      </div>
+
+      <label class="sg-label" for="sg-info">Infos utiles</label>
+      <textarea class="sg-input sg-area" id="sg-info" name="info" maxlength="800" rows="3" placeholder="Étage, entrée, horaires d'ouverture, salle pour les sœurs…"></textarea>
+      <label class="sg-label" for="sg-mawaqit">Lien Mawaqit de la mosquée <span class="sg-opt">(facultatif)</span></label>
+      <input class="sg-input" id="sg-mawaqit" name="mawaqit" maxlength="300" inputmode="url" placeholder="https://mawaqit.net/fr/…" autocomplete="off">
+
+      <div class="sg-sep"></div>
+      <label class="sg-label" for="sg-cname">Ton prénom <span class="sg-opt">(facultatif)</span></label>
+      <input class="sg-input" id="sg-cname" name="contact_name" maxlength="60" autocomplete="given-name">
+      <label class="sg-label" for="sg-cemail">Ton e-mail <span class="sg-opt">(facultatif)</span></label>
+      <input class="sg-input" id="sg-cemail" name="contact_email" type="email" maxlength="120" inputmode="email" autocomplete="email" placeholder="Pour être prévenu quand le lieu est ajouté">
+      <input class="sg-hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+      <div class="sg-err" id="sg-err" role="alert"></div>
+      <button type="submit" class="sg-submit" id="sg-submit">Envoyer la suggestion</button>
+      <button type="button" class="sg-mail" id="sg-mail" style="display:none" onclick="suggestByMail()">Envoyer par e-mail</button>
+      <p class="sg-privacy">Ton e-mail sert uniquement à te prévenir quand le lieu est ajouté ou à te poser une question sur ta suggestion. Il n'est ni publié ni partagé.</p>
+    </form>
+
+    <div class="sg-done" id="sg-done" style="display:none">
+      <div class="sg-done-ico"><svg class="lico sz-xl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg></div>
+      <div class="sg-done-title">Jazak Allahu khayran !</div>
+      <p>Ta suggestion a bien été envoyée. Elle sera vérifiée avant d'apparaître sur la carte.</p>
+      <button type="button" class="sg-submit" onclick="resetSuggestion()">Suggérer un autre lieu</button>
+      <button type="button" class="sg-mail" onclick="navStack=['explorer'];showScreen('explorer',true)">Retour à la carte</button>
     </div>
   </div>
 </div>
@@ -1368,7 +1523,7 @@ html.theme-dark #pay-error{color:#ff7b6b!important}
 
     <div class="ap-section-title"><svg class="lico sz-set" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 12H3a2 2 0 0 0 0 4h4"/><path d="M11 14H3a2 2 0 0 0 0 4h4"/><path d="M7 16v1a2 2 0 0 0 2 2h4"/><path d="M13 12v-2a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2v2"/><path d="M15 17a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4v-1h10v1z"/><path d="m21 12-4.6 4.6a2 2 0 0 1-1.4.4"/><path d="M17 12V8a2 2 0 0 0-4 0v4"/></svg> Aider le projet et les développeurs</div>
     <p class="ap-text">Cette application a été développée avec l'intention d'aider les musulmans à préserver leur prière à l'heure, même à l'extérieur, et à faciliter l'accomplissement de cette adoration immense.</p>
-    <p class="ap-text">Si tu le souhaites, il est possible de souscrire à un abonnement de <b>1,99€ par mois</b>, conçu comme une <b>Sadaqa Jariyah</b> — une aumône continue — uniquement dans le but de soutenir le développement de l'application et d'encourager cette initiative.</p>
+    <p class="ap-text">Si tu le souhaites, il est possible de souscrire à un abonnement de <b>1,99€ par mois</b>, conçu comme une <b>Sadaqa Jariyah</b> — une aumône continue. Il permet de soutenir le développement de l'application et contribue également à <b>rémunérer le développeur</b> qui la maintient et l'améliore.</p>
     <p class="ap-text">Cet abonnement n'offre aucun avantage supplémentaire : il s'agit simplement d'une contribution sincère pour participer à une cause bénéfique pour la communauté musulmane, dont la récompense — par la permission d'Allah — continue tant que l'application sert les musulmans.</p>
     <p class="ap-text">Soutenir ce projet, c'est participer — avec la permission d'Allah — à faciliter la prière pour des milliers de musulmans.</p>
 
@@ -1387,6 +1542,7 @@ html.theme-dark #pay-error{color:#ff7b6b!important}
       <div class="ap-li"><span class="bullet">●</span><span>Faciliter l'accomplissement de la prière</span></div>
       <div class="ap-li"><span class="bullet">●</span><span>Encourager les musulmans à prier à l'heure</span></div>
       <div class="ap-li"><span class="bullet">●</span><span>Soutenir une œuvre utile pour la Oummah</span></div>
+      <div class="ap-li"><span class="bullet">●</span><span>Permettre au développeur de continuer à améliorer l'application</span></div>
     </div>
 
     <p class="ap-text">Et peut-être qu'Allah inscrira pour toi une part de récompense dans chaque prière accomplie grâce à cette cause.</p>
@@ -1778,8 +1934,8 @@ let settings=(function(){
 })();
 if(settings.autoLocate === undefined) settings.autoLocate = false;
 let prayerTrackerEnabled = localStorage.getItem('salati_tracker_enabled')==='1';
-const SCREEN_LABELS={explorer:'Explorer',favoris:'Favoris',compte:'Compte',apropos:'À propos',parametres:'Paramètres',qibla:'Boussole Qibla','aide-priere':'Aide à la prière','comment-prier':'Comment prier','suivi-priere':'Suivi de prière','noble-coran':'Noble Coran'};
-const DRAWER_ROOT_SCREENS=['explorer','favoris','compte','apropos','qibla'];
+const SCREEN_LABELS={explorer:'Explorer',favoris:'Favoris',compte:'Compte',apropos:'À propos',parametres:'Paramètres',qibla:'Boussole Qibla',suggerer:'Suggérer un lieu','aide-priere':'Aide à la prière','comment-prier':'Comment prier','suivi-priere':'Suivi de prière','noble-coran':'Noble Coran'};
+const DRAWER_ROOT_SCREENS=['explorer','favoris','compte','apropos','qibla','suggerer'];
 let navStack=['explorer'];
 
 // ============================================================
@@ -1877,8 +2033,10 @@ function showScreen(name, skipPush){
   if(name==='comment-prier') renderCommentPrier();
   if(name==='suivi-priere') renderSuiviPriere();
   if(name==='noble-coran') renderNobleCoranList();
+  if(name==='suggerer') renderSuggest();
   if(name==='qibla') initQibla();
   else stopQibla();
+  if(name!=='sourate'){ try{ stopVersetTracking(); }catch(e){} }
 }
 
 function goBack(){
@@ -2592,12 +2750,113 @@ function reportPlaceIssue(placeId, placeName){
   window.location.href = `mailto:spotprayer@gmail.com?subject=${subject}&body=${body}`;
 }
 
-function suggestPlace(){
-  const subject = encodeURIComponent('Suggestion de nouveau lieu pour Prayer Spot');
-  const body = encodeURIComponent(`Bonjour,\n\nJe souhaite suggérer un lieu pour Prayer Spot :\n\nNom du lieu : \nAdresse complète : \nType (mosquée / commerce / restaurant) : \nAblutions possibles ? : \nToilettes disponibles ? : \nAccès (hommes / femmes / mixte) : \nInformations complémentaires : \n\nMerci !`);
-  window.location.href = `mailto:spotprayer@gmail.com?subject=${subject}&body=${body}`;
-  closeDrawer();
+// ─── SUGGÉRER UN LIEU ────────────────────────────────────────
+// Page qui donne envie de participer + formulaire envoyé par e-mail (serveur → Resend).
+// Si l'envoi échoue : bouton « Envoyer par e-mail » (boîte mail pré-remplie, comme avant).
+const SUGGEST_MAIL = 'spotprayer@gmail.com';
+function suggestPlace(){ navFromDrawer('suggerer'); }
+
+function renderSuggest(){
+  document.querySelectorAll('#screen-suggerer [data-ico]').forEach(el=>{ if(!el.innerHTML) el.innerHTML = placeIcon(el.dataset.ico); });
+  const st = document.getElementById('sg-stat');
+  const n = (typeof PLACES !== 'undefined' && Array.isArray(PLACES)) ? PLACES.filter(p => !String(p.id).startsWith('fallback')).length : 0;
+  if(st){
+    if(n > 0){ st.innerHTML = `<b>${n}</b> lieu${n > 1 ? 'x' : ''} déjà sur la carte. Aide-nous à en ajouter d'autres !`; st.style.display = 'block'; }
+    else st.style.display = 'none';
+  }
+  // Pré-remplit le prénom et l'e-mail si la personne est connectée (sans écraser ce qu'elle a tapé)
+  try{
+    if(session){
+      const cn = document.getElementById('sg-cname'), ce = document.getElementById('sg-cemail');
+      if(cn && !cn.value && session.name) cn.value = String(session.name).split(' ')[0];
+      if(ce && !ce.value && session.email) ce.value = session.email;
+    }
+  }catch(e){}
 }
+
+function suggestionData(){
+  const f = document.getElementById('sg-form');
+  const v = n => { const el = f.elements[n]; return el ? String(el.value || '').trim() : ''; };
+  const r = n => { const el = f.querySelector(`input[name="${n}"]:checked`); return el ? el.value : ''; };
+  return { name: v('name'), type: r('type'), address: v('address'), city: v('city'), ablution: r('ablution'), wc: r('wc'),
+           genre: r('genre'), info: v('info'), mawaqit: v('mawaqit'), contact_name: v('contact_name'), contact_email: v('contact_email'),
+           website: v('website') };
+}
+function sgError(msg, withMail){
+  const e = document.getElementById('sg-err');
+  e.textContent = msg || ''; e.style.display = msg ? 'block' : 'none';
+  document.getElementById('sg-mail').style.display = withMail ? 'block' : 'none';
+}
+function sgMark(id, bad){ const el = document.getElementById(id); if(el) el.classList.toggle('bad', !!bad); }
+document.addEventListener('input', e=>{
+  const f = document.getElementById('sg-form'); if(!f || !f.contains(e.target)) return;
+  const el = e.target.closest('.sg-chips') || e.target;
+  el.classList.remove('bad');
+  if(!f.querySelector('.bad')) sgError('');
+});
+
+async function submitSuggestion(ev){
+  if(ev) ev.preventDefault();
+  const d = suggestionData();
+  const typeChips = document.querySelector('.sg-chips[data-field="type"]');
+  sgMark('sg-name', d.name.length < 2); sgMark('sg-address', d.address.length < 3); sgMark('sg-city', !d.city);
+  if(typeChips) typeChips.classList.toggle('bad', !d.type);
+  if(d.name.length < 2 || !d.type || d.address.length < 3 || !d.city){
+    sgError('Merci de remplir le nom, le type, l\'adresse et la ville du lieu.');
+    const first = document.querySelector('#sg-form .bad'); if(first) first.scrollIntoView({ behavior:'smooth', block:'center' });
+    return;
+  }
+  if(d.contact_email && !/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]{2,}$/.test(d.contact_email)){ sgMark('sg-cemail', true); sgError('Ton adresse e-mail semble incorrecte.'); return; }
+  sgMark('sg-cemail', false); sgError('');
+  const btn = document.getElementById('sg-submit');
+  btn.disabled = true; btn.textContent = 'Envoi en cours…';
+  try{
+    const r = await fetch(`${API}/suggestions`, { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(d), signal: AbortSignal.timeout(20000) });
+    const j = await r.json().catch(()=>({}));
+    if(r.ok && j.ok){
+      document.getElementById('sg-form').style.display = 'none';
+      document.getElementById('sg-done').style.display = 'block';
+      document.getElementById('sg-form-title').textContent = 'Merci !';
+      document.getElementById('sg-done').scrollIntoView({ behavior:'smooth', block:'center' });
+    } else if(r.status === 429){
+      sgError(j.error || 'Trop de suggestions envoyées. Réessaie dans une heure.');
+    } else if(r.status === 400){
+      sgError(j.error || 'Vérifie les informations saisies.');
+    } else {
+      sgError('L\'envoi n\'a pas fonctionné. Tu peux envoyer ta suggestion par e-mail, elle est déjà remplie :', true);
+    }
+  }catch(e){
+    sgError('Pas de connexion au serveur. Tu peux envoyer ta suggestion par e-mail, elle est déjà remplie :', true);
+  }
+  btn.disabled = false; btn.textContent = 'Envoyer la suggestion';
+}
+
+function suggestByMail(){ window.location.href = suggestionMailto(); }
+function suggestionMailto(){
+  const d = suggestionData();
+  const T = { mosque:'Mosquée', other:'Salle de prière', shop:'Commerce', restaurant:'Restaurant' };
+  const YN = { oui:'Oui', non:'Non', '?':'Je ne sais pas' };
+  const G = { mixte:'Hommes et femmes', hommes:'Hommes', femmes:'Femmes', '?':'Je ne sais pas' };
+  const body = `Bonjour,\n\nJe souhaite suggérer un lieu pour Prayer Spot :\n\n`
+    + `Nom du lieu : ${d.name}\nType : ${T[d.type] || ''}\nAdresse : ${d.address}, ${d.city}\n`
+    + `Ablutions : ${YN[d.ablution] || ''}\nToilettes : ${YN[d.wc] || ''}\nAccès : ${G[d.genre] || ''}\n`
+    + `Infos utiles : ${d.info}\nLien Mawaqit : ${d.mawaqit}\n\n${d.contact_name ? d.contact_name + '\n' : ''}Merci !`;
+  return `mailto:${SUGGEST_MAIL}?subject=${encodeURIComponent('Suggestion de lieu : ' + (d.name || 'nouveau lieu'))}&body=${encodeURIComponent(body)}`;
+}
+
+function resetSuggestion(){
+  const f = document.getElementById('sg-form');
+  const keepName = f.elements['contact_name'].value, keepMail = f.elements['contact_email'].value;
+  f.reset();
+  f.elements['contact_name'].value = keepName; f.elements['contact_email'].value = keepMail;
+  f.querySelectorAll('.bad').forEach(el => el.classList.remove('bad'));
+  sgError('');
+  f.style.display = 'flex';
+  document.getElementById('sg-done').style.display = 'none';
+  document.getElementById('sg-form-title').textContent = 'Ta suggestion';
+  document.getElementById('sg-form-title').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
 
 async function toggleFav(id){
   if(!session){showToast('Connecte-toi pour ajouter aux favoris');closeDetail();navStack=['compte'];showScreen('compte',true);return;}
@@ -2994,9 +3253,10 @@ async function fetchPrayers(lat, lng){
 
   // Tout passe par le backend (pas de CORS)
   try{
-    const params = mawaqitId
-      ? `mawaqit_id=${encodeURIComponent(mawaqitId)}`
-      : `lat=${lat}&lng=${lng}`;
+    // Toujours la position (calcul 15° de secours) + la date du téléphone (+ la mosquée Mawaqit si connue)
+    const d = new Date();
+    const params = `lat=${lat}&lng=${lng}&date=${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}`
+      + (mawaqitId ? `&mawaqit_id=${encodeURIComponent(mawaqitId)}` : '');
     const r = await fetch(`${API}/prayer-times?${params}`, { signal: AbortSignal.timeout(20000) });
     if(r.ok){
       const data = await r.json();
@@ -3178,12 +3438,19 @@ function renderPrayers(p){
 // ============================================================
 // BOUSSOLE QIBLA
 // ============================================================
+// - iPhone : cap fourni directement par Safari (webkitCompassHeading), après autorisation
+// - Android : événement « deviceorientationabsolute » = vrai Nord (le « deviceorientation » classique
+//   de Chrome est relatif à la position de départ : il ne montre PAS le Nord)
+// - Le cadran tourne de -cap (le N suit le vrai Nord) ; la 🕋 est posée sur le cadran à l'angle de la Qibla
 const KAABA_LAT = 21.4225;
 const KAABA_LNG = 39.8262;
 let qiblaBearing = 0;
-let compassHeading = 0;
+let compassHeading = null;       // cap lissé (degrés), null = pas encore de mesure
 let qiblaActive = false;
-let qiblaListener = null;
+let qiblaListener = null, qiblaListenerType = null;
+let qiblaSmooth = null;          // {x, y} : moyenne glissante sur le cercle (évite le saut 359° → 0°)
+let qiblaDialAngle = 0;          // angle affiché, continu (tourne toujours par le chemin le plus court)
+let qiblaRaf = false, qiblaAligned = false, qiblaNoSensorTimer = null, qiblaLastEvent = 0;
 
 function calculateQiblaBearing(lat, lng) {
   const φ1 = lat * Math.PI/180;
@@ -3194,82 +3461,184 @@ function calculateQiblaBearing(lat, lng) {
   let bearing = Math.atan2(y, x) * 180/Math.PI;
   return (bearing + 360) % 360;
 }
+function qiblaDistanceKm(lat, lng){
+  const R = 6371, dLat = (KAABA_LAT-lat)*Math.PI/180, dLng = (KAABA_LNG-lng)*Math.PI/180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat*Math.PI/180)*Math.cos(KAABA_LAT*Math.PI/180)*Math.sin(dLng/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+function cardinalFr(deg){
+  return ['Nord','Nord-Est','Est','Sud-Est','Sud','Sud-Ouest','Ouest','Nord-Ouest'][Math.round(((deg%360)+360)%360/45)%8];
+}
+// Position utilisée : la dernière position GPS connue (30 jours), sinon Paris
+function qiblaPosition(){
+  try{
+    const p = JSON.parse(localStorage.getItem('salati_last_pos') || 'null');
+    if(p && p.lat && p.lng && Date.now() - (p.ts||0) < 30*24*3600*1000) return { lat:+p.lat, lng:+p.lng, real:true };
+  }catch(e){}
+  return { lat:48.8566, lng:2.3522, real:false };
+}
 
-function initQibla(){
-  // Calcule le relèvement Qibla pour la position actuelle (ou Paris par défaut)
-  qiblaBearing = calculateQiblaBearing(uLat, uLng);
-  document.getElementById('qibla-deg').textContent = Math.round(qiblaBearing)+'°';
-
-  const needsPermission = typeof DeviceOrientationEvent !== 'undefined' &&
-    typeof DeviceOrientationEvent.requestPermission === 'function';
-
-  if(needsPermission && !qiblaActive){
-    document.getElementById('qibla-permission').style.display='block';
-    document.getElementById('qibla-info').style.display='none';
-  } else if(!needsPermission) {
-    // Android / navigateurs sans permission explicite requise
-    startCompassListener();
+function buildCompassDial(){
+  const ticks = document.getElementById('compass-ticks');
+  if(ticks && !ticks.childElementCount){
+    let h = '';
+    for(let d = 0; d < 360; d += 10){
+      const major = d % 90 === 0, mid = d % 30 === 0;
+      const r1 = 132, r2 = major ? 118 : mid ? 122 : 126;
+      const a = (d - 90) * Math.PI/180;
+      h += `<line x1="${135 + r1*Math.cos(a)}" y1="${135 + r1*Math.sin(a)}" x2="${135 + r2*Math.cos(a)}" y2="${135 + r2*Math.sin(a)}" stroke="currentColor" stroke-width="${major ? 2.4 : 1.2}" stroke-linecap="round" opacity="${major ? 0.9 : 0.5}"/>`;
+    }
+    ticks.innerHTML = h;
+  }
+  const card = document.getElementById('compass-card');
+  if(card && !card.childElementCount){
+    card.innerHTML = [['N',0],['E',90],['S',180],['O',270]].map(([t, d])=>{
+      const a = (d - 90) * Math.PI/180, r = 104;
+      return `<span class="${t==='N'?'n':''}" style="transform:translate(${(r*Math.cos(a)).toFixed(1)}px,${(r*Math.sin(a)).toFixed(1)}px) rotate(${d}deg)">${t}</span>`;
+    }).join('');
   }
 }
 
-function requestCompassPermission(){
-  if(typeof DeviceOrientationEvent.requestPermission === 'function'){
-    DeviceOrientationEvent.requestPermission().then(state=>{
-      if(state==='granted'){
-        document.getElementById('qibla-permission').style.display='none';
-        document.getElementById('qibla-info').style.display='flex';
-        startCompassListener();
-      } else {
-        showToast("Permission refusée — active-la dans les réglages de ton navigateur");
-      }
-    }).catch(()=>showToast('Boussole non disponible sur cet appareil'));
+function renderQiblaInfo(){
+  const pos = qiblaPosition();
+  qiblaBearing = calculateQiblaBearing(pos.lat, pos.lng);
+  const b = Math.round(qiblaBearing);
+  document.getElementById('qibla-deg').textContent = b + '°';
+  document.getElementById('qibla-label').textContent = 'Qibla : ' + cardinalFr(qiblaBearing) + ' (depuis le Nord)';
+  const km = Math.round(qiblaDistanceKm(pos.lat, pos.lng)/10)*10;
+  document.getElementById('qibla-src').innerHTML = pos.real
+    ? `Calculée depuis ta position · La Mecque à ${km.toLocaleString('fr-FR')} km`
+    : `Calculée depuis Paris (ta position n'est pas connue) · <button onclick="qiblaLocate()">Me localiser</button>`;
+  const ptr = document.getElementById('qibla-pointer');
+  if(ptr) ptr.style.transform = `rotate(${qiblaBearing}deg)`;
+  setQiblaDial(compassHeading === null ? 0 : compassHeading);
+}
+function qiblaLocate(){
+  try{ locateMe(); }catch(e){}
+  // Recalcule dès que la nouvelle position est enregistrée
+  let n = 0; const t = setInterval(()=>{ n++; if(qiblaPosition().real || n > 30){ clearInterval(t); renderQiblaInfo(); } }, 1000);
+}
+
+function initQibla(){
+  buildCompassDial();
+  renderQiblaInfo();
+  document.getElementById('qibla-unavailable').style.display = 'none';
+  if(typeof DeviceOrientationEvent === 'undefined'){ qiblaShowUnavailable(); return; }
+  // iPhone : Safari exige un appui pour autoriser les capteurs.
+  // Android (Chrome récent a aussi requestPermission) : les mesures arrivent sans rien demander.
+  const iosNeedsTap = typeof DeviceOrientationEvent.requestPermission === 'function' && isIOSDevice();
+  if(iosNeedsTap && !qiblaActive){
+    document.getElementById('qibla-permission').style.display = 'block';
+    document.getElementById('qibla-info').style.display = 'none';
+    document.getElementById('qibla-calib').style.display = 'none';
+    setQiblaDial(0);
+  } else if(!iosNeedsTap){
+    startCompassListener();
   }
+}
+// « Réessayer » depuis le message « non disponible » (demande l'accès aux capteurs si le navigateur le prévoit)
+function qiblaRetry(){
+  stopQibla();
+  const go = ()=>startCompassListener();
+  if(typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function'){
+    DeviceOrientationEvent.requestPermission().then(go).catch(go);
+  } else go();
+}
+
+function requestCompassPermission(){
+  if(typeof DeviceOrientationEvent === 'undefined' || typeof DeviceOrientationEvent.requestPermission !== 'function') return;
+  DeviceOrientationEvent.requestPermission().then(state=>{
+    if(state === 'granted'){
+      document.getElementById('qibla-permission').style.display = 'none';
+      startCompassListener();
+    } else {
+      showToast("Autorisation refusée — active « Mouvement et orientation » dans les réglages de Safari");
+    }
+  }).catch(()=>showToast('Boussole non disponible sur cet appareil'));
+}
+
+function screenAngle(){
+  const a = (screen.orientation && typeof screen.orientation.angle === 'number') ? screen.orientation.angle
+    : (typeof window.orientation === 'number' ? window.orientation : 0);
+  return ((a % 360) + 360) % 360;
+}
+
+function onCompassReading(raw){
+  const h = ((raw + screenAngle()) % 360 + 360) % 360;
+  const r = h * Math.PI/180;
+  if(!qiblaSmooth) qiblaSmooth = { x: Math.cos(r), y: Math.sin(r) };
+  else { const k = 0.25; qiblaSmooth.x += k*(Math.cos(r) - qiblaSmooth.x); qiblaSmooth.y += k*(Math.sin(r) - qiblaSmooth.y); }
+  compassHeading = (Math.atan2(qiblaSmooth.y, qiblaSmooth.x) * 180/Math.PI + 360) % 360;
+  qiblaLastEvent = Date.now();
+  if(!qiblaRaf){ qiblaRaf = true; requestAnimationFrame(()=>{ qiblaRaf = false; updateCompassNeedle(); }); }
 }
 
 function startCompassListener(){
   if(qiblaActive) return;
-  qiblaActive = true;
-  document.getElementById('qibla-permission').style.display='none';
-  document.getElementById('qibla-info').style.display='flex';
+  qiblaActive = true; compassHeading = null; qiblaSmooth = null; qiblaAligned = false;
+  document.getElementById('qibla-permission').style.display = 'none';
+  document.getElementById('qibla-unavailable').style.display = 'none';
+  document.getElementById('qibla-info').style.display = 'flex';
+  document.getElementById('qibla-calib').style.display = 'block';
+  document.getElementById('qibla-guide').textContent = 'Recherche du Nord…';
 
+  const useAbsolute = 'ondeviceorientationabsolute' in window;
+  qiblaListenerType = useAbsolute ? 'deviceorientationabsolute' : 'deviceorientation';
   qiblaListener = (e)=>{
-    let heading;
-    if(e.webkitCompassHeading !== undefined){
-      heading = e.webkitCompassHeading; // iOS Safari
-    } else if(e.alpha !== null){
-      heading = 360 - e.alpha; // Android/standard
-    } else {
-      return;
+    if(typeof e.webkitCompassHeading === 'number' && !isNaN(e.webkitCompassHeading)){
+      onCompassReading(e.webkitCompassHeading);                 // iPhone (Safari)
+    } else if(e.alpha !== null && e.alpha !== undefined && (useAbsolute || e.absolute === true)){
+      onCompassReading(360 - e.alpha);                          // Android : vrai Nord
     }
-    compassHeading = heading;
-    updateCompassNeedle();
   };
-  window.addEventListener('deviceorientation', qiblaListener, true);
+  window.addEventListener(qiblaListenerType, qiblaListener, true);
 
-  // Si aucune donnée ne vient (desktop, pas de capteur), afficher un mode statique après 2s
-  setTimeout(()=>{
-    if(compassHeading===0){
-      showToast('Pas de capteur boussole détecté — orientation Nord par défaut');
-    }
-  },2000);
+  // Aucune mesure exploitable après 3 s (ordinateur, pas de capteur, Nord non fourni) → mode « Nord en haut »
+  clearTimeout(qiblaNoSensorTimer);
+  qiblaNoSensorTimer = setTimeout(()=>{ if(qiblaActive && compassHeading === null) qiblaShowUnavailable(); }, 3000);
+}
+
+function qiblaShowUnavailable(){
+  document.getElementById('qibla-unavailable').style.display = 'block';
+  document.getElementById('qibla-info').style.display = 'none';
+  document.getElementById('qibla-calib').style.display = 'none';
+  document.getElementById('qibla-guide').textContent = '';
+  setQiblaDial(0);
 }
 
 function stopQibla(){
   if(qiblaListener){
-    window.removeEventListener('deviceorientation', qiblaListener, true);
-    qiblaListener=null;
+    window.removeEventListener(qiblaListenerType || 'deviceorientation', qiblaListener, true);
+    qiblaListener = null;
   }
-  qiblaActive=false;
+  clearTimeout(qiblaNoSensorTimer);
+  qiblaActive = false;
+}
+
+// Tourne le cadran vers -cap, toujours par le chemin le plus court (pas de tour complet en passant par le Nord)
+function setQiblaDial(heading){
+  const target = -heading;
+  const delta = ((target - qiblaDialAngle) % 360 + 540) % 360 - 180;
+  qiblaDialAngle += delta;
+  const dial = document.getElementById('compass-dial');
+  if(dial) dial.style.transform = `rotate(${qiblaDialAngle}deg)`;
+  const k = document.querySelector('#qibla-pointer .kaaba');
+  if(k) k.style.transform = `rotate(${-(qiblaBearing + qiblaDialAngle)}deg)`;
 }
 
 function updateCompassNeedle(){
-  const relativeBearing = (qiblaBearing - compassHeading + 360) % 360;
-  const needle = document.getElementById('compass-needle');
-  if(needle) needle.style.transform = `rotate(${relativeBearing}deg)`;
-
-  const alignedEl = document.getElementById('qibla-aligned');
-  const isAligned = relativeBearing < 6 || relativeBearing > 354;
-  if(alignedEl) alignedEl.classList.toggle('show', isAligned);
+  if(compassHeading === null) return;
+  setQiblaDial(compassHeading);
+  // Angle entre le haut du téléphone et la Qibla : -180 … +180 (positif = tourner à droite)
+  const rel = ((qiblaBearing - compassHeading) % 360 + 540) % 360 - 180;
+  const abs = Math.abs(rel);
+  const wasAligned = qiblaAligned;
+  qiblaAligned = wasAligned ? abs <= 9 : abs <= 5;          // petite marge pour ne pas clignoter
+  document.getElementById('compass-ring').classList.toggle('aligned', qiblaAligned);
+  document.getElementById('qibla-aligned').classList.toggle('show', qiblaAligned);
+  document.getElementById('qibla-guide').textContent = qiblaAligned ? ''
+    : (rel > 0 ? `Tourne vers la droite ↻ (${Math.round(abs)}°)` : `Tourne vers la gauche ↺ (${Math.round(abs)}°)`);
+  if(qiblaAligned && !wasAligned && navigator.vibrate){ try{ navigator.vibrate(40); }catch(e){} }
 }
 
 // ============================================================
@@ -4487,6 +4856,7 @@ function closeInstallModal(){
 async function initApp(){
   // Localisation en premier : ne dépend ni du serveur ni de la carte
   initLocation();
+  repairQuranProgress();
   try{ countVisit(); scheduleInstallBanner(IB_DELAY); }catch(e){}
   try{ await restoreSession(); }catch(e){ console.error('restoreSession', e); }
   try{ showScreen('explorer', true); }catch(e){ console.error('showScreen', e); }
@@ -4780,13 +5150,30 @@ function getQuranProgress(num){
 function saveQuranProgress(num, data){
   localStorage.setItem(`ps_quran_${num}`, JSON.stringify(data));
 }
-function getSourateReadCount(num){
+function sourateTotal(num){ const m = SOURATES_META[num-1]; return m ? m[4] : 0; }
+// Ne compte que les versets qui existent dans la sourate (1 → nombre de versets)
+function getSourateReadCount(num, total){
+  const max = total || sourateTotal(num);
   const p = getQuranProgress(num);
-  return Object.values(p).filter(Boolean).length;
+  return Object.keys(p).filter(k=>{ const v = +k; return p[k] && Number.isInteger(v) && v >= 1 && v <= max; }).length;
 }
 function getSouratePct(num, total){
-  const count = getSourateReadCount(num);
-  return total > 0 ? Math.round(count/total*100) : 0;
+  const t = total || sourateTotal(num);
+  const count = getSourateReadCount(num, t);
+  return t > 0 ? Math.min(100, Math.round(count/t*100)) : 0;
+}
+// Réparation unique : retire les versets « en trop » enregistrés par erreur (ancien bug du suivi de lecture)
+function repairQuranProgress(){
+  try{
+    if(localStorage.getItem('ps_quran_fix1')) return;
+    for(let n = 1; n <= 114; n++){
+      const raw = localStorage.getItem(`ps_quran_${n}`); if(!raw) continue;
+      const p = JSON.parse(raw) || {}, max = sourateTotal(n), clean = {};
+      Object.keys(p).forEach(k=>{ const v = +k; if(p[k] && Number.isInteger(v) && v >= 1 && v <= max) clean[v] = true; });
+      localStorage.setItem(`ps_quran_${n}`, JSON.stringify(clean));
+    }
+    localStorage.setItem('ps_quran_fix1', '1');
+  }catch(e){}
 }
 
 function renderNobleCoranList(){
@@ -4835,6 +5222,7 @@ function renderSouratesList(list){
 }
 
 async function openSourate(num){
+  stopVersetTracking();
   currentSourateNum = num;
   const meta = SOURATES_META[num-1];
   const [_,nameEn,nameAr,nameFr,versets,type] = meta;
@@ -5056,9 +5444,19 @@ async function loadSourateIntro(num){
   else { el.textContent = 'Informations non disponibles.'; el.classList.remove('sourate-intro-loading'); }
 }
 
+// Un seul suivi de lecture à la fois (sinon les versets d'une sourate étaient comptés pour une autre)
+let quranScrollHandler = null, quranTrackTimers = [];
+function stopVersetTracking(){
+  const screen = document.getElementById('screen-sourate');
+  if(screen && quranScrollHandler) screen.removeEventListener('scroll', quranScrollHandler);
+  quranScrollHandler = null;
+  quranTrackTimers.forEach(clearTimeout); quranTrackTimers = [];
+}
+
 function setupVersetObserver(num, total){
   if(quranObserver) quranObserver.disconnect();
   quranObserver = null;
+  stopVersetTracking();
 
   const screen = document.getElementById('screen-sourate');
   if(!screen) return;
@@ -5066,7 +5464,31 @@ function setupVersetObserver(num, total){
   let _rafPending = false;
   let _lastCenterV = -1;
 
+  function markRead(els){
+    if(currentSourateNum !== num) return;
+    const progress = getQuranProgress(num);
+    let changed = false;
+    els.forEach(el=>{
+      const v = parseInt(el.dataset.v);
+      if(v >= 1 && v <= total && !progress[v]){ progress[v] = true; el.classList.add('read'); changed = true; }
+    });
+    if(!changed) return;
+    saveQuranProgress(num, progress);
+    const bar = document.getElementById('s-progress');
+    if(bar) bar.style.width = getSouratePct(num, total)+'%';
+  }
+  // Versets visibles à l'écran (même partiellement)
+  function visibleVersets(){
+    const sr = screen.getBoundingClientRect();
+    return [...screen.querySelectorAll('.verset[data-v]')].filter(el=>{ const r = el.getBoundingClientRect(); return r.bottom > sr.top + 8 && r.top < sr.bottom - 8; });
+  }
+  // Fin de sourate : les derniers versets ne peuvent pas remonter au centre → validés quand on arrive en bas
+  function checkEnd(){
+    if(screen.scrollHeight - screen.clientHeight > 4 && screen.scrollTop + screen.clientHeight >= screen.scrollHeight - 12) markRead(visibleVersets());
+  }
+
   function updateCenterVerset(){
+    if(currentSourateNum !== num) return;
     const screenRect = screen.getBoundingClientRect();
     const screenCenterY = screenRect.top + screenRect.height / 2;
     const versets = screen.querySelectorAll('.verset[data-v]');
@@ -5081,26 +5503,21 @@ function setupVersetObserver(num, total){
     const vNum = parseInt(bestEl.dataset.v);
     if(vNum === _lastCenterV) return;
     _lastCenterV = vNum;
-    const progress = getQuranProgress(num);
-    if(!progress[vNum]){
-      progress[vNum] = true;
-      saveQuranProgress(num, progress);
-      bestEl.classList.add('read');
-      const pct = getSouratePct(num, total);
-      const bar = document.getElementById('s-progress');
-      if(bar) bar.style.width = pct+'%';
-    }
+    markRead([bestEl]);
   }
 
   function onScroll(){
     if(_rafPending) return;
     _rafPending = true;
-    requestAnimationFrame(()=>{ _rafPending = false; updateCenterVerset(); });
+    requestAnimationFrame(()=>{ _rafPending = false; updateCenterVerset(); checkEnd(); });
   }
 
+  quranScrollHandler = onScroll;
   screen.addEventListener('scroll', onScroll, {passive:true});
   // Marquer le verset centre au chargement (après layout)
-  setTimeout(updateCenterVerset, 400);
+  quranTrackTimers.push(setTimeout(updateCenterVerset, 400));
+  // Sourate entière visible sans défiler (grand écran) : validée après 8 s de lecture
+  quranTrackTimers.push(setTimeout(()=>{ if(screen.scrollHeight - screen.clientHeight <= 4) markRead(visibleVersets()); }, 8000));
 }
 
 function openSourateMenu(num){

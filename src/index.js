@@ -30,12 +30,14 @@ app.use('/api/prayer', require('./routes/prayer'));
 app.use('/api/prayer-times', require('./routes/prayer-times'));
 app.use('/api/stripe', stripeRoutes);
 app.use('/api/admin', require('./routes/admin'));
+app.use('/api/suggestions', require('./routes/suggestions'));
 
 app.use((req, res) => res.status(404).json({ error: 'Route introuvable' }));
 
 app.listen(PORT, () => {
   console.log(`🕌 Salati API démarrée sur http://localhost:${PORT}`);
   console.log(`Stripe: ${process.env.STRIPE_SECRET_KEY ? '✅ configuré' : '⚠️ STRIPE_SECRET_KEY manquant'}`);
+  console.log(`Suggestions (Resend): ${process.env.RESEND_API_KEY ? '✅ configuré' : '⚠️ RESEND_API_KEY manquant — le formulaire proposera l\'envoi par e-mail'}`);
   // Ajout automatique des lieux listés dans data/lieux-a-ajouter.json (doublons ignorés)
   setTimeout(() => { require('./import-places').runPlacesImport().catch(e => console.error('Import lieux :', e.message)); }, 3000);
 });
