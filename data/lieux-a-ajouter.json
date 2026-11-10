@@ -17,7 +17,7 @@
     "genre": "mixte",
     "name": "Mosquée As-Salam",
     "address": "1 impasse de Londres",
-    "description": "Espace femmes, parking et accès handicapés.",
+    "description": "",
     "mawaqit_id": "assalam-toulouse"
   },
   {
@@ -28,7 +28,7 @@
     "genre": "mixte",
     "name": "Mosquée Al Fath (Les Izards)",
     "address": "64 chemin des Izards",
-    "description": "Quartier des Izards. Espace femmes, parking et accès handicapés.",
+    "description": "Quartier des Izards.",
     "mawaqit_id": "mosquee-al-fath-toulouse-31200-france"
   },
   {
@@ -111,5 +111,56 @@
     "name": "Mosquée Tawhid",
     "address": "21 rue Gramat",
     "description": "Près de la gare Matabiau. Pas d'espace pour les femmes."
+  },
+  {
+    "type": "mosque",
+    "ablution": true,
+    "wc": false,
+    "genre": "mixte",
+    "name": "Grande Mosquée de Blagnac",
+    "address": "18 rue des Orfèvres",
+    "city": "Blagnac",
+    "mawaqit_id": "mosquee-de-blagnac-blagnac-31700-france"
+  },
+  {
+    "type": "mosque",
+    "ablution": true,
+    "wc": false,
+    "genre": "mixte",
+    "name": "Mosquée Al-Ihsane",
+    "address": "7 chemin de la Plaine",
+    "city": "Colomiers",
+    "description": "Dans une zone d'activités. Parking, souvent complet le vendredi."
+  },
+  {
+    "type": "mosque",
+    "ablution": true,
+    "wc": false,
+    "genre": "mixte",
+    "name": "Mosquée El Firdaous",
+    "address": "2 ter rue du Vivier",
+    "city": "Cugnaux",
+    "mawaqit_id": "mosquee-el-firdaous-cugnaux-31270-france"
+  },
+  {
+    "type": "mosque",
+    "ablution": true,
+    "wc": false,
+    "genre": "mixte",
+    "name": "Mosquée Al Mouminine",
+    "address": "16 rue de Marclan",
+    "city": "Muret",
+    "description": "À côté du cimetière."
+  },
+  {
+    "type": "mosque",
+    "ablution": true,
+    "wc": false,
+    "genre": "mixte",
+    "name": "Association Al Misbah",
+    "address": "7 chemin de Moulis",
+    "city": "Portet-sur-Garonne",
+    "description": "Salle de prière et école.",
+    "mawaqit_id": "almisbah-psg"
   }
 ]
