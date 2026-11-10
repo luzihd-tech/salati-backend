@@ -440,12 +440,17 @@ tr:hover td{background:var(--green-light)}
         <div class="fg form-full">
           <label>URL de la photo</label>
           <input type="url" id="f-photo" placeholder="https://..." oninput="previewPhoto(this.value)">
-          <div class="hint">Lien direct vers une image JPG/PNG (Google Maps, site officiel...)</div>
+          <div class="hint">Seulement une photo dont tu as les droits (ta photo, Wikimédia…). Laisse vide pour afficher la photo Google automatiquement.</div>
           <img id="photo-preview" class="photo-preview" alt="Aperçu">
         </div>
         <div class="fg form-full">
           <label>Description</label>
           <textarea id="f-desc" placeholder="Informations utiles sur ce lieu..."></textarea>
+        </div>
+        <div class="fg form-full">
+          <label>Identifiant Google du lieu (optionnel)</label>
+          <input type="text" id="f-gplace" placeholder="ex: ChIJaQSgCoy7rhIRWycqhLkppo8">
+          <div class="hint">Sert à afficher la photo Google Maps du lieu dans l'app</div>
         </div>
         <div class="fg form-full">
           <label>ID Mawaqit (optionnel)</label>
@@ -678,6 +683,7 @@ function openPlaceModal(place=null){
   document.getElementById('f-photo').value = place?.photo_url||'';
   document.getElementById('f-desc').value = place?.desc||place?.description||'';
   document.getElementById('f-mawaqit').value = place?.mawaqit_id||'';
+  document.getElementById('f-gplace').value = place?.google_place_id||'';
   setToggle('t-ablution', place?.ablution||false);
   setToggle('t-wc', place?.wc||false);
   setToggle('t-verified', place?.verified!==false);
@@ -725,6 +731,7 @@ async function savePlace(){
     photo_url: document.getElementById('f-photo').value.trim()||null,
     description: document.getElementById('f-desc').value.trim(),
     mawaqitId: document.getElementById('f-mawaqit').value.trim()||null,
+    google_place_id: document.getElementById('f-gplace').value.trim()||null,
     ablution: getToggle('t-ablution'),
     wc: getToggle('t-wc'),
     verified: getToggle('t-verified'),
