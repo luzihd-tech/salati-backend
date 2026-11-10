@@ -1,1 +1,115 @@
-[]
+[
+  {
+    "type": "mosque",
+    "city": "Toulouse",
+    "ablution": true,
+    "wc": false,
+    "genre": "mixte",
+    "name": "Grande Mosquée de Toulouse",
+    "address": "22 rue Jean Lebas",
+    "description": "Quartier Empalot. Grande mosquée avec une salle réservée aux femmes."
+  },
+  {
+    "type": "mosque",
+    "city": "Toulouse",
+    "ablution": true,
+    "wc": false,
+    "genre": "mixte",
+    "name": "Mosquée As-Salam",
+    "address": "1 impasse de Londres",
+    "description": "Espace femmes, parking et accès handicapés.",
+    "mawaqit_id": "assalam-toulouse"
+  },
+  {
+    "type": "mosque",
+    "city": "Toulouse",
+    "ablution": true,
+    "wc": false,
+    "genre": "mixte",
+    "name": "Mosquée Al Fath (Les Izards)",
+    "address": "64 chemin des Izards",
+    "description": "Quartier des Izards. Espace femmes, parking et accès handicapés.",
+    "mawaqit_id": "mosquee-al-fath-toulouse-31200-france"
+  },
+  {
+    "type": "mosque",
+    "city": "Toulouse",
+    "ablution": true,
+    "wc": false,
+    "genre": "mixte",
+    "name": "Mosquée En-Nour",
+    "address": "19 rue de Cannes",
+    "description": "Petite salle pour les femmes."
+  },
+  {
+    "type": "mosque",
+    "city": "Toulouse",
+    "ablution": true,
+    "wc": false,
+    "genre": "mixte",
+    "name": "Mosquée Rahma (Faourette-Bagatelle)",
+    "address": "59 rue de la Faourette",
+    "description": "Petite salle au sous-sol d'une résidence."
+  },
+  {
+    "type": "mosque",
+    "city": "Toulouse",
+    "ablution": true,
+    "wc": false,
+    "genre": "mixte",
+    "name": "Mosquée Abou Bakr As-Siddiq",
+    "address": "18 cheminement Louis Auriacombe",
+    "description": "Quartier de la Reynerie.",
+    "mawaqit_id": "abu-bakr-toulouse"
+  },
+  {
+    "type": "mosque",
+    "city": "Toulouse",
+    "ablution": true,
+    "wc": false,
+    "genre": "hommes",
+    "name": "Masjid Omar Ibn Al-Khattab",
+    "address": "3 cheminement Edgard Varèse",
+    "description": "Quartier de la Reynerie. Pas d'espace pour les femmes.",
+    "mawaqit_id": "omar-reynerie"
+  },
+  {
+    "type": "mosque",
+    "city": "Toulouse",
+    "ablution": true,
+    "wc": false,
+    "genre": "mixte",
+    "name": "Mosquée turque de la Reynerie",
+    "address": "4 rue Émile Baudot",
+    "description": "Quartier de la Reynerie."
+  },
+  {
+    "type": "mosque",
+    "city": "Toulouse",
+    "ablution": true,
+    "wc": false,
+    "genre": "mixte",
+    "name": "Masjid Ötüken",
+    "address": "37 rue Paul Gauguin",
+    "description": "Association culturelle turque."
+  },
+  {
+    "type": "mosque",
+    "city": "Toulouse",
+    "ablution": true,
+    "wc": false,
+    "genre": "mixte",
+    "name": "Mosquée CTSM",
+    "address": "8 rue du Nivernais"
+  },
+  {
+    "type": "mosque",
+    "city": "Toulouse",
+    "ablution": true,
+    "wc": false,
+    "genre": "hommes",
+    "name": "Mosquée Tawhid",
+    "address": "21 rue Gramat",
+    "description": "Près de la gare Matabiau. Pas d'espace pour les femmes."
+  }
+]
