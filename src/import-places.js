@@ -92,7 +92,8 @@ async function runPlacesImport() {
       genre: GENRES.includes(item.genre) ? item.genre : 'mixte',
       description: String(item.description || ''),
       emoji: EMOJI[type], rating: 0, rating_count: 0, verified: true,
-      mawaqit_id: item.mawaqit_id || null, opening_hours: String(item.opening_hours || '')
+      mawaqit_id: item.mawaqit_id || null, opening_hours: String(item.opening_hours || ''),
+      google_place_id: /^[\w-]{10,300}$/.test(String(item.google_place_id || '')) ? item.google_place_id : null
     };
     const { data: inserted, error: insErr } = await supabase.from('places').insert(row).select('id').single();
     if (insErr) { res.failed.push(`${label} — refus de la base (${insErr.message})`); continue; }

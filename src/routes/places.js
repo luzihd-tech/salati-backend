@@ -49,7 +49,7 @@ router.get('/:id', async (req, res) => {
 // POST /api/places (admin)
 router.post('/', adminMiddleware, async (req, res) => {
   try {
-    const { name, type, address, city, lat, lng, ablution, wc, genre, description, emoji, openingHours, mawaqitId } = req.body;
+    const { name, type, address, city, lat, lng, ablution, wc, genre, description, emoji, openingHours, mawaqitId, photo_url, google_place_id, googlePlaceId } = req.body;
     if (!name || !type || !address || !lat || !lng) return res.status(400).json({ error: 'Champs obligatoires manquants' });
 
     const { data: place, error } = await supabase.from('places').insert({
@@ -59,6 +59,7 @@ router.post('/', adminMiddleware, async (req, res) => {
       emoji: emoji||(type==='mosque'?'🕌':type==='shop'?'🏪':type==='restaurant'?'🍽️':'📍'),
       rating: 0, rating_count: 0, verified: true,
       mawaqit_id: mawaqitId||null, opening_hours: openingHours||'',
+      photo_url: photo_url||null, google_place_id: google_place_id||googlePlaceId||null,
       created_by: req.user.id
     }).select().single();
     if (error) throw error;
@@ -76,6 +77,8 @@ router.put('/:id', adminMiddleware, async (req, res) => {
     if (updates.lng) updates.lng = parseFloat(updates.lng);
     if (updates.openingHours !== undefined) { updates.opening_hours = updates.openingHours; delete updates.openingHours; }
     if (updates.mawaqitId !== undefined) { updates.mawaqit_id = updates.mawaqitId; delete updates.mawaqitId; }
+    if (updates.googlePlaceId !== undefined) { updates.google_place_id = updates.googlePlaceId; delete updates.googlePlaceId; }
+    if (updates.google_place_id === '') updates.google_place_id = null;
 
     const { data: place, error } = await supabase.from('places').update(updates).eq('id', req.params.id).select().single();
     if (error) throw error;
