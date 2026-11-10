@@ -15,6 +15,7 @@
     "multer": "^1.4.5-lts.1",
     "dotenv": "^16.3.1",
     "node-fetch": "^2.7.0",
+    "nodemailer": "^7.0.13",
     "stripe": "^14.21.0"
   },
   "devDependencies": {

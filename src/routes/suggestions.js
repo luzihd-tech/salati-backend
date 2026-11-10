@@ -1,14 +1,35 @@
 // ============================================================
-// SUGGESTIONS DE LIEUX → e-mail (via Resend)
+// SUGGESTIONS DE LIEUX → e-mail
 // POST /api/suggestions : le formulaire « Suggérer un lieu » de l'app.
 // Rien n'est enregistré : la suggestion est envoyée par e-mail à l'équipe.
-// Variables Render : RESEND_API_KEY (obligatoire), SUGGESTIONS_TO (facultatif)
+// Envoi par Gmail (variable Render GMAIL_APP_PASSWORD = mot de passe d'application
+// du compte spotprayer@gmail.com), sinon par Resend (RESEND_API_KEY) si configuré.
+// Facultatif : GMAIL_USER, SUGGESTIONS_TO
 // ============================================================
 const express = require('express');
 const router = express.Router();
 
-const TO = process.env.SUGGESTIONS_TO || 'spotprayer@gmail.com';
+const GMAIL_USER = process.env.GMAIL_USER || 'spotprayer@gmail.com';
+const TO = process.env.SUGGESTIONS_TO || GMAIL_USER;
 const FROM = process.env.SUGGESTIONS_FROM || 'Prayer Spot <onboarding@resend.dev>';
+
+let gmailTransport = null;
+function getGmail() {
+  if (!gmailTransport) {
+    const nodemailer = require('nodemailer');
+    gmailTransport = nodemailer.createTransport({
+      service: 'gmail',
+      auth: { user: GMAIL_USER, pass: String(process.env.GMAIL_APP_PASSWORD).replace(/\s+/g, '') },
+      connectionTimeout: 10000, greetingTimeout: 10000, socketTimeout: 15000
+    });
+  }
+  return gmailTransport;
+}
+function mailProvider() {
+  if (process.env.GMAIL_APP_PASSWORD) return 'gmail';
+  if (process.env.RESEND_API_KEY) return 'resend';
+  return null;
+}
 const TYPES = { mosque: 'Mosquée', other: 'Salle de prière', shop: 'Commerce', restaurant: 'Restaurant' };
 const YESNO = { oui: 'Oui', non: 'Non', '?': 'Je ne sais pas' };
 const GENRES = { mixte: 'Hommes et femmes', hommes: 'Hommes', femmes: 'Femmes', '?': 'Je ne sais pas' };
@@ -53,7 +74,8 @@ router.post('/', async (req, res) => {
   if (s.contactEmail && !EMAIL_RE.test(s.contactEmail)) return res.status(400).json({ error: 'Adresse e-mail invalide' });
   if (s.mawaqit && !/^https?:\/\/(www\.)?mawaqit\.net\//i.test(s.mawaqit)) s.mawaqit = '';
 
-  if (!process.env.RESEND_API_KEY) return res.status(503).json({ error: 'Envoi momentanément indisponible', fallback: 'mail' });
+  const provider = mailProvider();
+  if (!provider) return res.status(503).json({ error: 'Envoi momentanément indisponible', fallback: 'mail' });
   if (!allowed(clientIp(req))) return res.status(429).json({ error: 'Trop de suggestions envoyées. Réessaie dans une heure.' });
 
   const full = `${s.address}, ${s.city}`;
@@ -73,7 +95,20 @@ router.post('/', async (req, res) => {
     <p style="margin:18px 0 0;color:#7a8f86;font-size:12px">Envoyé depuis le formulaire « Suggérer un lieu » de Prayer Spot.${s.contactEmail ? ' Réponds directement à ce message pour écrire à la personne.' : ''}</p></div>`;
   const text = rows.map(([k, v]) => `${k} : ${v}`).join('\n') + `\n\nGoogle Maps : ${maps}`;
 
-  const payload = { from: FROM, to: [TO], subject: `📍 Nouvelle suggestion : ${s.name} (${s.city})`, html, text };
+  const subject = `📍 Nouvelle suggestion : ${s.name} (${s.city})`;
+
+  if (provider === 'gmail') {
+    try {
+      await getGmail().sendMail({ from: `"Prayer Spot" <${GMAIL_USER}>`, to: TO, subject, html, text, ...(s.contactEmail ? { replyTo: s.contactEmail } : {}) });
+      console.log(`Suggestion envoyée : ${s.name} (${s.city})`);
+      return res.json({ ok: true });
+    } catch (e) {
+      console.error('Suggestion : Gmail a refusé l\'envoi —', e.code || '', (e.message || '').slice(0, 200));
+      return res.status(502).json({ error: 'Envoi impossible pour le moment', fallback: 'mail' });
+    }
+  }
+
+  const payload = { from: FROM, to: [TO], subject, html, text };
   if (s.contactEmail) payload.reply_to = s.contactEmail;
 
   try {
