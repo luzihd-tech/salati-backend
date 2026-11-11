@@ -1058,6 +1058,14 @@ html.theme-dark .install-banner{box-shadow:0 10px 30px rgba(0,0,0,0.55)}
   display:flex;align-items:flex-start;gap:8px;margin-bottom:4px;line-height:1.5;
 }
 
+/* Dessin de la barre du navigateur avec le bouton à toucher */
+.iv{display:flex;justify-content:center;margin:2px 0 16px}
+.iv svg{width:100%;max-width:290px;height:auto;overflow:visible}
+.iv-ring{transform-box:fill-box;transform-origin:center;animation:ivPulse 1.6s ease-out infinite}
+@keyframes ivPulse{0%{opacity:.9;transform:scale(.8)}70%{opacity:0;transform:scale(1.55)}100%{opacity:0;transform:scale(1.55)}}
+@media (prefers-reduced-motion: reduce){.iv-ring{animation:none;opacity:0}}
+.install-copy{width:100%;background:var(--gray-100);color:var(--text);border:1px solid var(--border);border-radius:100px;padding:12px 18px;font-size:13.5px;font-weight:700;cursor:pointer;margin:2px 0 12px;font-family:inherit}
+
 /* ─── POPUP LOCALISATION ─────────────────────────────────── */
 .loc-overlay{
   position:fixed;inset:0;background:rgba(10,30,22,0.55);z-index:9000;
@@ -1778,28 +1786,11 @@ html.theme-dark #pay-error{color:#ff7b6b!important}
       </div>
     </div>
 
-    <!-- ÉTAPE iOS -->
-    <div id="install-step-ios" style="display:none">
-      <p class="install-subtitle">Dans <strong>Safari</strong>, suis ces 3 étapes :</p>
-      <div class="install-steps">
-        <div class="install-step">
-          <span class="install-step-num">1</span>
-          <span class="install-step-text">Appuie sur l'icône <strong>Partager</strong> <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg> en bas de l'écran</span>
-        </div>
-        <div class="install-step">
-          <span class="install-step-num">2</span>
-          <span class="install-step-text">Fais défiler et appuie sur <strong>"Sur l'écran d'accueil"</strong></span>
-        </div>
-        <div class="install-step">
-          <span class="install-step-num">3</span>
-          <span class="install-step-text">Appuie sur <strong>Ajouter</strong> en haut à droite</span>
-        </div>
-      </div>
-      <div class="install-tip">
-        <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0;stroke-linecap:round;stroke-linejoin:round;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        Cette page doit être ouverte dans Safari (pas Chrome iOS) pour que l'option apparaisse.
-      </div>
-    </div>
+    <!-- ÉTAPE iOS (contenu adapté au navigateur : Safari récent / ancien, Chrome, autre) -->
+    <div id="install-step-ios" style="display:none"><div id="install-ios-guide"></div></div>
+
+    <!-- ÉTAPE : navigateur intégré à une autre app (Instagram, Facebook…) -->
+    <div id="install-step-inapp" style="display:none"><div id="install-inapp-guide"></div></div>
 
     <!-- ÉTAPE Android : choix navigateur -->
     <div id="install-step-android" style="display:none">
@@ -1859,10 +1850,11 @@ html.theme-dark #pay-error{color:#ff7b6b!important}
       </div>
       <div id="install-chrome-manual" style="display:none">
         <p class="install-subtitle">Dans <strong>Chrome</strong>, suis ces étapes :</p>
+        <div class="iv" data-iv="dots"></div>
         <div class="install-steps">
           <div class="install-step"><span class="install-step-num">1</span><span class="install-step-text">Appuie sur les <strong>⋮ trois points</strong> en haut à droite</span></div>
-          <div class="install-step"><span class="install-step-num">2</span><span class="install-step-text">Appuie sur <strong>"Ajouter à l'écran d'accueil"</strong></span></div>
-          <div class="install-step"><span class="install-step-num">3</span><span class="install-step-text">Confirme en appuyant sur <strong>Ajouter</strong></span></div>
+          <div class="install-step"><span class="install-step-num">2</span><span class="install-step-text">Appuie sur <strong>« Installer l'application »</strong> ou <strong>« Ajouter à l'écran d'accueil »</strong></span></div>
+          <div class="install-step"><span class="install-step-num">3</span><span class="install-step-text">Confirme en appuyant sur <strong>Installer</strong></span></div>
         </div>
       </div>
     </div>
@@ -1870,6 +1862,7 @@ html.theme-dark #pay-error{color:#ff7b6b!important}
     <!-- Samsung Internet -->
     <div id="install-step-android-samsung" style="display:none">
       <p class="install-subtitle">Dans <strong>Samsung Internet</strong> :</p>
+      <div class="iv" data-iv="samsung"></div>
       <div class="install-steps">
         <div class="install-step"><span class="install-step-num">1</span><span class="install-step-text">Appuie sur l'icône <strong>☰ Menu</strong> en bas à droite</span></div>
         <div class="install-step"><span class="install-step-num">2</span><span class="install-step-text">Appuie sur <strong>"Ajouter page à"</strong></span></div>
@@ -1880,8 +1873,9 @@ html.theme-dark #pay-error{color:#ff7b6b!important}
     <!-- Firefox -->
     <div id="install-step-android-firefox" style="display:none">
       <p class="install-subtitle">Dans <strong>Firefox</strong> :</p>
+      <div class="iv" data-iv="dots"></div>
       <div class="install-steps">
-        <div class="install-step"><span class="install-step-num">1</span><span class="install-step-text">Appuie sur les <strong>⋮ trois points</strong> en bas</span></div>
+        <div class="install-step"><span class="install-step-num">1</span><span class="install-step-text">Appuie sur les <strong>⋮ trois points</strong> (en haut ou en bas, selon ton réglage)</span></div>
         <div class="install-step"><span class="install-step-num">2</span><span class="install-step-text">Appuie sur <strong>"Installer"</strong> ou <strong>"Ajouter à l'écran d'accueil"</strong></span></div>
         <div class="install-step"><span class="install-step-num">3</span><span class="install-step-text">Confirme en appuyant sur <strong>Ajouter</strong></span></div>
       </div>
@@ -1890,6 +1884,7 @@ html.theme-dark #pay-error{color:#ff7b6b!important}
     <!-- Autre navigateur -->
     <div id="install-step-android-other" style="display:none">
       <p class="install-subtitle">Sur la plupart des navigateurs Android :</p>
+      <div class="iv" data-iv="dots"></div>
       <div class="install-steps">
         <div class="install-step"><span class="install-step-num">1</span><span class="install-step-text">Appuie sur le <strong>menu ⋮</strong> ou <strong>☰</strong> du navigateur</span></div>
         <div class="install-step"><span class="install-step-num">2</span><span class="install-step-text">Cherche <strong>"Ajouter à l'écran d'accueil"</strong></span></div>
@@ -4765,7 +4760,112 @@ const INSTALL_STEPS = {
   'android-samsung': { title:'Samsung Internet',         back:'android' },
   'android-firefox': { title:'Firefox',                  back:'android' },
   'android-other':   { title:'Autre navigateur',         back:'android' },
+  'inapp':           { title:'Ouvrir dans le navigateur', back:null },
 };
+
+// Navigateur utilisé (pour montrer directement le bon guide, sans passer par les listes)
+function detectBrowser(){
+  const ua = navigator.userAgent || '';
+  const inApp = /FBAN|FBAV|FB_IAB|Instagram|Snapchat|TikTok|musical_ly|BytedanceWebview|Line\//i.test(ua);
+  if(isIOSDevice()){
+    if(inApp) return { os:'ios', br:'inapp' };
+    if(/CriOS/i.test(ua)) return { os:'ios', br:'chrome' };
+    if(/FxiOS|EdgiOS|OPiOS|OPT\/|YaBrowser|DuckDuckGo|GSA\//i.test(ua)) return { os:'ios', br:'other' };
+    const v = +((ua.match(/Version\/(\d+)/) || [])[1] || 0); // Safari : version (26 = iOS 26)
+    return { os:'ios', br:'safari', v };
+  }
+  if(/android/i.test(ua)){
+    if(inApp || /; wv\)/.test(ua)) return { os:'android', br:'inapp' };
+    if(/SamsungBrowser/i.test(ua)) return { os:'android', br:'samsung' };
+    if(/Firefox\//i.test(ua)) return { os:'android', br:'firefox' };
+    if(/MiuiBrowser|HuaweiBrowser|HeyTapBrowser|OPR\/|EdgA\/|YaBrowser|UCBrowser/i.test(ua)) return { os:'android', br:'other' };
+    if(/Chrome\//i.test(ua)) return { os:'android', br:'chrome' };
+    return { os:'android', br:'other' };
+  }
+  return { os:'other', br:'other' };
+}
+
+// Petit dessin de la barre du navigateur, le bon bouton entouré et qui pulse
+function installVisual(kind){
+  const ring = (cx, cy, r = 17) => `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--green)" stroke-width="2.6"/><circle class="iv-ring" cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--green)" stroke-width="2.2"/>`;
+  const ico = 'fill="none" stroke="var(--text-2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"';
+  const dots = (cx, cy) => `<g fill="var(--text-2)"><circle cx="${cx-7}" cy="${cy}" r="2.3"/><circle cx="${cx}" cy="${cy}" r="2.3"/><circle cx="${cx+7}" cy="${cy}" r="2.3"/></g>`;
+  const vdots = (cx, cy) => `<g fill="var(--text-2)"><circle cx="${cx}" cy="${cy-7}" r="2.3"/><circle cx="${cx}" cy="${cy}" r="2.3"/><circle cx="${cx}" cy="${cy+7}" r="2.3"/></g>`;
+  const share = (cx, cy) => `<g ${ico}><path d="M${cx-7} ${cy-3}v10h14v-10"/><path d="M${cx} ${cy-12}v12"/><path d="M${cx-4.5} ${cy-7.5}l4.5-4.5 4.5 4.5"/></g>`;
+  const back = (cx, cy) => `<path ${ico} d="M${cx+3} ${cy-7}l-7 7 7 7"/>`;
+  const fwd = (cx, cy) => `<path ${ico} d="M${cx-3} ${cy-7}l7 7-7 7"/>`;
+  const book = (cx, cy) => `<g ${ico}><path d="M${cx} ${cy-6}c-3-2-7-2-10-1v13c3-1 7-1 10 1 3-2 7-2 10-1v-13c-3-1-7-1-10 1z"/><path d="M${cx} ${cy-6}v13"/></g>`;
+  const tabs = (cx, cy) => `<g ${ico}><rect x="${cx-8}" y="${cy-5}" width="12" height="12" rx="2"/><path d="M${cx-4} ${cy-9}h10a2 2 0 0 1 2 2v10"/></g>`;
+  const home = (cx, cy) => `<g ${ico}><path d="M${cx-8} ${cy-1}l8-7 8 7"/><path d="M${cx-6} ${cy-2}v9h12v-9"/></g>`;
+  const burger = (cx, cy) => `<path ${ico} d="M${cx-8} ${cy-6}h16M${cx-8} ${cy}h16M${cx-8} ${cy+6}h16"/>`;
+  const addr = (x, w) => `<rect x="${x}" y="19" width="${w}" height="26" rx="13" fill="var(--white)" stroke="var(--border)"/><text x="${x + w/2}" y="36" text-anchor="middle" font-size="11.5" font-family="Outfit,sans-serif" fill="var(--muted)">prayerspot.fr</text>`;
+  const bar = '<rect x="4" y="9" width="272" height="46" rx="23" fill="var(--gray-100)" stroke="var(--border)"/>';
+  const K = {
+    ios26:     bar + back(26, 32) + addr(46, 172) + dots(246, 32) + ring(246, 32),
+    iosOld:    bar + back(36, 32) + fwd(86, 32) + share(140, 33) + book(194, 32) + tabs(244, 33) + ring(140, 32),
+    iosChrome: bar + addr(16, 202) + share(246, 33) + ring(246, 32),
+    dots:      bar + addr(16, 202) + vdots(246, 32) + ring(246, 32),
+    samsung:   bar + back(34, 32) + fwd(82, 32) + home(130, 33) + tabs(184, 33) + burger(240, 32) + ring(240, 32)
+  };
+  return `<svg viewBox="0 0 280 64" role="img" aria-label="Le bouton à toucher est entouré en vert">${K[kind] || K.dots}</svg>`;
+}
+function fillInstallVisuals(root){ (root || document).querySelectorAll('.iv[data-iv]').forEach(el => { if(!el.firstChild) el.innerHTML = installVisual(el.dataset.iv); }); }
+
+const IV_SHARE_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;vertical-align:-2px"><path d="M5 10v10h14V10"/><path d="M12 3v12"/><path d="m8 7 4-4 4 4"/></svg>';
+function installStepsHtml(list){
+  return '<div class="install-steps">' + list.map((t, i) => `<div class="install-step"><span class="install-step-num">${i + 1}</span><span class="install-step-text">${t}</span></div>`).join('') + '</div>';
+}
+function copyAppLink(btn){
+  const url = 'https://prayerspot.fr';
+  const done = () => { btn.textContent = 'Lien copié ✓'; setTimeout(() => { btn.textContent = 'Copier le lien de Prayer Spot'; }, 2500); };
+  try{ navigator.clipboard.writeText(url).then(done, () => { prompt('Copie ce lien :', url); }); }
+  catch(e){ prompt('Copie ce lien :', url); }
+}
+// Guide iPhone selon le navigateur
+function renderIosGuide(nav){
+  const box = document.getElementById('install-ios-guide');
+  if(!box) return;
+  nav = nav || { os:'ios', br:'safari', v:26 };
+  let html;
+  if(nav.br === 'chrome'){
+    html = `<p class="install-subtitle">Dans <strong>Chrome</strong>, suis ces étapes :</p><div class="iv">${installVisual('iosChrome')}</div>`
+      + installStepsHtml([`Appuie sur l'icône <strong>Partager</strong> ${IV_SHARE_ICON} dans la barre d'adresse`,
+                          `Appuie sur <strong>« Sur l'écran d'accueil »</strong> (fais défiler si besoin)`,
+                          `Appuie sur <strong>Ajouter</strong>`]);
+  } else if(nav.br === 'other'){
+    html = `<p class="install-subtitle">Pour installer Prayer Spot, le plus simple est d'ouvrir le site dans <strong>Safari</strong>.</p>`
+      + `<button class="install-copy" onclick="copyAppLink(this)">Copier le lien de Prayer Spot</button>`
+      + installStepsHtml([`Ouvre <strong>Safari</strong> et colle le lien dans la barre d'adresse`,
+                          `Appuie sur <strong>« ••• »</strong> puis <strong>Partager</strong>`,
+                          `Appuie sur <strong>« Sur l'écran d'accueil »</strong> puis <strong>Ajouter</strong>`])
+      + `<div class="install-tip"><span>Certains navigateurs proposent aussi « Sur l'écran d'accueil » dans leur menu Partager.</span></div>`;
+  } else if(nav.v && nav.v < 26){
+    html = `<p class="install-subtitle">Dans <strong>Safari</strong>, suis ces étapes :</p><div class="iv">${installVisual('iosOld')}</div>`
+      + installStepsHtml([`Appuie sur l'icône <strong>Partager</strong> ${IV_SHARE_ICON} en bas de l'écran (en haut à droite sur iPad)`,
+                          `Fais défiler et appuie sur <strong>« Sur l'écran d'accueil »</strong>`,
+                          `Appuie sur <strong>Ajouter</strong> en haut à droite`]);
+  } else {
+    html = `<p class="install-subtitle">Dans <strong>Safari</strong>, suis ces étapes :</p><div class="iv">${installVisual('ios26')}</div>`
+      + installStepsHtml([`Appuie sur <strong>« ••• »</strong> à droite de la barre d'adresse`,
+                          `Appuie sur <strong>Partager</strong>`,
+                          `Fais défiler et appuie sur <strong>« Sur l'écran d'accueil »</strong>`,
+                          `Appuie sur <strong>Ajouter</strong> en haut à droite`])
+      + `<div class="install-tip"><span>Sur un iPhone plus ancien, le bouton Partager ${IV_SHARE_ICON} est directement en bas de l'écran.</span></div>`;
+  }
+  box.innerHTML = html;
+}
+// Navigateur intégré à une autre app (Instagram, Facebook, TikTok…) : il faut d'abord ouvrir le vrai navigateur
+function renderInappGuide(nav){
+  const box = document.getElementById('install-inapp-guide');
+  if(!box) return;
+  const ios = nav && nav.os === 'ios';
+  box.innerHTML = `<p class="install-subtitle">Tu es dans le navigateur d'une autre app. Pour installer Prayer Spot, ouvre-le d'abord dans <strong>${ios ? 'Safari' : 'Chrome'}</strong>.</p>`
+    + `<div class="iv">${installVisual(ios ? 'ios26' : 'dots')}</div>`
+    + installStepsHtml([`Appuie sur <strong>« ••• »</strong> ou <strong>⋮</strong> (souvent en haut à droite)`,
+                        `Choisis <strong>« Ouvrir dans ${ios ? 'Safari' : 'Chrome'} »</strong> ou <strong>« Ouvrir dans le navigateur »</strong>`,
+                        `Puis touche à nouveau <strong>Installer l'app</strong> dans le menu de Prayer Spot`])
+    + `<button class="install-copy" onclick="copyAppLink(this)">Copier le lien de Prayer Spot</button>`;
+}
 
 function installApp(){
   closeDrawer();
@@ -4778,13 +4878,22 @@ function installApp(){
     return;
   }
 
-  // Détection auto iOS
-  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
-  if(isIOS){
+  fillInstallVisuals();
+  const nav = detectBrowser();
+
+  // Navigateur intégré à Instagram, Facebook… → il faut d'abord ouvrir le vrai navigateur
+  if(nav.br === 'inapp'){
+    renderInappGuide(nav);
+    installShowStep('inapp');
+    document.getElementById('install-overlay').style.display = 'flex';
+    return;
+  }
+
+  // iPhone / iPad → directement le guide adapté (Safari récent ou ancien, Chrome, autre)
+  if(nav.os === 'ios'){
+    renderIosGuide(nav);
+    installHistory = ['os'];
     installShowStep('ios');
-    document.getElementById('install-title').textContent = 'iPhone / iPad';
-    document.getElementById('install-back').style.display = 'flex';
-    installHistory = ['ios'];
     document.getElementById('install-overlay').style.display = 'flex';
     return;
   }
@@ -4795,12 +4904,22 @@ function installApp(){
     return;
   }
 
-  // Fallback : choix manuel
+  // Android sans fenêtre d'installation → directement le guide de son navigateur
+  if(nav.os === 'android'){
+    installHistory = ['os', 'android'];
+    installChoose({ chrome:'android-chrome', samsung:'android-samsung', firefox:'android-firefox' }[nav.br] || 'android-other');
+    document.getElementById('install-overlay').style.display = 'flex';
+    return;
+  }
+
+  // Ordinateur ou appareil inconnu : choix manuel
   installShowStep('os');
   document.getElementById('install-overlay').style.display = 'flex';
 }
 
 function installChoose(step){
+  fillInstallVisuals();
+  if(step === 'ios'){ const n = detectBrowser(); renderIosGuide(n.os === 'ios' ? n : null); }
   if(step === 'android-chrome'){
     installShowStep(step);
     document.getElementById('install-chrome-native').style.display = deferredInstallPrompt ? 'block' : 'none';
