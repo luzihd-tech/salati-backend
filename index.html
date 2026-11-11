@@ -2697,7 +2697,7 @@ document.addEventListener('click', function(e){
 // Ne charge Google qu'à l'ouverture d'une fiche qui a un identifiant Google.
 // Affiche uniquement la photo + le crédit Google ; sinon l'icône reste.
 // ============================================================
-const GOOGLE_MAPS_KEY = '';
+const GOOGLE_MAPS_KEY = 'AIzaSyCvJDrxxqgY49a7nk4sLAV9yiCfK4g4TZI'; // clé navigateur (publique par nature), limitée aux API Places UI Kit + Maps JavaScript
 function escAttr(v){ return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 let gmapsLoading = null;
 function loadGooglePlaces(){
