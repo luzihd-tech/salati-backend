@@ -388,6 +388,15 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
   box-shadow:0 -10px 40px rgba(10,61,44,0.2);transform:translateY(100%);transition:transform 0.32s cubic-bezier(.2,.9,.3,1);
 }
 .dsheet.open{transform:translateY(0)}
+/* Haut de fiche toujours visible : bouton Retour + poignée */
+.dtop{position:sticky;top:0;z-index:5;background:var(--white);border-radius:24px 24px 0 0;
+  display:flex;align-items:center;justify-content:center;min-height:52px;padding:0 14px;margin-bottom:4px}
+.dtop .drag{margin:0;cursor:pointer;padding:0}
+.dback{position:absolute;left:14px;top:50%;transform:translateY(-50%);display:inline-flex;align-items:center;gap:3px;
+  background:var(--green-light);color:var(--green-deep);border:none;border-radius:20px;padding:7px 14px 7px 8px;
+  font-family:'Outfit',sans-serif;font-size:13.5px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.dback svg{width:18px;height:18px}
+.dback:active{transform:translateY(-50%) scale(.96)}
 .dbody{padding:0 20px}
 .drag{width:38px;height:4.5px;background:var(--border);border-radius:3px;margin:11px auto 14px}
 .dimg{
@@ -1911,7 +1920,10 @@ html.theme-dark #pay-error{color:#ff7b6b!important}
 
 <!-- DETAIL SHEET -->
 <div class="dsheet" id="dsheet">
-  <div class="drag" onclick="closeDetail()" style="cursor:pointer;padding:6px 0;margin:6px auto 10px;"></div>
+  <div class="dtop">
+    <button class="dback" type="button" onclick="closeDetail()" aria-label="Retour"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>Retour</button>
+    <div class="drag" onclick="closeDetail()"></div>
+  </div>
   <div class="dbody" id="dbody"></div>
 </div>
 
@@ -2780,6 +2792,7 @@ function openDetail(id) {
     <button class="share-btn" onclick="sharePlace('${p.name.replace(/'/g,"\\'")}','${p.address.replace(/'/g,"\\'")}',${p.lat},${p.lng})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;vertical-align:-3px;margin-right:6px"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98"/><path d="m15.41 6.51-6.82 3.98"/></svg>Partager ce lieu</button>
     <button class="report-link" onclick="reportPlaceIssue('${p.id}','${p.name.replace(/'/g,"\\'")}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;vertical-align:-3px;margin-right:6px"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><path d="M4 22v-7"/></svg>Signaler un problème avec ce lieu</button>`;
   if(!p.image_url && p.gplace) showGooglePhoto(p);
+  document.getElementById('dsheet').scrollTop = 0;
   document.getElementById('dsheet').classList.add('open');
   const ov = document.getElementById('dsheet-overlay');
   if(ov) ov.style.display='block';
