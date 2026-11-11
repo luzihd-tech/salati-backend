@@ -379,6 +379,27 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
 .tg{background:var(--green-light);color:var(--green-deep)}
 .tb{background:#e8f2fd;color:#1a5fa8}
 .to{background:#fef0e6;color:#a85820}
+.pcmeta{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;margin:3px 0 1px}
+.pcmeta:empty{display:none}
+.dmeta{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;margin:-8px 0 14px}
+.dmeta:empty{display:none}
+.pst{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700}
+.pst i{width:7px;height:7px;border-radius:50%;background:currentColor;display:inline-block}
+.pst.on{color:var(--green)}
+.pst.off{color:var(--muted)}
+.ptravel{font-size:11px;color:var(--muted);font-weight:600}
+.dmeta .pst,.dmeta .ptravel{font-size:12.5px}
+.dprayers{margin:4px 0 14px}
+.dpr-title{font-size:12px;font-weight:800;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em}
+.dpr-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.dpr{background:var(--gray-100);border:1px solid var(--border);border-radius:10px;padding:7px 2px;text-align:center;display:flex;flex-direction:column;gap:2px}
+.dpr span{font-size:10.5px;color:var(--muted);font-weight:700}
+.dpr b{font-size:13px;color:var(--text);font-variant-numeric:tabular-nums}
+.dpr.cur{background:var(--green-deep);border-color:var(--green-deep)}
+.dpr.cur span,.dpr.cur b{color:#fff}
+.dpr.next{border-color:var(--green);background:var(--green-light)}
+.dpr-note{font-size:11px;color:var(--muted);line-height:1.45;margin-top:7px}
+.chip-dot{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block}
 .pcdist{font-size:10.5px;color:var(--muted);margin-left:auto;white-space:nowrap;font-weight:600;padding-top:2px}
 
 /* ─── DETAIL SHEET ───────────────────────────────────────── */
@@ -1304,6 +1325,11 @@ html.theme-dark #pay-error{color:#ff7b6b!important}
             <button class="chip" onclick="setFilter(this,'women')"><svg class="chip-ico" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="32" cy="14" r="8"/><path d="M16 14c0 0 2-8 16-8s16 8 16 8c0 8-4 12-8 14"/><path d="M20 22c-4 2-6 6-6 10l2 20h32l2-20c0-4-2-8-6-10"/><path d="M26 56v-14h12v14"/></svg> Femmes</button>
             <button class="chip" onclick="setFilter(this,'men')"><svg class="chip-ico" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="32" cy="13" r="7"/><path d="M20 28 Q16 32 16 40 L18 56 L46 56 L48 40 Q48 32 44 28"/><line x1="26" y1="56" x2="26" y2="40"/><line x1="38" y1="56" x2="38" y2="40"/><line x1="20" y1="36" x2="44" y2="36"/></svg> Hommes</button>
           </div>
+          <div class="filters-section-label">Disponibilité</div>
+          <div class="filters-chips-grid">
+            <button class="chip" onclick="setFilter(this,'open_now')"><span class="chip-dot"></span> Ouvert maintenant</button>
+            <button class="chip" onclick="setFilter(this,'open_next')"><span class="chip-dot"></span> Ouvert à la prochaine prière</button>
+          </div>
           <div class="filters-section-label">Rayon de recherche</div>
           <div class="filters-chips-grid" style="margin-bottom:14px">
             <div class="chip radius-chip">
@@ -2008,6 +2034,7 @@ let PLACES = [];
 let activeFilters=new Set(), selected=null, session=null, token=null, isSubscribed=false, favorites=[];
 let activeRadius=10; // km par défaut pour la vue Proximité
 let uLat=48.8566, uLng=2.3522, filtered=[];
+let uHasPos=false; // vraie position (ou ville choisie) connue → temps de trajet affichés
 let prayerLat=48.8566, prayerLng=2.3522, prayerCityName='Paris', nearestMosqueForPrayer=null;
 let markers={}, uMarker=null, mapInitialized=false;
 let listView='proximity';
@@ -2058,7 +2085,8 @@ function normalizePlace(p){
     mawaqit_id: p.mawaqit_id || null,
     image_url: p.photo_url || null,
     gplace: p.google_place_id || null,
-    jumuah: p.jumuah_time || ''
+    jumuah: p.jumuah_time || '',
+    spec: p.opening_spec || ''
   };
 }
 
@@ -2516,6 +2544,8 @@ function matchesFilter(p, f){
     case 'wc': return p.wc;
     case 'women': return p.genre==='femmes'||p.genre==='mixte';
     case 'men': return p.genre==='hommes'||p.genre==='mixte';
+    case 'open_now': return !!(placeStatus(p) || {}).open;
+    case 'open_next': return openAtNextPrayer(p);
     default: return true;
   }
 }
@@ -2612,6 +2642,7 @@ function selectFirstSuggestionOrSearch(){
 function goToPlace(place){
   uLat = parseFloat(place.lat);
   uLng = parseFloat(place.lon);
+  uHasPos = false; // ville ou adresse recherchée : pas de temps de trajet depuis ce point
 
   if(mapInitialized){
     map.setView([uLat,uLng], 13, {animate:true});
@@ -2672,6 +2703,7 @@ function renderList() {
         <div style="flex:1;min-width:0">
           <div class="pcname">${p.name}${p.verified?' <span style="color:#0a8f5c;font-size:9px">✓</span>':''}</div>
           <div class="pcaddr">${p.address}</div>
+          <div class="pcmeta">${statusHtml(p)}${uHasPos ? `<span class="ptravel">${travelText(p.dist)}</span>` : ''}</div>
           <div class="pctags">
             ${p.ablution?'<span class="tag tg"><svg class="tag-ico" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M32 8c0 0-14 12-14 24a14 14 0 0028 0C46 20 32 8 32 8z"/><path d="M24 36c0 4 3.6 8 8 8"/></svg> Ablutions</span>':''}
             ${p.wc?'<span class="tag tb"><svg class="tag-ico" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="56" height="48" rx="12"/><polyline points="9,20 14,44 19,30 24,44 29,20"/><path d="M55,22 A13,13 0 1,0 55,42"/></svg> WC</span>':''}
@@ -2775,6 +2807,180 @@ document.addEventListener('click', function(e){
   }
 });
 
+// ─── HEURES DE PRIÈRE CALCULÉES SUR L'APPAREIL (méthode ISNA 15°, comme le serveur) ───
+// Sert à savoir si une mosquée est « ouverte » (1 h avant → 1 h après chaque prière) partout, sans réseau.
+const PT_CALC = (() => {
+  const dtr = d => d * Math.PI / 180, rtd = r => r * 180 / Math.PI;
+  const sin = d => Math.sin(dtr(d)), cos = d => Math.cos(dtr(d)), tan = d => Math.tan(dtr(d));
+  const arcsin = x => rtd(Math.asin(x)), arccos = x => rtd(Math.acos(x)), arctan2 = (y, x) => rtd(Math.atan2(y, x)), arccot = x => rtd(Math.atan(1 / x));
+  const fix = (a, b) => { a = a - b * Math.floor(a / b); return a < 0 ? a + b : a; };
+  const julian = (y, m, d) => { if (m <= 2) { y -= 1; m += 12; } const A = Math.floor(y / 100), B = 2 - A + Math.floor(A / 4); return Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) + d + B - 1524.5; };
+  const sunPos = jd => {
+    const D = jd - 2451545.0, g = fix(357.529 + 0.98560028 * D, 360), q = fix(280.459 + 0.98564736 * D, 360);
+    const L = fix(q + 1.915 * sin(g) + 0.020 * sin(2 * g), 360), e = 23.439 - 0.00000036 * D;
+    const RA = fix(arctan2(cos(e) * sin(L), cos(L)) / 15, 24);
+    return { decl: arcsin(sin(e) * sin(L)), eqt: q / 15 - RA };
+  };
+  return function (lat, lng, date) {
+    const y = date.getFullYear(), m = date.getMonth() + 1, d = date.getDate();
+    const tz = -new Date(y, m - 1, d, 12).getTimezoneOffset() / 60;
+    const jd = julian(y, m, d) - lng / (15 * 24);
+    const midDay = t => fix(12 - sunPos(jd + t).eqt, 24);
+    const angleTime = (angle, t, ccw) => {
+      const decl = sunPos(jd + t).decl, noon = midDay(t);
+      const T = arccos((-sin(angle) - sin(decl) * sin(lat)) / (cos(decl) * cos(lat))) / 15;
+      return noon + (ccw ? -T : T);
+    };
+    const asrTime = t => { const decl = sunPos(jd + t).decl; return angleTime(-arccot(1 + tan(Math.abs(lat - decl))), t); };
+    const p = h => h / 24;
+    let r = { Fajr: angleTime(15, p(5), true), Chourouk: angleTime(0.833, p(6), true), Dhohr: midDay(p(12)), Asr: asrTime(p(13)), Maghrib: angleTime(0.833, p(18)), Icha: angleTime(15, p(18)) };
+    // 2e passe avec les heures trouvées (plus précis)
+    r = { Fajr: angleTime(15, p(r.Fajr), true), Chourouk: angleTime(0.833, p(r.Chourouk), true), Dhohr: midDay(p(r.Dhohr)), Asr: asrTime(p(r.Asr)), Maghrib: angleTime(0.833, p(r.Maghrib)), Icha: angleTime(15, p(r.Icha)) };
+    // Hautes latitudes (nord de la France en été) : même correction « par angle » que le serveur (Aladhan)
+    const night = fix(r.Chourouk - r.Maghrib, 24), portion = 15 / 60 * night;
+    if (!isFinite(r.Fajr) || fix(r.Chourouk - r.Fajr, 24) > portion) r.Fajr = r.Chourouk - portion;
+    if (!isFinite(r.Icha) || fix(r.Icha - r.Maghrib, 24) > portion) r.Icha = r.Maghrib + portion;
+    const out = {};
+    for (const k in r) {
+      const h = r[k] + tz - lng / 15;
+      if (!isFinite(h)) { out[k] = null; continue; }
+      const mins = Math.round(fix(h, 24) * 60) % 1440;
+      out[k] = String(Math.floor(mins / 60)).padStart(2, '0') + ':' + String(mins % 60).padStart(2, '0');
+    }
+    return out;
+  };
+})();
+
+// Horaires du jour pour un lieu : ceux affichés en haut de l'app si le lieu est à moins de 30 km
+// (mêmes chiffres partout), sinon calculés sur l'appareil pour la position du lieu
+let lastPrayer = null; // { times, lat, lng, day }
+const dayKey = d => d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate();
+function timesForPlace(p, date){
+  date = date || new Date();
+  if(lastPrayer && lastPrayer.day === dayKey(date) && dist(lastPrayer.lat, lastPrayer.lng, p.lat, p.lng) <= 30) return lastPrayer.times;
+  return PT_CALC(p.lat, p.lng, date);
+}
+const toMin = s => { const m = /^(\d{1,2}):(\d{2})/.exec(s || ''); return m ? (+m[1]) * 60 + (+m[2]) : NaN; };
+const fmtMin = m => { m = ((Math.round(m) % 1440) + 1440) % 1440; return Math.floor(m / 60) + 'h' + String(m % 60).padStart(2, '0'); };
+const fmtH = s => fmtMin(toMin(s));
+const PRAYER_LIST = [['Fajr','Fajr'],['Dhohr','Dhohr'],['Asr','Asr'],['Maghrib','Maghrib'],['Icha','Icha']];
+const OPEN_MARGIN = 60; // une mosquée est considérée ouverte 1 h avant → 1 h après chaque prière
+const isPrayerPlace = p => p.type === 'mosque' || p.type === 'other';
+
+function mosqueStatus(p, now){
+  const t = timesForPlace(p, now);
+  if(!t) return null;
+  const n = now.getHours() * 60 + now.getMinutes();
+  const list = PRAYER_LIST.map(([k, label]) => ({ label, m: toMin(t[k]) })).filter(x => !isNaN(x.m));
+  if(!list.length) return null;
+  const cur = list.find(x => n >= x.m - OPEN_MARGIN && n <= x.m + OPEN_MARGIN);
+  if(cur) return { open: true, text: `Ouverte · ${cur.label} ${fmtMin(cur.m)}` };
+  const nxt = list.find(x => x.m - OPEN_MARGIN > n);
+  if(nxt) return { open: false, text: `Fermée · ouvre vers ${fmtMin(nxt.m - OPEN_MARGIN)}` };
+  const tm = new Date(now); tm.setDate(tm.getDate() + 1);
+  const f = toMin((timesForPlace(p, tm) || {}).Fajr);
+  return { open: false, text: isNaN(f) ? 'Fermée' : `Fermée · ouvre vers ${fmtMin(f - OPEN_MARGIN)}` };
+}
+
+// Horaires des commerces saisis par nous : « lu-sa 09:00-20:00; di 10:00-13:00 », « tlj 08:00-22:00 », « 24/7 »
+const DAY_IDX = { di:0, lu:1, ma:2, me:3, je:4, ve:5, sa:6 };
+const DAY_NAME = ['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+function parseOpeningSpec(spec){
+  if(!spec) return null;
+  const s = String(spec).toLowerCase().replace(/\s+/g, ' ').trim();
+  if(/^(24\/7|24h\/24|24 ?h ?\/ ?24)$/.test(s)) return Array.from({ length: 7 }, () => [[0, 1440]]);
+  const week = Array.from({ length: 7 }, () => []);
+  let any = false;
+  for(const seg of s.split(';')){
+    const m = seg.trim().match(/^([a-zé,\- ]+?)\s+(\d.*)$/);
+    if(!m) continue;
+    const dpart = m[1].replace(/\s/g, '');
+    let days = [];
+    if(dpart === 'tlj' || dpart === 'tous') days = [0,1,2,3,4,5,6];
+    else for(const tok of dpart.split(',')){
+      const r = tok.split('-');
+      if(r.length === 2 && (r[0] in DAY_IDX) && (r[1] in DAY_IDX)){ for(let i = DAY_IDX[r[0]]; ; i = (i + 1) % 7){ days.push(i); if(i === DAY_IDX[r[1]]) break; } }
+      else if(tok in DAY_IDX) days.push(DAY_IDX[tok]);
+    }
+    const ranges = [...m[2].matchAll(/(\d{1,2})[:h](\d{2})\s*-\s*(\d{1,2})[:h](\d{2})/g)].map(x => [(+x[1]) * 60 + (+x[2]), (+x[3]) * 60 + (+x[4])]);
+    for(const d of days) for(const [a, b] of ranges){
+      any = true;
+      if(b > a) week[d].push([a, b]); else { week[d].push([a, 1440]); if(b > 0) week[(d + 1) % 7].push([0, b]); }
+    }
+  }
+  return any ? week : null;
+}
+function specOpenAt(week, date){ const n = date.getHours() * 60 + date.getMinutes(); return week[date.getDay()].some(([a, b]) => n >= a && n < b); }
+function shopStatus(p, now){
+  const w = parseOpeningSpec(p.spec);
+  if(!w) return null;
+  const n = now.getHours() * 60 + now.getMinutes(), d = now.getDay();
+  const cur = w[d].find(([a, b]) => n >= a && n < b);
+  if(cur) return { open: true, text: cur[1] >= 1440 ? 'Ouvert · tard' : `Ouvert · jusqu'à ${fmtMin(cur[1])}` };
+  for(let k = 0; k < 7; k++){
+    const day = (d + k) % 7;
+    const c = w[day].filter(([a]) => k > 0 || a > n).sort((x, y) => x[0] - y[0])[0];
+    if(c) return { open: false, text: k === 0 ? `Fermé · ouvre à ${fmtMin(c[0])}` : k === 1 ? `Fermé · ouvre demain à ${fmtMin(c[0])}` : `Fermé · ouvre ${DAY_NAME[day]} à ${fmtMin(c[0])}` };
+  }
+  return { open: false, text: 'Fermé' };
+}
+function placeStatus(p, now){ now = now || new Date(); return isPrayerPlace(p) ? mosqueStatus(p, now) : shopStatus(p, now); }
+// Prochaine prière (heures affichées en haut de l'app) → le lieu sera-t-il ouvert à ce moment-là ?
+function nextPrayerDate(now){
+  now = now || new Date();
+  const t = (lastPrayer && lastPrayer.day === dayKey(now)) ? lastPrayer.times : PT_CALC(uLat, uLng, now);
+  const n = now.getHours() * 60 + now.getMinutes();
+  const nxt = PRAYER_LIST.map(([k]) => toMin(t[k])).filter(m => !isNaN(m) && m > n)[0];
+  const d = new Date(now);
+  if(nxt === undefined){ d.setDate(d.getDate() + 1); const f = toMin(PT_CALC(uLat, uLng, d).Fajr); d.setHours(0, isNaN(f) ? 360 : f, 0, 0); }
+  else d.setHours(0, nxt, 0, 0);
+  return d;
+}
+function openAtNextPrayer(p){
+  const at = nextPrayerDate();
+  if(isPrayerPlace(p)) return !!(mosqueStatus(p, at) || {}).open;
+  const w = parseOpeningSpec(p.spec);
+  return !!(w && specOpenAt(w, at));
+}
+// Temps de trajet estimé à partir de la distance (rues ≈ 1,3 × la ligne droite)
+function travelText(km){
+  if(km == null || !isFinite(km)) return '';
+  const road = km * 1.3;
+  if(road <= 1.5) return `≈ ${Math.max(1, Math.round(road / 4.8 * 60))} min à pied`;
+  const mins = Math.round(road / (road < 10 ? 25 : 45) * 60) + 2;
+  return mins < 60 ? `≈ ${mins} min en voiture` : `≈ ${Math.floor(mins / 60)} h ${String(mins % 60).padStart(2, '0')} en voiture`;
+}
+// Heures de prière du jour sur la fiche (exactes pour ce lieu : demandées au serveur, sinon calculées)
+const placeTimesCache = new Map();
+function prayerChipsHtml(p, exact){
+  const now = new Date(), n = now.getHours() * 60 + now.getMinutes();
+  const t = exact || timesForPlace(p, now);
+  if(!t) return '';
+  const list = PRAYER_LIST.map(([k, label]) => ({ label, s: t[k], m: toMin(t[k]) })).filter(x => !isNaN(x.m));
+  const cur = list.find(x => n >= x.m - OPEN_MARGIN && n <= x.m + OPEN_MARGIN);
+  const nxt = list.find(x => x.m > n);
+  return `<div class="dpr-title">Heures de prière aujourd'hui</div>
+    <div class="dpr-grid">${list.map(x => `<div class="dpr${cur === x ? ' cur' : nxt === x && !cur ? ' next' : ''}"><span>${x.label}</span><b>${fmtH(x.s)}</b></div>`).join('')}</div>
+    <div class="dpr-note">Lieu considéré ouvert 1 h avant et 1 h après chaque prière (estimation). L'heure de la prière en commun peut varier selon la mosquée.</div>`;
+}
+async function loadPlacePrayerTimes(p){
+  const d = new Date(), key = `${p.lat.toFixed(3)},${p.lng.toFixed(3)},${dayKey(d)}`;
+  let times = placeTimesCache.get(key);
+  if(!times){
+    try{
+      const r = await fetch(`${API}/prayer-times?lat=${p.lat}&lng=${p.lng}&date=${d.getDate()}-${d.getMonth() + 1}-${d.getFullYear()}`, { signal: AbortSignal.timeout(15000) });
+      const j = r.ok ? await r.json() : null;
+      if(j && j.times){ times = j.times; placeTimesCache.set(key, times); }
+    }catch(e){}
+  }
+  const box = document.getElementById('dprayers');
+  if(times && box && selected === p.id) box.innerHTML = prayerChipsHtml(p, times);
+}
+function statusHtml(p){
+  const st = placeStatus(p);
+  return st ? `<span class="pst ${st.open ? 'on' : 'off'}"><i></i>${st.text}</span>` : '';
+}
+
 // ============================================================
 // PHOTO GOOGLE MAPS (Places UI Kit — seule méthode autorisée en Europe à côté d'une carte non Google)
 // Ne charge Google qu'à l'ouverture d'une fiche qui a un identifiant Google.
@@ -2812,7 +3018,11 @@ async function showGooglePhoto(p){
   const attr = document.createElement('gmp-place-attribution');
   attr.setAttribute('light-scheme-color', 'gray');
   attr.setAttribute('dark-scheme-color', 'white');
-  el.append(req, media, attr);
+  el.append(req, media);
+  if(p.type === 'shop' || p.type === 'restaurant'){
+    el.append(document.createElement('gmp-place-open-now-status'), document.createElement('gmp-place-opening-hours'));
+  }
+  el.append(attr);
   let settled = false;
   const giveUp = () => { if(settled) return; settled = true; el.remove(); };
   el.addEventListener('gmp-error', giveUp);
@@ -2830,6 +3040,14 @@ async function showGooglePhoto(p){
   box.appendChild(el);
 }
 
+document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible' && typeof PLACES !== 'undefined' && PLACES.length) applyFilter(); });
+// Statuts ouvert/fermé à jour : la liste se recalcule chaque minute si elle n'est pas en train de défiler
+setInterval(() => { try{
+  const l = document.getElementById('plist');
+  if(document.visibilityState !== 'visible' || !PLACES.length || isDragging || (l && l.scrollTop > 0)) return;
+  if(activeFilters.has('open_now') || activeFilters.has('open_next')) applyFilter(); else renderList(); // la carte n'est redessinée que si la liste change
+}catch(e){} }, 60000);
+
 // ============================================================
 // FICHE DÉTAIL D'UN LIEU
 // ============================================================
@@ -2846,6 +3064,7 @@ function openDetail(id) {
     ${p.image_url ? `<div class="dimg"><img class="dimg-photo" src="${escAttr(p.image_url)}" alt="${escAttr(p.name)}" onerror="this.style.display='none';this.parentElement.classList.add('t-${escAttr(p.type)}')"></div>` : `<div class="dimg t-${p.type}" id="dimg-box"><div class="dimg-icon">${placeIcon(p.type)}</div></div>`}
     <div class="dname">${p.name}</div>
     <div class="daddr"><svg class="lico sz-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg> ${p.address}</div>
+    <div class="dmeta">${statusHtml(p)}${uHasPos ? `<span class="ptravel">${travelText(dist(uLat, uLng, p.lat, p.lng))}</span>` : ''}</div>
     <div class="dtags">
       ${p.ablution?'<span class="dtag tg"><svg class="tag-ico" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M32 8c0 0-14 12-14 24a14 14 0 0028 0C46 20 32 8 32 8z"/><path d="M24 36c0 4 3.6 8 8 8"/></svg> Ablutions</span>':'<span class="dtag to">✕ Pas d\u2019ablutions</span>'}
       ${p.wc?'<span class="dtag tb"><svg class="tag-ico" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="56" height="48" rx="12"/><polyline points="9,20 14,44 19,30 24,44 29,20"/><path d="M55,22 A13,13 0 1,0 55,42"/></svg> Toilettes</span>':''}
@@ -2854,6 +3073,7 @@ function openDetail(id) {
     </div>
     <div class="ilist">
       ${p.desc ? `      <div class="irow"><span class="iico"><svg class="lico sz-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span><span class="ilbl">Description</span><span class="ival" style="font-size:12px;font-weight:400;color:var(--muted)">${p.desc}</span></div>` : ''}
+      ${isPrayerPlace(p) ? `<div class="dprayers" id="dprayers">${prayerChipsHtml(p)}</div>` : ''}
       ${p.hours ? `      <div class="irow"><span class="iico"><svg class="lico sz-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span class="ilbl">Horaires</span><span class="ival green">${p.hours}</span></div>` : ''}
       ${p.jumuah ? `      <div class="irow"><span class="iico"><svg class="lico sz-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><span class="ilbl">Prière du vendredi</span><span class="ival green">${escAttr(p.jumuah)}</span></div>` : ''}
     </div>
@@ -2864,6 +3084,7 @@ function openDetail(id) {
     <button class="share-btn" onclick="sharePlace('${p.name.replace(/'/g,"\\'")}','${p.address.replace(/'/g,"\\'")}',${p.lat},${p.lng})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;vertical-align:-3px;margin-right:6px"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98"/><path d="m15.41 6.51-6.82 3.98"/></svg>Partager ce lieu</button>
     <button class="report-link" onclick="reportPlaceIssue('${p.id}','${p.name.replace(/'/g,"\\'")}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;vertical-align:-3px;margin-right:6px"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><path d="M4 22v-7"/></svg>Signaler un problème avec ce lieu</button>`;
   if(!p.image_url && p.gplace) showGooglePhoto(p);
+  if(isPrayerPlace(p)) loadPlacePrayerTimes(p);
   document.getElementById('dsheet').scrollTop = 0;
   document.getElementById('dsheet').classList.add('open');
   const ov = document.getElementById('dsheet-overlay');
@@ -3434,7 +3655,7 @@ function loadLastPosition(){
   }catch(e){ return null; }
 }
 function applyPosition(lat, lng){
-  uLat=lat; uLng=lng;
+  uLat=lat; uLng=lng; uHasPos=true; // vraie position : les temps de trajet ont un sens
   if(mapInitialized){
     map.setView([uLat,uLng],14,{animate:true});
     if(uMarker) map.removeLayer(uMarker);
@@ -3469,6 +3690,8 @@ async function fetchPrayers(lat, lng){
       if(data.times){
         renderPrayers(data.times);
         savePrayerTimes(data.times);
+        lastPrayer = { times: data.times, lat, lng, day: dayKey(new Date()) };
+        if(typeof applyFilter === 'function' && PLACES.length) applyFilter();
         return;
       }
     }

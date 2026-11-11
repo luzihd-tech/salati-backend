@@ -429,6 +429,11 @@ tr:hover td{background:var(--green-light)}
           <label>Horaires d'ouverture</label>
           <input type="text" id="f-hours" placeholder="Lun-Dim: 5h-23h">
         </div>
+        <div class="fg form-full">
+          <label>Horaires pour « Ouvert / Fermé » (commerces, restaurants)</label>
+          <input type="text" id="f-spec" placeholder="lu-sa 09:00-20:00; di 10:00-13:00" maxlength="200">
+          <div class="hint">Jours : lu ma me je ve sa di (ex. « lu-ve », « tlj » = tous les jours, « 24/7 »). Plusieurs plages : « lu-ve 09:00-12:00, 14:00-19:00 ». Inutile pour les mosquées : elles suivent les heures de prière.</div>
+        </div>
         <div class="fg">
           <label>Prière du vendredi (khutba)</label>
           <input type="text" id="f-jumuah" placeholder="ex : 13h30" maxlength="60">
@@ -683,6 +688,7 @@ function openPlaceModal(place=null){
   document.getElementById('f-city').value = place?.city||'';
   document.getElementById('f-hours').value = place?.hours||place?.opening_hours||'';
   document.getElementById('f-jumuah').value = place?.jumuah_time||'';
+  document.getElementById('f-spec').value = place?.opening_spec||'';
   document.getElementById('f-lat').value = place?.lat||'';
   document.getElementById('f-lng').value = place?.lng||'';
   document.getElementById('f-photo').value = place?.photo_url||'';
@@ -733,6 +739,7 @@ async function savePlace(){
     city: document.getElementById('f-city').value.trim(),
     openingHours: document.getElementById('f-hours').value.trim(),
     jumuah_time: document.getElementById('f-jumuah').value.trim()||null,
+    opening_spec: document.getElementById('f-spec').value.trim()||null,
     lat, lng,
     photo_url: document.getElementById('f-photo').value.trim()||null,
     description: document.getElementById('f-desc').value.trim(),

@@ -94,7 +94,8 @@ async function runPlacesImport() {
       emoji: EMOJI[type], rating: 0, rating_count: 0, verified: true,
       mawaqit_id: item.mawaqit_id || null, opening_hours: String(item.opening_hours || ''),
       google_place_id: /^[\w-]{10,300}$/.test(String(item.google_place_id || '')) ? item.google_place_id : null,
-      jumuah_time: item.jumuah_time ? String(item.jumuah_time).slice(0, 60) : null
+      jumuah_time: item.jumuah_time ? String(item.jumuah_time).slice(0, 60) : null,
+      opening_spec: item.opening_spec ? String(item.opening_spec).slice(0, 200) : null
     };
     const { data: inserted, error: insErr } = await supabase.from('places').insert(row).select('id').single();
     if (insErr) { res.failed.push(`${label} — refus de la base (${insErr.message})`); continue; }
