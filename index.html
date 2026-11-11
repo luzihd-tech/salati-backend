@@ -402,6 +402,18 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
 .dimg-icon{width:52px;height:52px}
 .dimg-icon svg{width:100%;height:100%}
 .dimg-photo{width:100%;height:100%;object-fit:cover;border-radius:var(--radius-lg)}
+/* Photo Google Maps (Places UI Kit) : chargée en arrière-plan, affichée seulement si une photo existe */
+.dimg{position:relative}
+.dimg .gphoto{position:absolute;left:0;top:0;width:100%;visibility:hidden;pointer-events:none}
+.dimg.has-g{height:auto;display:block;border:none;background:none}
+.dimg.has-g .dimg-icon{display:none}
+.dimg.has-g .gphoto{position:static;visibility:visible;pointer-events:auto}
+gmp-place-details.gphoto{
+  display:block;border:none;border-radius:var(--radius-lg);overflow:hidden;color-scheme:light;
+  --gmp-mat-color-surface:var(--white);--gmp-mat-color-outline-decorative:transparent;
+  --gmp-mat-color-primary:var(--green);--gmp-mat-font-family:'Outfit',sans-serif;
+}
+html.theme-dark gmp-place-details.gphoto{color-scheme:dark}
 .dname{font-size:19px;font-weight:800;margin-bottom:4px;letter-spacing:-0.4px;font-family:'Outfit',sans-serif;color:var(--text)}
 .daddr{font-size:12.5px;color:var(--muted);margin-bottom:14px;font-weight:500;display:flex;align-items:center;gap:5px}
 .dtags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
@@ -1559,6 +1571,7 @@ html.theme-dark #pay-error{color:#ff7b6b!important}
       <p>Fond de carte : <a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> · <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener">© OpenMapTiles</a></p>
       <p>Données cartographiques : <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© les contributeurs d'OpenStreetMap</a>, sous licence ODbL</p>
       <p>Affichage de la carte : <a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a> et <a href="https://maplibre.org" target="_blank" rel="noopener">MapLibre</a></p>
+      <p>Photos des lieux : Google Maps (l'auteur est indiqué sous chaque photo)</p>
     </div>
   </div>
 </div>
@@ -1974,7 +1987,8 @@ function normalizePlace(p){
     verified: p.verified,
     hours: p.opening_hours || '',
     mawaqit_id: p.mawaqit_id || null,
-    image_url: p.photo_url || null
+    image_url: p.photo_url || null,
+    gplace: p.google_place_id || null
   };
 }
 
@@ -2679,6 +2693,61 @@ document.addEventListener('click', function(e){
 });
 
 // ============================================================
+// PHOTO GOOGLE MAPS (Places UI Kit — seule méthode autorisée en Europe à côté d'une carte non Google)
+// Ne charge Google qu'à l'ouverture d'une fiche qui a un identifiant Google.
+// Affiche uniquement la photo + le crédit Google ; sinon l'icône reste.
+// ============================================================
+const GOOGLE_MAPS_KEY = 'AIzaSyCvJDrxxqgY49a7nk4sLAV9yiCfK4g4TZI'; // clé navigateur (publique par nature), limitée aux API Places UI Kit + Maps JavaScript
+function escAttr(v){ return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+let gmapsLoading = null;
+function loadGooglePlaces(){
+  if(gmapsLoading) return gmapsLoading;
+  gmapsLoading = new Promise((resolve, reject) => {
+    window.__psGmapsReady = resolve;
+    const sc = document.createElement('script');
+    sc.src = 'https://maps.googleapis.com/maps/api/js?key=' + encodeURIComponent(GOOGLE_MAPS_KEY)
+      + '&v=weekly&loading=async&language=fr&region=FR&callback=__psGmapsReady';
+    sc.async = true;
+    sc.onerror = () => reject(new Error('Google Maps indisponible'));
+    document.head.appendChild(sc);
+  }).then(() => google.maps.importLibrary('places'))
+    .catch(e => { gmapsLoading = null; throw e; });
+  return gmapsLoading;
+}
+async function showGooglePhoto(p){
+  if(!GOOGLE_MAPS_KEY || !p || !p.gplace || !/^[\w-]{10,300}$/.test(p.gplace)) return;
+  const box = document.getElementById('dimg-box');
+  if(!box) return;
+  try{ await loadGooglePlaces(); }catch(e){ console.warn('Photo Google :', e.message); return; }
+  if(selected !== p.id || !document.body.contains(box) || box.querySelector('.gphoto')) return; // fiche fermée ou changée entre-temps
+  const el = document.createElement('gmp-place-details');
+  el.className = 'gphoto';
+  const req = document.createElement('gmp-place-details-place-request');
+  req.setAttribute('place', p.gplace);
+  const media = document.createElement('gmp-place-media');
+  media.setAttribute('lightbox-preferred', '');
+  const attr = document.createElement('gmp-place-attribution');
+  attr.setAttribute('light-scheme-color', 'gray');
+  attr.setAttribute('dark-scheme-color', 'white');
+  el.append(req, media, attr);
+  let settled = false;
+  const giveUp = () => { if(settled) return; settled = true; el.remove(); };
+  el.addEventListener('gmp-error', giveUp);
+  el.addEventListener('gmp-load', () => {
+    // on attend que la photo soit dessinée : si rien de plus haut qu'une ligne de crédit, pas de photo
+    let tries = 0;
+    const check = () => {
+      if(settled) return;
+      if(el.getBoundingClientRect().height > 90){ settled = true; box.classList.add('has-g'); return; }
+      if(++tries < 12) setTimeout(check, 150); else giveUp();
+    };
+    requestAnimationFrame(check);
+  });
+  setTimeout(() => { if(!settled) giveUp(); }, 12000);
+  box.appendChild(el);
+}
+
+// ============================================================
 // FICHE DÉTAIL D'UN LIEU
 // ============================================================
 function openDetail(id) {
@@ -2691,7 +2760,7 @@ function openDetail(id) {
   if(mapInitialized && markers[id]) map.panTo([p.lat,p.lng],{animate:true});
   const isFav = favorites.includes(id);
   document.getElementById('dbody').innerHTML=`
-    ${p.image_url ? `<div class="dimg"><img class="dimg-photo" src="${p.image_url}" alt="${p.name}" onerror="this.style.display='none';this.parentElement.classList.add('t-'+${JSON.stringify(p.type)})"></div>` : `<div class="dimg t-${p.type}"><div class="dimg-icon">${placeIcon(p.type)}</div></div>`}
+    ${p.image_url ? `<div class="dimg"><img class="dimg-photo" src="${escAttr(p.image_url)}" alt="${escAttr(p.name)}" onerror="this.style.display='none';this.parentElement.classList.add('t-${escAttr(p.type)}')"></div>` : `<div class="dimg t-${p.type}" id="dimg-box"><div class="dimg-icon">${placeIcon(p.type)}</div></div>`}
     <div class="dname">${p.name}</div>
     <div class="daddr"><svg class="lico sz-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg> ${p.address}</div>
     <div class="dtags">
@@ -2710,6 +2779,7 @@ function openDetail(id) {
     </div>
     <button class="share-btn" onclick="sharePlace('${p.name.replace(/'/g,"\\'")}','${p.address.replace(/'/g,"\\'")}',${p.lat},${p.lng})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;vertical-align:-3px;margin-right:6px"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98"/><path d="m15.41 6.51-6.82 3.98"/></svg>Partager ce lieu</button>
     <button class="report-link" onclick="reportPlaceIssue('${p.id}','${p.name.replace(/'/g,"\\'")}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;vertical-align:-3px;margin-right:6px"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><path d="M4 22v-7"/></svg>Signaler un problème avec ce lieu</button>`;
+  if(!p.image_url && p.gplace) showGooglePhoto(p);
   document.getElementById('dsheet').classList.add('open');
   const ov = document.getElementById('dsheet-overlay');
   if(ov) ov.style.display='block';
@@ -5689,9 +5759,9 @@ const CGU_CONTENT = {
       <p style="margin-bottom:14px"><b>Application : Prayer Spot</b><br>Éditeur : Prayer Spot<br>Date de mise à jour : septembre 2025</p>
       <p style="margin-bottom:10px"><b>1. Objet</b><br>Prayer Spot est une application web permettant de localiser des lieux de prière en France. L'utilisation de l'application est gratuite.</p>
       <p style="margin-bottom:10px"><b>2. Accès au service</b><br>L'accès à Prayer Spot est libre et ne nécessite pas de création de compte. Certaines fonctionnalités (favoris, suivi de prière) nécessitent une inscription.</p>
-      <p style="margin-bottom:10px"><b>3. Données personnelles</b><br>Seules les données strictement nécessaires sont collectées (email, préférences). Aucune donnée n'est revendue à des tiers. La géolocalisation est utilisée uniquement pour afficher les lieux proches et n'est jamais stockée.</p>
+      <p style="margin-bottom:10px"><b>3. Données personnelles</b><br>Seules les données strictement nécessaires sont collectées (email, préférences). Aucune donnée n'est revendue à des tiers. La géolocalisation est utilisée uniquement pour afficher les lieux proches et n'est jamais stockée. Les photos des lieux proviennent de Google Maps : à l'ouverture d'une fiche, ton appareil se connecte aux serveurs de Google pour les afficher.</p>
       <p style="margin-bottom:10px"><b>4. Responsabilité</b><br>Prayer Spot s'efforce d'assurer l'exactitude des informations (horaires, lieux) mais ne peut garantir leur complétude. L'utilisateur est invité à signaler toute erreur.</p>
-      <p style="margin-bottom:10px"><b>5. Propriété intellectuelle</b><br>L'ensemble du contenu de l'application est la propriété de Prayer Spot. Toute reproduction sans autorisation est interdite.</p>
+      <p style="margin-bottom:10px"><b>5. Propriété intellectuelle</b><br>L'ensemble du contenu de l'application est la propriété de Prayer Spot, à l'exception des photos des lieux issues de Google Maps, qui restent la propriété de leurs auteurs. Toute reproduction sans autorisation est interdite.</p>
       <p style="margin-bottom:10px"><b>6. Modification des CGU</b><br>Prayer Spot se réserve le droit de modifier ces CGU à tout moment. Les utilisateurs seront informés des changements significatifs.</p>
       <p style="color:var(--muted);font-size:12px">Contact : contact@prayerspot.fr</p>
     `
