@@ -162,5 +162,16 @@
     "city": "Portet-sur-Garonne",
     "description": "Salle de prière et école.",
     "mawaqit_id": "almisbah-psg"
+  },
+  {
+    "type": "mosque",
+    "ablution": true,
+    "wc": true,
+    "genre": "mixte",
+    "name": "Mosquée Omar Ibn Al-Khattab",
+    "address": "79 rue Jean-Pierre Timbaud",
+    "city": "Paris",
+    "description": "Espace pour les sœurs au sous-sol.",
+    "google_place_id": "ChIJE2jrCOVt5kcR2QscEE6vMPU"
   }
 ]
