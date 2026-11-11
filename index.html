@@ -2351,47 +2351,60 @@ function initSheetDrag(){
     else setSheetState('normal');
   });
 
-  let dragLastY=0, dragVelocity=0;
-
-  sheet.addEventListener('touchstart',e=>{
-    const list=document.getElementById('plist');
-    if(list && list.contains(e.target) && list.scrollTop>0) return;
-    isDragging=true;
-    dragStartY=e.touches[0].clientY;
-    dragLastY=dragStartY;
-    dragVelocity=0;
-    dragStartHeight=sheet.getBoundingClientRect().height;
-    sheet.style.transition='none';
-  },{passive:true});
-
-  sheet.addEventListener('touchmove',e=>{
-    if(!isDragging) return;
-    const currentY=e.touches[0].clientY;
-    const dy=dragStartY-currentY;
-    dragVelocity=dragLastY-currentY; // positif = vers le haut
-    dragLastY=currentY;
-    const list=document.getElementById('plist');
-    if(dy<0 && list && list.scrollTop>0){ isDragging=false; sheet.style.transition=''; return; }
-    const wrapH=sheet.parentElement.getBoundingClientRect().height;
-    let newH=dragStartHeight+dy;
-    newH=Math.max(90, Math.min(wrapH*0.88, newH));
-    sheet.style.height=newH+'px';
-  },{passive:true});
-
-  sheet.addEventListener('touchend',()=>{
-    if(!isDragging) return;
-    isDragging=false;
+  // Geste sur le panneau des lieux : on décide UNE fois par geste si on déplace le panneau ou si on fait défiler la liste
+  // - liste ouverte en grand : glisser vers le haut = défiler (le panneau ne bouge plus)
+  // - liste pas ouverte : glisser vers le haut = ouvrir le panneau (la liste ne défile pas en même temps)
+  // - glisser vers le bas en haut de la liste = refermer
+  const OPEN = 0.82; // hauteur « ouverte » (comme .plist-wrap.expanded) : pas de sur-étirement puis retour
+  let mode = null, startedInList = false, listAtTop = true, dragLastY = 0, dragVelocity = 0;
+  const endDrag = () => {
+    if(mode !== 'drag'){ mode = null; return; }
+    mode = null; isDragging = false;
     sheet.style.transition='height 0.3s cubic-bezier(.2,.9,.3,1)';
     const wrapH=sheet.parentElement.getBoundingClientRect().height;
-    const h=sheet.getBoundingClientRect().height;
-    const pct=h/wrapH;
+    const pct=sheet.getBoundingClientRect().height/wrapH;
     // Snap avec prise en compte de la vélocité (flick)
     if(dragVelocity < -6) { setSheetState('collapsed'); return; } // flick vers le bas
     if(dragVelocity > 6)  { setSheetState('expanded');  return; } // flick vers le haut
     if(pct < 0.18) setSheetState('collapsed');
     else if(pct > 0.5) setSheetState('expanded');
     else setSheetState('normal');
-  });
+  };
+
+  sheet.addEventListener('touchstart',e=>{
+    if(e.touches.length !== 1){ mode = 'none'; return; }
+    const list=document.getElementById('plist');
+    startedInList = !!(list && list.contains(e.target));
+    listAtTop = !list || list.scrollTop <= 0;
+    dragStartY = dragLastY = e.touches[0].clientY;
+    dragVelocity = 0; mode = null; isDragging = false;
+  },{passive:true});
+
+  sheet.addEventListener('touchmove',e=>{
+    if(mode === 'none' || mode === 'scroll') return;
+    const y=e.touches[0].clientY;
+    if(mode === null){
+      const dy = dragStartY - y; // positif = doigt vers le haut
+      if(Math.abs(dy) < 6) return;
+      if(!startedInList) mode = 'drag';                                  // poignée / barre Proximité-Favoris
+      else if(dy > 0) mode = sheetState === 'expanded' ? 'scroll' : 'drag';
+      else mode = listAtTop ? 'drag' : 'scroll';
+      if(mode === 'scroll') return;
+      isDragging = true;
+      dragStartY = dragLastY = y;
+      dragStartHeight = sheet.getBoundingClientRect().height;
+      sheet.style.transition='none';
+    }
+    if(e.cancelable) e.preventDefault(); // la liste ne défile pas pendant qu'on déplace le panneau
+    dragVelocity = dragLastY - y; // positif = vers le haut
+    dragLastY = y;
+    const wrapH=sheet.parentElement.getBoundingClientRect().height;
+    const newH=Math.max(90, Math.min(wrapH*OPEN, dragStartHeight + (dragStartY - y)));
+    sheet.style.height=newH+'px';
+  },{passive:false});
+
+  sheet.addEventListener('touchend', endDrag);
+  sheet.addEventListener('touchcancel', endDrag);
 }
 
 function repositionFab(){
