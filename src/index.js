@@ -40,5 +40,9 @@ app.listen(PORT, () => {
   console.log(`Stripe: ${process.env.STRIPE_SECRET_KEY ? '✅ configuré' : '⚠️ STRIPE_SECRET_KEY manquant'}`);
   console.log(`Suggestions : ${process.env.GMAIL_APP_PASSWORD ? '✅ envoi par Gmail configuré' : process.env.RESEND_API_KEY ? '✅ envoi par Resend configuré' : '⚠️ GMAIL_APP_PASSWORD manquant — le formulaire proposera l\'envoi par e-mail'}`);
   // Ajout automatique des lieux listés dans data/lieux-a-ajouter.json (doublons ignorés)
-  setTimeout(() => { require('./import-places').runPlacesImport().catch(e => console.error('Import lieux :', e.message)); }, 3000);
+  // Ajout automatique des lieux ; si le service d'adresses ne répond pas, nouvel essai toutes les 15 min (4 fois max)
+  const importPlaces = (tries = 0) => require('./import-places').runPlacesImport()
+    .then(r => { if (r && r.unreachable && tries < 4) { console.log('Import lieux : nouvel essai dans 15 min'); setTimeout(() => importPlaces(tries + 1), 15 * 60 * 1000).unref(); } })
+    .catch(e => console.error('Import lieux :', e.message));
+  setTimeout(() => importPlaces(), 3000);
 });

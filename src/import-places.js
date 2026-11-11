@@ -31,21 +31,23 @@ function distM(a, b) {
 
 async function geocode(address, city) {
   const q = encodeURIComponent([address, city].filter(Boolean).join(' '));
+  const why = [];
   for (const base of GEOCODERS) {
+    const host = new URL(base).hostname;
     try {
       const ctl = new AbortController(); const t = setTimeout(() => ctl.abort(), 8000);
       const r = await fetch(base + q, { signal: ctl.signal, headers: { 'User-Agent': 'PrayerSpot/1.0 (prayerspot.fr)' } });
       clearTimeout(t);
-      if (!r.ok) continue;
+      if (!r.ok) { why.push(`${host} : ${r.status}`); continue; }
       const j = await r.json();
       const f = j && j.features && j.features[0];
       if (!f || !f.geometry || !Array.isArray(f.geometry.coordinates)) return { error: 'adresse introuvable' };
       const p = f.properties || {};
       if (typeof p.score === 'number' && p.score < 0.5) return { error: `adresse imprécise (trouvé : ${p.label || '?'})` };
       return { lng: f.geometry.coordinates[0], lat: f.geometry.coordinates[1], city: p.city, label: p.label };
-    } catch (e) { /* on essaie le service suivant */ }
+    } catch (e) { why.push(`${host} : ${e.name === 'AbortError' ? 'trop lent' : e.message}`); /* on essaie le service suivant */ }
   }
-  return { error: 'service d\'adresses injoignable' };
+  return { error: `service d'adresses injoignable (${why.join(', ')})`, unreachable: true };
 }
 
 function readList() {
@@ -64,7 +66,7 @@ async function runPlacesImport() {
   if (error) { console.error('Import lieux : lecture de la base impossible —', error.message); return { error: error.message }; }
   const known = (existing || []).map(p => ({ ...p, key: norm(p.name) + '|' + norm(p.city) }));
 
-  const res = { added: [], already: [], failed: [] };
+  const res = { added: [], already: [], failed: [], unreachable: 0 };
   for (const item of list) {
     const name = String(item.name || '').trim();
     const type = TYPES.includes(item.type) ? item.type : null;
@@ -78,7 +80,7 @@ async function runPlacesImport() {
     if (typeof lat !== 'number' || typeof lng !== 'number') {
       const g = await geocode(address, city);
       await sleep(150);
-      if (g.error) { res.failed.push(`${label} — ${g.error} (${address})`); continue; }
+      if (g.error) { if (g.unreachable) res.unreachable++; res.failed.push(`${label} — ${g.error} (${address})`); continue; }
       lat = g.lat; lng = g.lng; if (!city && g.city) city = g.city;
     }
 
@@ -107,7 +109,7 @@ async function runPlacesImport() {
   res.added.forEach(l => console.log('  + ajouté : ' + l));
   res.already.forEach(l => console.log('  = déjà présent : ' + l));
   res.failed.forEach(l => console.log('  ! problème : ' + l));
-  return { added: res.added.length, already: res.already.length, failed: res.failed.length };
+  return { added: res.added.length, already: res.already.length, failed: res.failed.length, unreachable: res.unreachable };
 }
 
 module.exports = { runPlacesImport, geocode, norm };
