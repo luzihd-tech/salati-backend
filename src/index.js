@@ -31,6 +31,7 @@ app.use('/api/prayer-times', require('./routes/prayer-times'));
 app.use('/api/stripe', stripeRoutes);
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/suggestions', require('./routes/suggestions'));
+app.use('/api/reports', require('./routes/reports'));
 
 app.use((req, res) => res.status(404).json({ error: 'Route introuvable' }));
 

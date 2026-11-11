@@ -9,53 +9,12 @@
 const express = require('express');
 const router = express.Router();
 
-const GMAIL_USER = process.env.GMAIL_USER || 'spotprayer@gmail.com';
-const TO = process.env.SUGGESTIONS_TO || GMAIL_USER;
-const FROM = process.env.SUGGESTIONS_FROM || 'Prayer Spot <onboarding@resend.dev>';
-
-let gmailTransport = null;
-function getGmail() {
-  if (!gmailTransport) {
-    const nodemailer = require('nodemailer');
-    gmailTransport = nodemailer.createTransport({
-      service: 'gmail',
-      auth: { user: GMAIL_USER, pass: String(process.env.GMAIL_APP_PASSWORD).replace(/\s+/g, '') },
-      connectionTimeout: 10000, greetingTimeout: 10000, socketTimeout: 15000
-    });
-  }
-  return gmailTransport;
-}
-function mailProvider() {
-  if (process.env.GMAIL_APP_PASSWORD) return 'gmail';
-  if (process.env.RESEND_API_KEY) return 'resend';
-  return null;
-}
+const { sendTeamMail, mailProvider, makeLimiter, clientIp, esc, clean, EMAIL_RE } = require('../mailer');
 const TYPES = { mosque: 'Mosquée', other: 'Salle de prière', shop: 'Commerce', restaurant: 'Restaurant' };
 const YESNO = { oui: 'Oui', non: 'Non', '?': 'Je ne sais pas' };
 const GENRES = { mixte: 'Hommes et femmes', hommes: 'Hommes', femmes: 'Femmes', '?': 'Je ne sais pas' };
-const EMAIL_RE = /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]{2,}$/;
-
-// ── Anti-spam : 5 suggestions par heure depuis une même connexion, 90 par jour au total ──
-const HOUR = 3600 * 1000, DAY = 24 * HOUR;
-const perIp = new Map();
-let dayCount = 0, dayStart = Date.now();
-function clientIp(req) {
-  const xff = req.headers['x-forwarded-for'];
-  return (xff ? String(xff).split(',')[0].trim() : '') || req.socket.remoteAddress || 'inconnu';
-}
-function allowed(ip) {
-  const now = Date.now();
-  if (now - dayStart > DAY) { dayStart = now; dayCount = 0; }
-  if (dayCount >= 90) return false;
-  const list = (perIp.get(ip) || []).filter(t => now - t < HOUR);
-  if (list.length >= 5) { perIp.set(ip, list); return false; }
-  list.push(now); perIp.set(ip, list); dayCount++;
-  return true;
-}
-setInterval(() => { const now = Date.now(); for (const [k, v] of perIp) if (!v.some(t => now - t < HOUR)) perIp.delete(k); }, 15 * 60 * 1000).unref();
-
-const clean = (v, max) => (typeof v === 'string' ? v : '').replace(/[\u0000-\u0008\u000b-\u001f\u007f]/g, '').trim().slice(0, max);
-const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+// Anti-spam : 5 suggestions par heure depuis une même connexion, 90 par jour au total
+const allowed = makeLimiter(5, 90);
 
 router.post('/', async (req, res) => {
   const b = req.body || {};
@@ -74,8 +33,7 @@ router.post('/', async (req, res) => {
   if (s.contactEmail && !EMAIL_RE.test(s.contactEmail)) return res.status(400).json({ error: 'Adresse e-mail invalide' });
   if (s.mawaqit && !/^https?:\/\/(www\.)?mawaqit\.net\//i.test(s.mawaqit)) s.mawaqit = '';
 
-  const provider = mailProvider();
-  if (!provider) return res.status(503).json({ error: 'Envoi momentanément indisponible', fallback: 'mail' });
+  if (!mailProvider()) return res.status(503).json({ error: 'Envoi momentanément indisponible', fallback: 'mail' });
   if (!allowed(clientIp(req))) return res.status(429).json({ error: 'Trop de suggestions envoyées. Réessaie dans une heure.' });
 
   const full = `${s.address}, ${s.city}`;
@@ -96,40 +54,10 @@ router.post('/', async (req, res) => {
   const text = rows.map(([k, v]) => `${k} : ${v}`).join('\n') + `\n\nGoogle Maps : ${maps}`;
 
   const subject = `📍 Nouvelle suggestion : ${s.name} (${s.city})`;
-
-  if (provider === 'gmail') {
-    try {
-      await getGmail().sendMail({ from: `"Prayer Spot" <${GMAIL_USER}>`, to: TO, subject, html, text, ...(s.contactEmail ? { replyTo: s.contactEmail } : {}) });
-      console.log(`Suggestion envoyée : ${s.name} (${s.city})`);
-      return res.json({ ok: true });
-    } catch (e) {
-      console.error('Suggestion : Gmail a refusé l\'envoi —', e.code || '', (e.message || '').slice(0, 200));
-      return res.status(502).json({ error: 'Envoi impossible pour le moment', fallback: 'mail' });
-    }
-  }
-
-  const payload = { from: FROM, to: [TO], subject, html, text };
-  if (s.contactEmail) payload.reply_to = s.contactEmail;
-
-  try {
-    const ctl = new AbortController(); const t = setTimeout(() => ctl.abort(), 10000);
-    const r = await fetch('https://api.resend.com/emails', {
-      method: 'POST', signal: ctl.signal,
-      headers: { 'Authorization': `Bearer ${process.env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    clearTimeout(t);
-    if (!r.ok) {
-      const detail = await r.text().catch(() => '');
-      console.error('Suggestion : Resend a refusé l\'envoi —', r.status, detail.slice(0, 200));
-      return res.status(502).json({ error: 'Envoi impossible pour le moment', fallback: 'mail' });
-    }
-    console.log(`Suggestion envoyée : ${s.name} (${s.city})`);
-    res.json({ ok: true });
-  } catch (e) {
-    console.error('Suggestion : Resend injoignable —', e.message);
-    res.status(502).json({ error: 'Envoi impossible pour le moment', fallback: 'mail' });
-  }
+  const ok = await sendTeamMail({ subject, html, text, replyTo: s.contactEmail || null, label: 'Suggestion' });
+  if (!ok) return res.status(502).json({ error: 'Envoi impossible pour le moment', fallback: 'mail' });
+  console.log(`Suggestion envoyée : ${s.name} (${s.city})`);
+  res.json({ ok: true });
 });
 
 module.exports = router;

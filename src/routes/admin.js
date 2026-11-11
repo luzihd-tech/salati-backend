@@ -6,12 +6,13 @@ const router = express.Router();
 
 router.get('/stats', adminMiddleware, async (req, res) => {
   try {
-    const [{ count: placesCount }, { count: usersCount }, { count: ratingsCount }] = await Promise.all([
+    const [{ count: placesCount }, { count: usersCount }, { count: ratingsCount }, { count: subsCount }] = await Promise.all([
       supabase.from('places').select('*', { count: 'exact', head: true }),
       supabase.from('users').select('*', { count: 'exact', head: true }),
-      supabase.from('ratings').select('*', { count: 'exact', head: true })
+      supabase.from('ratings').select('*', { count: 'exact', head: true }),
+      supabase.from('users').select('*', { count: 'exact', head: true }).eq('is_subscribed', true)
     ]);
-    res.json({ places: placesCount, users: usersCount, likes: ratingsCount });
+    res.json({ places: placesCount, users: usersCount, likes: ratingsCount, subscribers: subsCount || 0 });
   } catch (err) { res.status(500).json({ error: 'Erreur serveur' }); }
 });
 

@@ -429,6 +429,10 @@ tr:hover td{background:var(--green-light)}
           <label>Horaires d'ouverture</label>
           <input type="text" id="f-hours" placeholder="Lun-Dim: 5h-23h">
         </div>
+        <div class="fg">
+          <label>Prière du vendredi (khutba)</label>
+          <input type="text" id="f-jumuah" placeholder="ex : 13h30" maxlength="60">
+        </div>
         <div class="fg form-full">
           <label>Coordonnées GPS *</label>
           <div class="coord-row">
@@ -677,7 +681,8 @@ function openPlaceModal(place=null){
   document.getElementById('f-genre').value = place?.genre||'mixte';
   document.getElementById('f-address').value = place?.address||'';
   document.getElementById('f-city').value = place?.city||'';
-  document.getElementById('f-hours').value = place?.hours||'';
+  document.getElementById('f-hours').value = place?.hours||place?.opening_hours||'';
+  document.getElementById('f-jumuah').value = place?.jumuah_time||'';
   document.getElementById('f-lat').value = place?.lat||'';
   document.getElementById('f-lng').value = place?.lng||'';
   document.getElementById('f-photo').value = place?.photo_url||'';
@@ -727,6 +732,7 @@ async function savePlace(){
     genre: document.getElementById('f-genre').value,
     city: document.getElementById('f-city').value.trim(),
     openingHours: document.getElementById('f-hours').value.trim(),
+    jumuah_time: document.getElementById('f-jumuah').value.trim()||null,
     lat, lng,
     photo_url: document.getElementById('f-photo').value.trim()||null,
     description: document.getElementById('f-desc').value.trim(),
