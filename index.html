@@ -1511,6 +1511,12 @@ html .screen:not(#screen-explorer){background:var(--pat-fond) 0 0/150px repeat l
 .dsheet{background:var(--pat-fond) 0 0/150px repeat local,var(--white)}
 .plist-wrap{background:var(--pat-fond) 0 0/150px repeat,var(--white)}
 .drawer{background:var(--pat-fond) 0 0/150px repeat,var(--white)}
+/* Filtres : croix pour fermer sans enregistrer ni réinitialiser (les filtres choisis restent appliqués) */
+.filters-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:-4px -4px 6px 0}
+.filters-head .filters-section-label{margin:0}
+.filters-close{flex-shrink:0;width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--white);color:var(--text-2);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+.filters-close:active{background:var(--gray-100)}
+.filters-close svg{width:16px;height:16px}
 /* Bande du haut (logo Prayer Spot) : même fond à motifs + grande rosace qui dépasse à droite */
 .header{background:var(--pat-fond) 0 0/150px repeat,var(--white);overflow:hidden}
 .header::before{content:'';position:absolute;z-index:-1;pointer-events:none;right:-40px;top:calc(50% + var(--sat) / 2);width:160px;height:160px;transform:translateY(-50%);
@@ -1643,7 +1649,10 @@ html .screen:not(#screen-explorer){background:var(--pat-fond) 0 0/150px repeat l
       </div>
       <div class="filters-dropdown" id="filters-panel">
         <div class="filters-dropdown-inner">
-          <div class="filters-section-label">Type de lieu</div>
+          <div class="filters-head">
+            <div class="filters-section-label">Type de lieu</div>
+            <button class="filters-close" type="button" aria-label="Fermer les filtres" onclick="closeFiltersPanel()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+          </div>
           <div class="filters-chips-grid">
             <button class="chip" onclick="setFilter(this,'mosque')"><svg class="chip-ico" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 22 Q22 10 32 8 Q42 10 42 22"/><line x1="13" y1="14" x2="13" y2="8"/><line x1="11" y1="8" x2="15" y2="8"/><path d="M10 18 Q10 14 13 14 Q16 14 16 18"/><line x1="51" y1="14" x2="51" y2="8"/><line x1="49" y1="8" x2="53" y2="8"/><path d="M48 18 Q48 14 51 14 Q54 14 54 18"/><rect x="8" y="22" width="48" height="28" rx="2"/><path d="M26 50 L26 36 Q26 30 32 30 Q38 30 38 36 L38 50"/><path d="M14 34 Q14 30 17 30 Q20 30 20 34"/><path d="M44 34 Q44 30 47 30 Q50 30 50 34"/><line x1="4" y1="50" x2="60" y2="50"/></svg> Mosquées</button>
             <button class="chip" onclick="setFilter(this,'shop')"><svg class="chip-ico" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 26l5-14h38l5 14"/><path d="M8 26c0 4 3 6 6 6s6-2 6-6c0 4 3 6 6 6s6-2 6-6c0 4 3 6 6 6s6-2 6-6"/><path d="M12 32v20h40V32"/><rect x="24" y="38" width="9" height="14" rx="1"/><rect x="37" y="38" width="9" height="9" rx="1"/></svg> Commerces</button>
