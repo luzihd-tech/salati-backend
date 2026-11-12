@@ -1639,6 +1639,7 @@ html.theme-dark #pay-error{color:#ff7b6b!important}
     <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;padding-bottom:8px">
       <button onclick="openCGU('general')" style="background:none;border:1px solid var(--border);border-radius:10px;padding:8px 16px;font-size:12px;color:var(--muted);cursor:pointer;font-family:Outfit,sans-serif"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;vertical-align:-3px;margin-right:6px"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>CGU — Application</button>
       <button onclick="openCGU('subscription')" style="background:none;border:1px solid var(--border);border-radius:10px;padding:8px 16px;font-size:12px;color:var(--muted);cursor:pointer;font-family:Outfit,sans-serif"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;vertical-align:-3px;margin-right:6px"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/></svg>CGU — Abonnement</button>
+      <button onclick="openCGU('legal')" style="background:none;border:1px solid var(--border);border-radius:10px;padding:8px 16px;font-size:12px;color:var(--muted);cursor:pointer;font-family:Outfit,sans-serif"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;vertical-align:-3px;margin-right:6px"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>Mentions légales</button>
     </div>
     <div class="ap-credits" id="ap-credits">
       <div class="ap-credits-title">Crédits de la carte</div>
@@ -6241,26 +6242,36 @@ const CGU_CONTENT = {
   general: {
     title: "Conditions Générales d'Utilisation",
     body: `
-      <p style="margin-bottom:14px"><b>Application : Prayer Spot</b><br>Éditeur : Prayer Spot<br>Date de mise à jour : septembre 2025</p>
+      <p style="margin-bottom:14px"><b>Application : Prayer Spot</b><br>Éditeur : First Class Drive (marque Prayer Spot)<br>Date de mise à jour : novembre 2026</p>
       <p style="margin-bottom:10px"><b>1. Objet</b><br>Prayer Spot est une application web permettant de localiser des lieux de prière en France. L'utilisation de l'application est gratuite.</p>
       <p style="margin-bottom:10px"><b>2. Accès au service</b><br>L'accès à Prayer Spot est libre et ne nécessite pas de création de compte. Certaines fonctionnalités (favoris, suivi de prière) nécessitent une inscription.</p>
       <p style="margin-bottom:10px"><b>3. Données personnelles</b><br>Seules les données strictement nécessaires sont collectées (email, préférences). Aucune donnée n'est revendue à des tiers. La géolocalisation est utilisée uniquement pour afficher les lieux proches et n'est jamais stockée. Les photos des lieux proviennent de Google Maps : à l'ouverture d'une fiche, ton appareil se connecte aux serveurs de Google pour les afficher.</p>
       <p style="margin-bottom:10px"><b>4. Responsabilité</b><br>Prayer Spot s'efforce d'assurer l'exactitude des informations (horaires, lieux) mais ne peut garantir leur complétude. L'utilisateur est invité à signaler toute erreur.</p>
       <p style="margin-bottom:10px"><b>5. Propriété intellectuelle</b><br>L'ensemble du contenu de l'application est la propriété de Prayer Spot, à l'exception des photos des lieux issues de Google Maps, qui restent la propriété de leurs auteurs. Toute reproduction sans autorisation est interdite.</p>
       <p style="margin-bottom:10px"><b>6. Modification des CGU</b><br>Prayer Spot se réserve le droit de modifier ces CGU à tout moment. Les utilisateurs seront informés des changements significatifs.</p>
-      <p style="color:var(--muted);font-size:12px">Contact : contact@prayerspot.fr</p>
+      <p style="color:var(--muted);font-size:12px">Contact : spotprayer@gmail.com</p>
     `
   },
   subscription: {
     title: "CGU — Abonnement",
     body: `
-      <p style="margin-bottom:14px"><b>Abonnement Prayer Spot</b><br>Éditeur : Prayer Spot<br>Prix : 1,99€/mois</p>
+      <p style="margin-bottom:14px"><b>Abonnement Prayer Spot</b><br>Éditeur : First Class Drive (marque Prayer Spot)<br>Prix : 1,99€/mois</p>
       <p style="margin-bottom:10px"><b>1. Nature de l'abonnement</b><br>L'abonnement à Prayer Spot est une contribution volontaire. Il ne donne accès à aucune fonctionnalité supplémentaire. Il s'agit d'une Sadaqa Jariyah — une aumône continue — destinée à soutenir le développement et la maintenance de l'application, et à rémunérer le développeur.</p>
       <p style="margin-bottom:10px"><b>2. Facturation</b><br>L'abonnement est facturé 1,99€ par mois via Stripe, une plateforme de paiement sécurisée. Le prélèvement est effectué à la date d'anniversaire de l'abonnement.</p>
-      <p style="margin-bottom:10px"><b>3. Résiliation</b><br>L'abonnement peut être résilié à tout moment depuis la section "Compte" de l'application ou en contactant contact@prayerspot.fr. La résiliation prend effet à la fin de la période en cours.</p>
+      <p style="margin-bottom:10px"><b>3. Résiliation</b><br>L'abonnement peut être résilié à tout moment depuis la section "Compte" de l'application ou en écrivant à spotprayer@gmail.com. La résiliation prend effet à la fin de la période en cours.</p>
       <p style="margin-bottom:10px"><b>4. Remboursement</b><br>Conformément à la réglementation européenne, vous disposez d'un droit de rétractation de 14 jours suivant la souscription. Passé ce délai, aucun remboursement ne sera effectué pour la période en cours.</p>
       <p style="margin-bottom:10px"><b>5. Sécurité des paiements</b><br>Les paiements sont entièrement gérés par Stripe. Prayer Spot ne stocke aucune information bancaire.</p>
-      <p style="color:var(--muted);font-size:12px">Contact : contact@prayerspot.fr</p>
+      <p style="color:var(--muted);font-size:12px">Contact : spotprayer@gmail.com</p>
+    `
+  },
+  legal: {
+    title: "Mentions légales",
+    body: `
+      <p style="margin-bottom:12px"><b>Éditeur</b><br>First Class Drive, SASU au capital de 1 €<br>RCS Toulouse 995 100 906<br>TVA intracommunautaire : FR78 995 100 906</p>
+      <p style="margin-bottom:12px"><b>Contact</b><br>spotprayer@gmail.com</p>
+      <p style="margin-bottom:12px"><b>Directeur de la publication</b><br>Le Président de la société First Class Drive</p>
+      <p style="margin-bottom:12px"><b>Hébergement</b><br>Netlify, Inc.<br>101 2nd Street, San Francisco, CA 94105, États-Unis<br><a href="https://www.netlify.com" target="_blank" rel="noopener" style="color:var(--green)">www.netlify.com</a></p>
+      <p style="color:var(--muted);font-size:12px">Prayer Spot est une marque de First Class Drive.</p>
     `
   }
 };
