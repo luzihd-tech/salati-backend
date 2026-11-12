@@ -7,10 +7,10 @@ self.addEventListener('fetch', e => {
   if (e.request.mode !== 'navigate') return; // tout le reste passe normalement par le réseau
   e.respondWith(fetch(e.request).catch(() => new Response(
     '<!doctype html><html lang="fr"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
-    '<title>Prayer Spot</title><body style="margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:system-ui,sans-serif;background:#f8f9fa;color:#0d1f18;text-align:center;padding:24px">' +
+    '<title>Prayer Spot</title><body style="margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:system-ui,sans-serif;background:#f6f1e6;color:#1b2820;text-align:center;padding:24px">' +
     '<div><div style="font-size:20px;font-weight:800;margin-bottom:8px">Pas de connexion</div>' +
-    '<div style="color:#7a8f86;margin-bottom:20px">Vérifie ta connexion internet puis réessaie.</div>' +
-    '<button onclick="location.reload()" style="background:#0d6e47;color:#fff;border:none;border-radius:12px;padding:12px 22px;font-size:15px;font-weight:700">Réessayer</button></div></body></html>',
+    '<div style="color:#8a8c82;margin-bottom:20px">Vérifie ta connexion internet puis réessaie.</div>' +
+    '<button onclick="location.reload()" style="background:#2a4234;color:#fff;border:none;border-radius:12px;padding:12px 22px;font-size:15px;font-weight:700">Réessayer</button></div></body></html>',
     { headers: { 'Content-Type': 'text/html; charset=utf-8' } }
   )));
 });
