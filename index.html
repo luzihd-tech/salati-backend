@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#fffdf9">
+<meta name="theme-color" content="#fdfaf4">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -19,21 +19,21 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
-  /* Palette premium — vert forêt profond, ivoire, laiton discret */
-  --green:#1f5d45;--green-deep:#123e2e;--green-dark:#0b2a1f;--green-light:#eef1ea;--green-soft:#dde5da;
-  --green-mid:#2c6e53;--green-vivid:#3a8a66;
+  /* Palette « sapin & lin » — vert sapin, beige très clair, tons sauge */
+  --green:#405c4d;--green-deep:#2a4234;--green-dark:#1d3026;--green-light:#e2e3d5;--green-soft:#d3d8c7;
+  --green-mid:#4f6b5b;--green-vivid:#5b7d68;
 
-  /* Neutres chauds */
-  --white:#fffdf9;--bg:#f5f1e8;--surface:#fffdf9;
-  --gray-100:#f2ede3;--gray-200:#e8e1d3;--gray-300:#d7cebd;
-  --text:#16231d;--text-2:#44514a;--muted:#8a8d84;--border:#e9e2d4;
+  /* Neutres lin */
+  --white:#fdfaf4;--bg:#f6f1e6;--surface:#fdfaf4;
+  --gray-100:#f1ece1;--gray-200:#e6e0d3;--gray-300:#d6cfc0;
+  --text:#1b2820;--text-2:#47524a;--muted:#8a8c82;--border:#e8e2d5;
 
-  /* Accents */
-  --gold:#a8834a;--gold-light:#f6efe1;--gold-line:rgba(168,131,74,0.35);
-  --hero-bg:#123e2e;--hero-text:#f4efe3;
+  /* Accents : tons sauge (pas de doré) */
+  --gold:#6d8473;--gold-light:#e2e3d5;--gold-line:rgba(64,92,77,0.26);
+  --hero-bg:#2a4234;--hero-text:#f7f2e8;
 
   /* Couleurs par type de lieu */
-  --t-mosque:#1c5a43;--t-shop:#9a7440;--t-restaurant:#8a3346;--t-other:#5f665f;
+  --t-mosque:#2f5a45;--t-shop:#8a6d45;--t-restaurant:#8a4f4a;--t-other:#5f665f;
 
   /* Polices */
   --font-display:'Fraunces',Georgia,'Times New Roman',serif;
@@ -44,7 +44,7 @@
   --header-h:56px;--radius-sm:10px;--radius-md:16px;--radius-lg:20px;--radius-xl:26px;
 
   /* Icon color token (adapts via JS for dark mode) */
-  --icon-color:rgba(22,35,29,0.68);
+  --icon-color:rgba(27,40,32,0.66);
 
   /* Ombres douces et chaudes */
   --shadow-xs:0 1px 2px rgba(40,32,15,0.05);
@@ -53,7 +53,7 @@
   --shadow-lg:0 18px 48px rgba(30,25,12,0.14);
 
   /* Glass */
-  --glass-bg:rgba(255,253,249,0.9);--glass-border:rgba(255,255,255,0.6);
+  --glass-bg:rgba(253,250,244,0.92);--glass-border:rgba(255,255,255,0.6);
 }
 html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--text);background:var(--bg);position:fixed;width:100%;-webkit-font-smoothing:antialiased}
 
@@ -1361,6 +1361,147 @@ html.theme-dark .compass-ring{box-shadow:0 18px 44px rgba(0,0,0,0.45),inset 0 0 
 html .cal-toggle-btn.active,html .cal-day.today{background:var(--green-deep)}
 .cal-month-name{font-weight:600}
 .leaflet-container .leaflet-control-attribution{background:var(--glass-bg)}
+/* ═══════════════════════════════════════════════════════════════
+   SAPIN & LIN — vert sapin, beige très clair, tons sauge.
+   Motifs originaux en filigrane (étoiles géométriques, rosace,
+   Coran sur son support) posés en masque : ils prennent la couleur
+   du thème, clair comme sombre.
+   ═══════════════════════════════════════════════════════════════ */
+:root{
+  --pat-girih:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2248%22 height=%2248%22 viewBox=%220 0 48 48%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%221%22%3E%3Cpolygon points=%2224.00,0.00 0.00,24.00 -24.00,0.00 -0.00,-24.00%22/%3E%3Cpolygon points=%2216.97,16.97 -16.97,16.97 -16.97,-16.97 16.97,-16.97%22/%3E%3Cpolygon points=%2212.96,0.00 7.54,3.12 9.16,9.16 3.12,7.54 0.00,12.96 -3.12,7.54 -9.16,9.16 -7.54,3.12 -12.96,0.00 -7.54,-3.12 -9.16,-9.16 -3.12,-7.54 -0.00,-12.96 3.12,-7.54 9.16,-9.16 7.54,-3.12%22/%3E%3Cpolygon points=%2272.00,0.00 48.00,24.00 24.00,0.00 48.00,-24.00%22/%3E%3Cpolygon points=%2264.97,16.97 31.03,16.97 31.03,-16.97 64.97,-16.97%22/%3E%3Cpolygon points=%2260.96,0.00 55.54,3.12 57.16,9.16 51.12,7.54 48.00,12.96 44.88,7.54 38.84,9.16 40.46,3.12 35.04,0.00 40.46,-3.12 38.84,-9.16 44.88,-7.54 48.00,-12.96 51.12,-7.54 57.16,-9.16 55.54,-3.12%22/%3E%3Cpolygon points=%2224.00,48.00 0.00,72.00 -24.00,48.00 -0.00,24.00%22/%3E%3Cpolygon points=%2216.97,64.97 -16.97,64.97 -16.97,31.03 16.97,31.03%22/%3E%3Cpolygon points=%2212.96,48.00 7.54,51.12 9.16,57.16 3.12,55.54 0.00,60.96 -3.12,55.54 -9.16,57.16 -7.54,51.12 -12.96,48.00 -7.54,44.88 -9.16,38.84 -3.12,40.46 -0.00,35.04 3.12,40.46 9.16,38.84 7.54,44.88%22/%3E%3Cpolygon points=%2272.00,48.00 48.00,72.00 24.00,48.00 48.00,24.00%22/%3E%3Cpolygon points=%2264.97,64.97 31.03,64.97 31.03,31.03 64.97,31.03%22/%3E%3Cpolygon points=%2260.96,48.00 55.54,51.12 57.16,57.16 51.12,55.54 48.00,60.96 44.88,55.54 38.84,57.16 40.46,51.12 35.04,48.00 40.46,44.88 38.84,38.84 44.88,40.46 48.00,35.04 51.12,40.46 57.16,38.84 55.54,44.88%22/%3E%3Ccircle cx=%2224.0%22 cy=%2224.0%22 r=%223.36%22/%3E%3C/svg%3E");
+  --pat-rosace:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22 viewBox=%220 0 200 200%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%221.6%22%3E%3Ccircle cx=%22100%22 cy=%22100%22 r=%2296%22/%3E%3Ccircle cx=%22100%22 cy=%22100%22 r=%2284%22/%3E%3Cpath transform=%22rotate%280 100 100%29%22 d=%22M100 74 C 90 60 91 40 100 24 C 109 40 110 60 100 74 Z%22/%3E%3Cpath transform=%22rotate%2830 100 100%29%22 d=%22M100 74 C 90 60 91 40 100 24 C 109 40 110 60 100 74 Z%22/%3E%3Cpath transform=%22rotate%2860 100 100%29%22 d=%22M100 74 C 90 60 91 40 100 24 C 109 40 110 60 100 74 Z%22/%3E%3Cpath transform=%22rotate%2890 100 100%29%22 d=%22M100 74 C 90 60 91 40 100 24 C 109 40 110 60 100 74 Z%22/%3E%3Cpath transform=%22rotate%28120 100 100%29%22 d=%22M100 74 C 90 60 91 40 100 24 C 109 40 110 60 100 74 Z%22/%3E%3Cpath transform=%22rotate%28150 100 100%29%22 d=%22M100 74 C 90 60 91 40 100 24 C 109 40 110 60 100 74 Z%22/%3E%3Cpath transform=%22rotate%28180 100 100%29%22 d=%22M100 74 C 90 60 91 40 100 24 C 109 40 110 60 100 74 Z%22/%3E%3Cpath transform=%22rotate%28210 100 100%29%22 d=%22M100 74 C 90 60 91 40 100 24 C 109 40 110 60 100 74 Z%22/%3E%3Cpath transform=%22rotate%28240 100 100%29%22 d=%22M100 74 C 90 60 91 40 100 24 C 109 40 110 60 100 74 Z%22/%3E%3Cpath transform=%22rotate%28270 100 100%29%22 d=%22M100 74 C 90 60 91 40 100 24 C 109 40 110 60 100 74 Z%22/%3E%3Cpath transform=%22rotate%28300 100 100%29%22 d=%22M100 74 C 90 60 91 40 100 24 C 109 40 110 60 100 74 Z%22/%3E%3Cpath transform=%22rotate%28330 100 100%29%22 d=%22M100 74 C 90 60 91 40 100 24 C 109 40 110 60 100 74 Z%22/%3E%3Cpolygon points=%22126.00,100.00 100.00,126.00 74.00,100.00 100.00,74.00%22/%3E%3Cpolygon points=%22118.38,118.38 81.62,118.38 81.62,81.62 118.38,81.62%22/%3E%3Ccircle cx=%22100%22 cy=%22100%22 r=%229%22/%3E%3Ccircle cx=%22186.9%22 cy=%22123.3%22 r=%223%22/%3E%3Ccircle cx=%22163.6%22 cy=%22163.6%22 r=%223%22/%3E%3Ccircle cx=%22123.3%22 cy=%22186.9%22 r=%223%22/%3E%3Ccircle cx=%2276.7%22 cy=%22186.9%22 r=%223%22/%3E%3Ccircle cx=%2236.4%22 cy=%22163.6%22 r=%223%22/%3E%3Ccircle cx=%2213.1%22 cy=%22123.3%22 r=%223%22/%3E%3Ccircle cx=%2213.1%22 cy=%2276.7%22 r=%223%22/%3E%3Ccircle cx=%2236.4%22 cy=%2236.4%22 r=%223%22/%3E%3Ccircle cx=%2276.7%22 cy=%2213.1%22 r=%223%22/%3E%3Ccircle cx=%22123.3%22 cy=%2213.1%22 r=%223%22/%3E%3Ccircle cx=%22163.6%22 cy=%2236.4%22 r=%223%22/%3E%3Ccircle cx=%22186.9%22 cy=%2276.7%22 r=%223%22/%3E%3Cpath transform=%22rotate%2815 100 100%29%22 d=%22M100 26 L100 16%22/%3E%3Cpath transform=%22rotate%2845 100 100%29%22 d=%22M100 26 L100 16%22/%3E%3Cpath transform=%22rotate%2875 100 100%29%22 d=%22M100 26 L100 16%22/%3E%3Cpath transform=%22rotate%28105 100 100%29%22 d=%22M100 26 L100 16%22/%3E%3Cpath transform=%22rotate%28135 100 100%29%22 d=%22M100 26 L100 16%22/%3E%3Cpath transform=%22rotate%28165 100 100%29%22 d=%22M100 26 L100 16%22/%3E%3Cpath transform=%22rotate%28195 100 100%29%22 d=%22M100 26 L100 16%22/%3E%3Cpath transform=%22rotate%28225 100 100%29%22 d=%22M100 26 L100 16%22/%3E%3Cpath transform=%22rotate%28255 100 100%29%22 d=%22M100 26 L100 16%22/%3E%3Cpath transform=%22rotate%28285 100 100%29%22 d=%22M100 26 L100 16%22/%3E%3Cpath transform=%22rotate%28315 100 100%29%22 d=%22M100 26 L100 16%22/%3E%3Cpath transform=%22rotate%28345 100 100%29%22 d=%22M100 26 L100 16%22/%3E%3C/svg%3E");
+  --pat-coran:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%22112%22 viewBox=%220 0 120 112%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222.2%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M60 36 C48 27 30 26 14 31 L14 72 C30 67 48 68 60 77 Z%22/%3E%3Cpath d=%22M60 36 C72 27 90 26 106 31 L106 72 C90 67 72 68 60 77 Z%22/%3E%3Cpath d=%22M60 36 V77%22/%3E%3Cg stroke-width=%221.4%22%3E%3Cpath d=%22M24 44.5 C36 41.0 48 42.0 56 47.0%22/%3E%3Cpath d=%22M96 44.5 C84 41.0 72 42.0 64 47.0%22/%3E%3Cpath d=%22M24 49.7 C36 46.2 48 47.2 56 52.2%22/%3E%3Cpath d=%22M96 49.7 C84 46.2 72 47.2 64 52.2%22/%3E%3Cpath d=%22M24 54.9 C36 51.4 48 52.4 56 57.4%22/%3E%3Cpath d=%22M96 54.9 C84 51.4 72 52.4 64 57.4%22/%3E%3Cpath d=%22M24 60.1 C36 56.6 48 57.6 56 62.6%22/%3E%3Cpath d=%22M96 60.1 C84 56.6 72 57.6 64 62.6%22/%3E%3Cpath d=%22M24 65.3 C36 61.8 48 62.8 56 67.8%22/%3E%3Cpath d=%22M96 65.3 C84 61.8 72 62.8 64 67.8%22/%3E%3C/g%3E%3Cpath d=%22M10 70 L60 86 L110 70%22/%3E%3Cpath d=%22M14 74 L92 106%22/%3E%3Cpath d=%22M106 74 L28 106%22/%3E%3Cpath d=%22M22 106 H38%22/%3E%3Cpath d=%22M82 106 H98%22/%3E%3Cg stroke-width=%221.6%22%3E%3Cpolygon points=%2268.00,17.00 60.00,25.00 52.00,17.00 60.00,9.00%22/%3E%3Cpolygon points=%2265.66,22.66 54.34,22.66 54.34,11.34 65.66,11.34%22/%3E%3C/g%3E%3C/svg%3E");
+  --pat-etoile:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22%3E%3Cpolygon points=%2220.00,0.50 25.82,5.96 33.79,6.21 34.04,14.18 39.50,20.00 34.04,25.82 33.79,33.79 25.82,34.04 20.00,39.50 14.18,34.04 6.21,33.79 5.96,25.82 0.50,20.00 5.96,14.18 6.21,6.21 14.18,5.96%22 fill=%22%23000%22/%3E%3C/svg%3E");
+  --pat-etoile-trait:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%221.2%22%3E%3Cpolygon points=%2220.00,1.40 25.51,6.70 33.15,6.85 33.30,14.49 38.60,20.00 33.30,25.51 33.15,33.15 25.51,33.30 20.00,38.60 14.49,33.30 6.85,33.15 6.70,25.51 1.40,20.00 6.70,14.49 6.85,6.85 14.49,6.70%22/%3E%3Ccircle cx=%2220%22 cy=%2220%22 r=%2211.5%22/%3E%3C/svg%3E");
+}
+
+/* Titres plus légers, comme la référence */
+.dname,.apropos-hero h2,.account-logged-out h3,.qibla-hero h2,.sourate-header-name,.sf-name,.aide-title{font-weight:500}
+.pi.next{border-color:var(--gold-line)}
+.pi.next .pn{color:var(--green)}
+.badge{color:var(--green);border-color:var(--gold-line)}
+.sub-btn{background:var(--hero-text);color:var(--hero-bg)}
+html.theme-dark .sub-btn{color:var(--hero-bg)}
+
+/* ─── Fonds verts décorés ─────────────────────────────────── */
+html .drawer-head,html .apropos-hero,html .profile-card,html .sub-card,.sourate-header,.sourate-feature,.aide-tile{position:relative;isolation:isolate;overflow:hidden}
+html .drawer-head::before,html .profile-card::before,html .sub-card::before,.sourate-header::before,.sourate-feature::before,.aide-tile.dark::before,html .apropos-hero::before{
+  content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;border-radius:0;
+  top:0;right:0;width:auto;height:auto;background:var(--hero-text);opacity:.075;
+  -webkit-mask:var(--pat-girih) repeat 0 0/44px,linear-gradient(105deg,transparent 18%,#000 92%);
+  -webkit-mask-composite:source-in;mask:var(--pat-girih) repeat 0 0/44px,linear-gradient(105deg,transparent 18%,#000 92%);mask-composite:intersect;
+}
+html .apropos-hero::after,html .sub-card::after,html .profile-card::after,.aide-tile::after{
+  content:'';position:absolute;z-index:-1;pointer-events:none;right:-58px;bottom:-58px;width:190px;height:190px;
+  background:var(--hero-text);opacity:.11;-webkit-mask:var(--pat-rosace) no-repeat center/contain;mask:var(--pat-rosace) no-repeat center/contain;
+}
+html .apropos-hero::after{right:50%;bottom:50%;transform:translate(50%,50%);width:300px;height:300px;opacity:.08}
+
+/* ─── Noble Coran : chaque sourate devient une carte ──────── */
+#screen-noble-coran{background:var(--bg)}
+.quran-search-bar{background:var(--bg);border-bottom:none;padding:14px 16px 6px}
+.quran-search-input{border:1px solid var(--border);border-radius:14px;background:var(--white)}
+.quran-settings-btn{background:var(--white);border:1px solid var(--border);border-radius:14px}
+#sourates-list{padding:6px 16px 22px;display:flex;flex-direction:column;gap:10px}
+.sl-label{font-size:10.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--green);margin:10px 2px 0;display:flex;align-items:center;gap:10px}
+.sl-label::after{content:'';flex:1;height:1px;background:var(--gold-line)}
+.sourate-card{
+  position:relative;isolation:isolate;overflow:hidden;background:var(--white);border:1px solid var(--border);
+  border-radius:18px;padding:14px 12px 14px 14px;gap:13px;border-bottom:1px solid var(--border);
+}
+.sourate-card::before{
+  content:'';position:absolute;z-index:-1;pointer-events:none;right:62px;top:50%;width:92px;height:86px;transform:translateY(-50%) rotate(-8deg);
+  background:var(--green-deep);opacity:.055;-webkit-mask:var(--pat-coran) no-repeat center/contain;mask:var(--pat-coran) no-repeat center/contain;
+}
+.sourate-card:active{background:var(--gray-100)}
+.sourate-num{position:relative;isolation:isolate;width:42px;height:42px;background:none;border-radius:0;color:var(--green-deep);font-weight:700;font-size:12.5px;font-variant-numeric:tabular-nums}
+.sourate-num::before{content:'';position:absolute;inset:0;z-index:-1;background:var(--green-light);-webkit-mask:var(--pat-etoile) no-repeat center/contain;mask:var(--pat-etoile) no-repeat center/contain}
+.sourate-num::after{content:'';position:absolute;inset:0;z-index:-1;background:var(--green);opacity:.45;-webkit-mask:var(--pat-etoile-trait) no-repeat center/contain;mask:var(--pat-etoile-trait) no-repeat center/contain}
+.sourate-name-fr{font-family:var(--font-display);font-weight:600;font-size:16.5px;letter-spacing:-0.1px}
+.sourate-name-fr span{font-family:var(--font-ui);font-size:12.5px}
+.sourate-meta{font-size:12px;font-weight:400}
+.sourate-name-ar{color:var(--green-deep);font-size:19px;font-weight:600}
+/* Sourate mise en avant (reprendre / commencer) */
+.sourate-feature{
+  background:var(--hero-bg);color:var(--hero-text);border-radius:24px;padding:22px 20px 20px;cursor:pointer;
+  box-shadow:0 10px 30px rgba(20,30,22,.16);min-height:176px;display:flex;flex-direction:column;
+}
+.sourate-feature::after{
+  content:'';position:absolute;z-index:-1;pointer-events:none;right:-22px;bottom:-16px;width:190px;height:178px;transform:rotate(-6deg);
+  background:var(--hero-text);opacity:.13;-webkit-mask:var(--pat-coran) no-repeat center/contain;mask:var(--pat-coran) no-repeat center/contain;
+}
+.sf-label{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;opacity:.7;font-weight:600}
+.sf-name{font-family:var(--font-display);font-size:30px;line-height:1.1;margin-top:8px;letter-spacing:-0.3px}
+.sf-ar{font-family:serif;font-size:22px;opacity:.9;margin-top:2px}
+.sf-meta{font-size:12px;opacity:.72;margin-top:6px}
+.sf-btn{margin-top:auto;align-self:flex-start;display:inline-flex;align-items:center;gap:6px;background:var(--hero-text);color:var(--hero-bg);border-radius:100px;padding:9px 16px;font-size:13px;font-weight:600;margin-top:16px}
+.sf-btn svg{width:15px;height:15px}
+
+/* ─── Lecture d'une sourate ───────────────────────────────── */
+#screen-sourate{background:var(--bg)}
+.sourate-header{
+  display:flex;flex-direction:column;align-items:center;text-align:center;gap:0;margin:14px 16px 10px;padding:24px 20px 22px;
+  background:var(--hero-bg);color:var(--hero-text);border-radius:24px;box-shadow:0 10px 30px rgba(20,30,22,.16);
+}
+.sourate-header::after{
+  content:'';position:absolute;z-index:-1;pointer-events:none;right:-30px;bottom:-20px;width:200px;height:186px;transform:rotate(-6deg);
+  background:var(--hero-text);opacity:.11;-webkit-mask:var(--pat-coran) no-repeat center/contain;mask:var(--pat-coran) no-repeat center/contain;
+}
+.sh-num{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;opacity:.7;font-weight:600}
+.sourate-header-name{font-size:30px;margin:6px 0 2px;font-weight:500}
+.sh-sub{font-size:13px;opacity:.8}
+.sh-sub b{font-family:serif;font-size:18px;font-weight:600;margin-right:6px}
+.sh-rule{width:70%;height:1px;background:currentColor;opacity:.3;margin:14px 0 10px}
+.sourate-header-meta{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;opacity:.8;font-weight:600}
+.sh-bism{font-family:serif;font-size:25px;margin-top:14px;line-height:1.6}
+.sourate-context{margin:0 16px 12px;background:var(--white);border:1px solid var(--border);border-radius:16px;padding:12px 14px}
+.sourate-context .sourate-intro-label{color:var(--green);opacity:1;letter-spacing:.12em;font-weight:600}
+.sourate-context .sourate-intro-text{color:var(--text-2);opacity:1;font-weight:400}
+.sourate-progress-bar{margin:0 16px;border-radius:3px;background:var(--green)}
+.verset{position:relative;margin:10px 16px 0;padding:12px;background:var(--white);border:1px solid var(--border);border-radius:18px;
+  display:grid;grid-template-columns:auto 1fr;column-gap:10px;align-items:center}
+.verset::before{content:'';position:absolute;left:8px;right:8px;top:8px;height:38px;background:var(--gray-100);border-radius:12px}
+.verset > *{position:relative}
+.verset-num{grid-column:1;grid-row:1;margin:0 0 0 2px;width:28px;height:28px;background:var(--green-deep);color:#fff;font-weight:700;font-size:11px}
+.verset-footer{grid-column:2;grid-row:1;margin:0;justify-content:flex-end}
+.tafsir-btn{background:transparent;border:1px solid var(--border);color:var(--text-2);font-weight:500}
+.verset-ar,.verset-translit,.verset-fr{grid-column:1 / -1}
+.verset-ar{margin:16px 2px 10px}
+.verset-translit{color:var(--green);font-style:normal;font-weight:500;margin:0 2px 4px}
+.verset-fr{margin:0 2px 2px;font-weight:400}
+.verset.read{background:var(--white)}
+.verset.read .verset-num{background:var(--green)}
+.verset.selected{border-color:var(--gold-line)}
+
+/* ─── Aide à la prière : tuiles ───────────────────────────── */
+.aide-head{text-align:center;padding:6px 0 18px}
+.aide-title{font-family:var(--font-display);font-size:26px;letter-spacing:-0.2px;color:var(--text)}
+.aide-sub{font-size:12.5px;color:var(--muted);margin-top:4px}
+.aide-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.aide-tile{
+  background:var(--white);border:1px solid var(--border);border-radius:22px;padding:18px 16px 16px;min-height:168px;
+  display:flex;flex-direction:column;align-items:flex-start;cursor:pointer;color:var(--text);text-align:left;min-width:0;
+}
+.aide-tile::after{background:var(--green-deep);opacity:.07}
+.aide-tile.dark{background:var(--hero-bg);border-color:transparent;color:var(--hero-text)}
+.aide-tile.dark::after{background:var(--hero-text);opacity:.12}
+.aide-tile:active{transform:scale(.98)}
+.aide-ico{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:var(--green-light);color:var(--green-deep)}
+.aide-tile.dark .aide-ico{background:rgba(255,253,246,.1);color:var(--hero-text)}
+.aide-ico svg{width:24px;height:24px}
+.aide-tile b{font-family:var(--font-display);font-weight:600;font-size:18px;margin-top:auto;padding-top:18px;line-height:1.15}
+.aide-tile span{font-size:11.5px;opacity:.72;margin-top:4px;line-height:1.4}
+.aide-tile .toggle{margin-top:10px}
+
+/* ─── Fiche sans photo, Qibla, compte ─────────────────────── */
+html .dimg[class*="t-"]{position:relative;isolation:isolate;overflow:hidden}
+.dimg[class*="t-"]::before{content:'';position:absolute;inset:0;z-index:-1;background:currentColor;opacity:.07;-webkit-mask:var(--pat-girih) repeat center/44px;mask:var(--pat-girih) repeat center/44px}
+.dimg.has-g::before{display:none}
+.dimg-icon{background:var(--white);border-radius:50%;width:76px;height:76px;padding:18px;border:1px solid var(--border)}
+.compass-ring::before{content:'';position:absolute;inset:17%;pointer-events:none;background:var(--green-deep);opacity:.06;-webkit-mask:var(--pat-rosace) no-repeat center/contain;mask:var(--pat-rosace) no-repeat center/contain}
+.account-logged-out .ico{position:relative;isolation:isolate;width:120px;height:120px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;color:var(--green-deep)}
+.account-logged-out .ico::before{content:'';position:absolute;inset:0;z-index:-1;background:var(--green-deep);opacity:.1;-webkit-mask:var(--pat-rosace) no-repeat center/contain;mask:var(--pat-rosace) no-repeat center/contain}
+#screen-aide-priere{overflow-y:auto;padding:20px 16px calc(24px + var(--sab));background:var(--bg)}
 </style>
 </head>
 <body>
@@ -2352,21 +2493,21 @@ const MAP_ATTRIB = '<a href="https://openfreemap.org" target="_blank" rel="noope
 
 // Palettes : sol clair légèrement vert, rues blanches, grands axes vert sauge
 const MAP_PALETTES = {
-  light:{ // ivoire, parcs sauge, grands axes champagne
-    land:'#f1ece1', residential:'#f1ece1', building:'#e6dfd0', buildingLine:'#dbd2c0',
-    park:'#dfe5d3', wood:'#d8e0cc', water:'#cddbd6', waterLine:'#b9ccc6',
-    minor:'#fffdf8', path:'#f7f3ea',
-    majorFill:'#f0e7d4', majorCase:'#e2d6bb', motorFill:'#e9dcbc', motorCase:'#d8c7a0',
-    rail:'#d9d1c1', railDash:'#f3eee4', boundary:'#c4b9a3',
-    roadLabel:'#6f6a5c', placeLabel:'#2b3a32', waterLabel:'#4f7a72', halo:'#f5f1e8'
+  light:{ // lin, parcs sauge, grands axes sable
+    land:'#f4eee2', residential:'#f4eee2', building:'#e9e2d3', buildingLine:'#ddd5c4',
+    park:'#dfe3d2', wood:'#d7ddc9', water:'#d3dfda', waterLine:'#bccdc6',
+    minor:'#fffcf6', path:'#f8f4ec',
+    majorFill:'#ebe4d3', majorCase:'#ddd4bf', motorFill:'#e2dac4', motorCase:'#cec3a8',
+    rail:'#dbd4c6', railDash:'#f4efe6', boundary:'#c7bfae',
+    roadLabel:'#77756a', placeLabel:'#2a3a31', waterLabel:'#55786f', halo:'#f6f1e6'
   },
-  dark:{ // nuit vert profond, grands axes bronze
-    land:'#101614', residential:'#101614', building:'#18201d', buildingLine:'#1f2925',
-    park:'#13221b', wood:'#132419', water:'#0c1b1d', waterLine:'#12282b',
-    minor:'#222b27', path:'#1a221f',
-    majorFill:'#3a3324', majorCase:'#1d1a12', motorFill:'#4d4129', motorCase:'#241f14',
-    rail:'#232c28', railDash:'#121816', boundary:'#3a443f',
-    roadLabel:'#a39c8a', placeLabel:'#e3dccd', waterLabel:'#6f9c96', halo:'#101614'
+  dark:{ // nuit sapin
+    land:'#111914', residential:'#111914', building:'#18221c', buildingLine:'#1f2a23',
+    park:'#15241b', wood:'#152519', water:'#0e1c1c', waterLine:'#13292a',
+    minor:'#222c26', path:'#1a231e',
+    majorFill:'#2d3a31', majorCase:'#18201b', motorFill:'#37483c', motorCase:'#1b241e',
+    rail:'#222c26', railDash:'#111914', boundary:'#3a463f',
+    roadLabel:'#9ea596', placeLabel:'#e4dfd3', waterLabel:'#6f9893', halo:'#111914'
   }
 };
 
@@ -2557,7 +2698,7 @@ function initMap(){
 }
 
 function mkIcon(type) {
-  const colors={mosque:'#1c5a43',shop:'#a8834a',restaurant:'#8a3346',other:'#5f665f'};
+  const colors={mosque:'#2f5a45',shop:'#8f744b',restaurant:'#8e4f4a',other:'#5f665f'};
   const c = colors[type]||colors.other;
 
   const svgInner={
@@ -4348,15 +4489,23 @@ function renderCompte(){
 function renderAidePriere(){
   const c=document.getElementById('aide-priere-content');
   c.innerHTML=`
-    <div style="padding:8px 0 18px;text-align:center">
-      <div style="margin-bottom:8px"><svg class="lico sz-xl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /> <path d="M7 20h8l-4 -4v-7l4 3l2 -2" /></svg></div>
-      <div style="font-size:17px;font-weight:800;font-family:var(--font-display)">Aide à la prière</div>
-      <div style="font-size:12.5px;color:var(--muted);margin-top:3px">Tout pour t'accompagner dans ta pratique quotidienne</div>
+    <div class="aide-head">
+      <div class="aide-title">Aide à la prière</div>
+      <div class="aide-sub">Tout pour t'accompagner dans ta pratique quotidienne</div>
     </div>
-    <div class="menu-list">
-      <div class="menu-item" onclick="showScreen('comment-prier')"><span class="mi-ico"><svg class="lico sz-mi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 12h11"/><path d="M10 18h11"/><path d="M10 6h11"/><path d="M4 10h2"/><path d="M4 6h1v4"/><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></span><span>Comment prier</span><span class="mi-arrow">›</span></div>
-      <div class="menu-item" onclick="showScreen('suivi-priere')"><span class="mi-ico"><svg class="lico sz-mi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/></svg></span><span>Suivi de prière</span>
-        <button class="toggle${prayerTrackerEnabled?' on':''}" onclick="event.stopPropagation();toggleSuiviPriere()" style="margin-left:auto"></button>
+    <div class="aide-grid">
+      <div class="aide-tile dark" role="button" onclick="showScreen('comment-prier');switchPrayerTab('ablutions')">
+        <div class="aide-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.7C9 6.4 6 9.6 6 13.3a6 6 0 0 0 12 0c0-3.7-3-6.9-6-10.6z"/><path d="M9.5 14.5a2.6 2.6 0 0 0 2.5 2.4"/></svg></div><b>Les ablutions</b><span>Les étapes du wudû, en images</span>
+      </div>
+      <div class="aide-tile" role="button" onclick="showScreen('comment-prier');switchPrayerTab('priere')">
+        <div class="aide-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4.5" r="1.8"/><path d="M7 20h8l-4-4v-6.5l4 2.5"/><path d="M11 9.5 7.5 12"/></svg></div><b>La prière</b><span>Chaque position, pas à pas</span>
+      </div>
+      <div class="aide-tile" role="button" onclick="showScreen('suivi-priere')">
+        <div class="aide-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="16" rx="3"/><path d="M8 2.5v4M16 2.5v4M3.5 9.5h17"/><path d="m9 15 2 2 4-4"/></svg></div><b>Suivi de prière</b><span>${prayerTrackerEnabled?'Activé · note tes prières':'Désactivé'}</span>
+        <button class="toggle${prayerTrackerEnabled?' on':''}" aria-label="Activer le suivi de prière" onclick="event.stopPropagation();toggleSuiviPriere()"></button>
+      </div>
+      <div class="aide-tile dark" role="button" onclick="showScreen('noble-coran')">
+        <div class="aide-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5C10 5 6.5 4.6 3.5 5.2v13c3-.6 6.5-.2 8.5 1.3 2-1.5 5.5-1.9 8.5-1.3v-13c-3-.6-6.5-.2-8.5 1.3z"/><path d="M12 6.5v13"/></svg></div><b>Noble Coran</b><span>Lire et suivre ta lecture</span>
       </div>
     </div>
   `;
@@ -4565,7 +4714,7 @@ function renderTrackerView(){
 function renderRing(pct, size=110){
   const r=44, circ=2*Math.PI*r;
   const offset=circ-(pct/100)*circ;
-  const color = pct===100?'#1c5a43':pct>=60?'#2c6e53':pct>=40?'#a8834a':'#8a3346';
+  const color = pct===100?'#2a4234':pct>=60?'#4f6b5b':pct>=40?'#8f744b':'#8e4f4a';
   return `
     <div class="tracker-ring-wrap">
       <div class="tracker-ring" style="width:${size}px;height:${size}px">
@@ -4683,7 +4832,7 @@ function renderMonthView(){
         const isToday=todayKey(d)===todayKey(todayD);
         const pct=isFuture?-1:getPct(todayKey(d));
         const r=7,circ=2*Math.PI*r;
-        const color=pct===100?'#1c5a43':pct>=60?'#2c6e53':pct>=40?'#a8834a':'#e9e2d4';
+        const color=pct===100?'#2a4234':pct>=60?'#4f6b5b':pct>=40?'#8f744b':'#e6e0d3';
         const fill=pct<0?0:pct/100*circ;
         const miniRing=isFuture?`<svg class="month-mini-ring" viewBox="0 0 20 20"><circle cx="10" cy="10" r="${r}" fill="none" stroke="var(--gray-200)" stroke-width="2.5"/></svg>`:
           `<svg class="month-mini-ring" viewBox="0 0 20 20" style="transform:rotate(-90deg)"><circle cx="10" cy="10" r="${r}" fill="none" stroke="var(--gray-200)" stroke-width="2.5"/><circle cx="10" cy="10" r="${r}" fill="none" stroke="${color}" stroke-width="2.5" stroke-dasharray="${circ}" stroke-dashoffset="${circ-fill}"/></svg>`;
@@ -4744,14 +4893,14 @@ function payAppearance(){
   return {
     theme: dark ? 'night' : 'stripe',
     variables: {
-      colorPrimary: dark ? '#5cc195' : '#123e2e',
-      colorBackground: dark ? '#1a2320' : '#fffdf9',
-      colorText: dark ? '#efe9dd' : '#16231d',
+      colorPrimary: dark ? '#7fb497' : '#2a4234',
+      colorBackground: dark ? '#1d2722' : '#fdfaf4',
+      colorText: dark ? '#f2eee5' : '#1b2820',
       colorDanger: dark ? '#ff7b6b' : '#c0392b',
       borderRadius: '12px',
       fontFamily: 'Inter, -apple-system, "Segoe UI", sans-serif'
     },
-    rules: { '.Input': { border: dark ? '1px solid #26302b' : '1px solid #e9e2d4' } }
+    rules: { '.Input': { border: dark ? '1px solid #27322c' : '1px solid #e8e2d5' } }
   };
 }
 // Messages d'erreur en français (Stripe renvoie un code pour chaque refus)
@@ -5023,34 +5172,34 @@ function setTheme(val){
 function applyTheme(theme){
   document.documentElement.classList.toggle('theme-dark', theme==='dark');
   if(theme==='dark'){
-    // Nuit premium : vert presque noir, texte ivoire, laiton
-    document.documentElement.style.setProperty('--white','#141b18');
-    document.documentElement.style.setProperty('--bg','#0d1311');
-    document.documentElement.style.setProperty('--surface','#141b18');
-    document.documentElement.style.setProperty('--text','#efe9dd');
-    document.documentElement.style.setProperty('--text-2','#cfc7b7');
-    document.documentElement.style.setProperty('--muted','#8c9189');
-    document.documentElement.style.setProperty('--border','#26302b');
-    document.documentElement.style.setProperty('--gray-100','#1a2320');
-    document.documentElement.style.setProperty('--gray-200','#25302b');
-    document.documentElement.style.setProperty('--glass-bg','rgba(20,27,24,0.92)');
-    document.documentElement.style.setProperty('--green','#6fbf98');
-    document.documentElement.style.setProperty('--green-deep','#2f7d5d');
-    document.documentElement.style.setProperty('--green-mid','#4fae86');
-    document.documentElement.style.setProperty('--green-light','#17261f');
-    document.documentElement.style.setProperty('--green-soft','#1d3329');
-    document.documentElement.style.setProperty('--green-dark','#2a7556');
-    document.documentElement.style.setProperty('--green-vivid','#5cc195');
-    document.documentElement.style.setProperty('--icon-color','rgba(230,224,210,0.8)');
-    document.documentElement.style.setProperty('--gold','#c9a66b');
-    document.documentElement.style.setProperty('--gold-light','#2a2417');
-    document.documentElement.style.setProperty('--gold-line','rgba(201,166,107,0.35)');
-    document.documentElement.style.setProperty('--hero-bg','#0f2a1f');
-    document.documentElement.style.setProperty('--hero-text','#f1ebdf');
-    document.documentElement.style.setProperty('--t-mosque','#6fbf98');
-    document.documentElement.style.setProperty('--t-shop','#d1ad72');
-    document.documentElement.style.setProperty('--t-restaurant','#d98494');
-    document.documentElement.style.setProperty('--t-other','#a7ada5');
+    // Nuit « sapin » : vert très sombre, texte lin, tons sauge
+    document.documentElement.style.setProperty('--white','#17201b');
+    document.documentElement.style.setProperty('--bg','#101713');
+    document.documentElement.style.setProperty('--surface','#17201b');
+    document.documentElement.style.setProperty('--text','#f2eee5');
+    document.documentElement.style.setProperty('--text-2','#cdc8bc');
+    document.documentElement.style.setProperty('--muted','#8f978e');
+    document.documentElement.style.setProperty('--border','#27322c');
+    document.documentElement.style.setProperty('--gray-100','#1d2722');
+    document.documentElement.style.setProperty('--gray-200','#27322c');
+    document.documentElement.style.setProperty('--glass-bg','rgba(23,32,27,0.92)');
+    document.documentElement.style.setProperty('--green','#9cc4ac');
+    document.documentElement.style.setProperty('--green-deep','#4d8468');
+    document.documentElement.style.setProperty('--green-mid','#6f9f86');
+    document.documentElement.style.setProperty('--green-light','#1e2b24');
+    document.documentElement.style.setProperty('--green-soft','#26372e');
+    document.documentElement.style.setProperty('--green-dark','#3f6f57');
+    document.documentElement.style.setProperty('--green-vivid','#7fb497');
+    document.documentElement.style.setProperty('--icon-color','rgba(235,230,218,0.8)');
+    document.documentElement.style.setProperty('--gold','#a9bfae');
+    document.documentElement.style.setProperty('--gold-light','#1e2a23');
+    document.documentElement.style.setProperty('--gold-line','rgba(169,191,174,0.26)');
+    document.documentElement.style.setProperty('--hero-bg','#213529');
+    document.documentElement.style.setProperty('--hero-text','#f2eee5');
+    document.documentElement.style.setProperty('--t-mosque','#9cc4ac');
+    document.documentElement.style.setProperty('--t-shop','#d4b98f');
+    document.documentElement.style.setProperty('--t-restaurant','#dc9f96');
+    document.documentElement.style.setProperty('--t-other','#a9afa6');
   } else {
     ['--white','--bg','--surface','--text','--text-2','--muted','--border','--gray-100','--gray-200','--glass-bg','--green','--green-deep','--green-mid','--green-light','--green-soft','--green-dark','--green-vivid','--icon-color','--gold','--gold-light','--gold-line','--hero-bg','--hero-text','--t-mosque','--t-shop','--t-restaurant','--t-other'].forEach(v=>
       document.documentElement.style.removeProperty(v)
@@ -5942,7 +6091,7 @@ function repairQuranProgress(){
 }
 
 function renderNobleCoranList(){
-  renderSouratesList(allSourates);
+  renderSouratesList(allSourates, true);
 }
 
 function filterSourates(){
@@ -5950,24 +6099,39 @@ function filterSourates(){
   const filtered = SOURATES_META.filter(s =>
     s[1].toLowerCase().includes(q) || s[3].toLowerCase().includes(q) || String(s[0]).includes(q)
   );
-  renderSouratesList(filtered);
+  renderSouratesList(filtered, !q);
 }
 
-function renderSouratesList(list){
+// Carte mise en avant : la sourate en cours de lecture, sinon Al-Fatiha
+function sourateFeatureHtml(){
+  const cur = SOURATES_META.find(s => { const p = getSouratePct(s[0], s[4]); return p > 0 && p < 100; });
+  const s = cur || SOURATES_META[0];
+  const [num, nameEn, nameAr, nameFr, versets, type] = s;
+  return `<div class="sourate-feature" onclick="openSourate(${num})">
+      <div class="sf-label">${cur ? 'Reprendre la lecture' : 'Commencer par'}</div>
+      <div class="sf-name">${nameEn}</div>
+      <div class="sf-ar">${nameAr}</div>
+      <div class="sf-meta">${nameFr} · ${versets} versets · ${type}</div>
+      <div class="sf-btn">${cur ? 'Continuer' : 'Lire'} <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+    </div>
+    <div class="sl-label">Les 114 sourates</div>`;
+}
+
+function renderSouratesList(list, withFeature){
   const container = document.getElementById('sourates-list');
   if(!container) return;
-  container.innerHTML = list.map(s => {
+  container.innerHTML = (withFeature ? sourateFeatureHtml() : '') + list.map(s => {
     const [num, nameEn, nameAr, nameFr, versets, type] = s;
     const pct = getSouratePct(num, versets);
     const r = 12, circ = 2*Math.PI*r;
-    const color = pct===100?'#3a8a66':pct>0?'#1c5a43':'#e9e2d4';
+    const color = pct===100?'var(--green)':pct>0?'var(--green-deep)':'var(--gray-200)';
     const offset = circ - (pct/100)*circ;
     return `
       <div class="sourate-card" onclick="openSourate(${num})">
         <div class="sourate-num">${num}</div>
         <div class="sourate-info">
-          <div class="sourate-name-fr">${nameEn} <span style="color:var(--muted);font-weight:500">(${nameFr})</span></div>
-          <div class="sourate-meta">${versets} versets · ${type}</div>
+          <div class="sourate-name-fr">${nameEn}</div>
+          <div class="sourate-meta">${nameFr} · ${versets} versets · ${type}</div>
         </div>
         <div class="sourate-right">
           <span class="sourate-name-ar">${nameAr}</span>
@@ -5998,19 +6162,18 @@ async function openSourate(num){
   const content = document.getElementById('sourate-content');
   content.innerHTML = `
     <div class="sourate-header">
-      <div class="sourate-header-left">
-        <div class="sourate-header-num">Sourate ${num}</div>
-        <div class="sourate-header-name">${nameEn}</div>
-        <div class="sourate-header-ar">${nameAr}</div>
-        <div class="sourate-header-meta">${versets} versets · ${type}</div>
-      </div>
-      <div class="sourate-header-right">
+      <div class="sh-num">Sourate ${num}</div>
+      <div class="sourate-header-name">${nameEn}</div>
+      <div class="sh-sub"><b>${nameAr}</b>${nameFr}</div>
+      <div class="sh-rule"></div>
+      <div class="sourate-header-meta">${type} · ${versets} versets</div>
+      ${num!==9?'<div class="sh-bism">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>':''}
+    </div>
+    <div class="sourate-context">
         <div class="sourate-intro-label">Contexte de révélation</div>
         <div class="sourate-intro-text sourate-intro-loading" id="sourate-intro-text">Chargement...</div>
-      </div>
     </div>
     <div class="sourate-progress-bar" id="s-progress" style="width:${getSouratePct(num,versets)}%"></div>
-    ${num!==9?'<div class="sourate-bismillah">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>':''}
     <div class="quran-loading"><span class="spin"><svg class="lico sz-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h4"/><path d="M7 22V6a5 5 0 0 0-2-4 5 5 0 0 0-2 4v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M12.268 2a2 2 0 0 0 3.464 2"/><path d="M14 5v3"/><path d="M16 22v-3a2 2 0 0 0-4 0v3"/><path d="M21 13c-.663-1.497-1.667-2.754-2.9-3.63C16.826 8.47 15.422 8 14 8s-2.826.47-4.1 1.37C8.667 10.246 7.663 11.503 7 13"/></svg></span><p>Chargement des versets...</p></div>`;
 
   // Charge les versets depuis l'API quran.foundation (retourne le texte sans Basmala dans v1)
@@ -6051,19 +6214,18 @@ async function openSourate(num){
 
     content.innerHTML = `
       <div class="sourate-header">
-        <div class="sourate-header-left">
-          <div class="sourate-header-num">Sourate ${num}</div>
-          <div class="sourate-header-name">${nameEn}</div>
-          <div class="sourate-header-ar">${nameAr}</div>
-          <div class="sourate-header-meta">${versets} versets · ${type}</div>
-        </div>
-        <div class="sourate-header-right" id="sourate-intro-box">
+        <div class="sh-num">Sourate ${num}</div>
+        <div class="sourate-header-name">${nameEn}</div>
+        <div class="sh-sub"><b>${nameAr}</b>${nameFr}</div>
+        <div class="sh-rule"></div>
+        <div class="sourate-header-meta">${type} · ${versets} versets</div>
+        ${num!==9?'<div class="sh-bism">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>':''}
+      </div>
+      <div class="sourate-context" id="sourate-intro-box">
           <div class="sourate-intro-label">Contexte de révélation</div>
           <div class="sourate-intro-text sourate-intro-loading" id="sourate-intro-text">Chargement...</div>
-        </div>
       </div>
       <div class="sourate-progress-bar" id="s-progress" style="width:${getSouratePct(num,versets)}%"></div>
-      ${num!==9?'<div class="sourate-bismillah">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>':''}
       ${versetsHtml}`;
 
     // Scroll vers le dernier verset lu
