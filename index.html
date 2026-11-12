@@ -1571,6 +1571,47 @@ html .pcity{background:none;border:none;padding:0 2px;font-size:10.5px;color:var
 .account-logged-out .ico{position:relative;isolation:isolate;width:120px;height:120px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;color:var(--green-deep)}
 .account-logged-out .ico::before{content:'';position:absolute;inset:0;z-index:-1;background:var(--green-deep);opacity:.1;-webkit-mask:var(--pat-rosace) no-repeat center/contain;mask:var(--pat-rosace) no-repeat center/contain}
 #screen-aide-priere{overflow-y:auto;padding:20px 16px calc(24px + var(--sab));background:var(--bg)}
+/* ═══ TONS : fond → panneaux → cartes → sélection (clair et sombre) ═══ */
+:root{--bg:#efe9dc;--white:#f9f5ed;--surface:#f9f5ed;--card:#fffdf8;--card-border:#e3dccd;--border:#e3dccd;--gray-100:#f1ebe0}
+/* Liste des lieux : chaque lieu dans sa carte */
+.plist{padding:2px 12px 14px}
+.pcard{background:var(--card);border:1px solid var(--card-border);border-radius:16px;padding:12px;margin:0 0 8px;box-shadow:0 1px 2px rgba(30,25,12,.04)}
+.pcard:last-child{border-bottom:1px solid var(--card-border)}
+.pcard.sel,.pcard:active{background:var(--green-light);border-color:var(--gold-line)}
+html .pico[class*="t-"]{background:var(--white);border-color:var(--card-border)}
+html .tag[class],.ptravel{background:var(--white);border-color:var(--card-border)}
+.pcard.sel .pico[class*="t-"],.pcard.sel .tag[class],.pcard.sel .ptravel{background:var(--card)}
+/* Bande des prières : une case par heure */
+.pb-frise .pi{background:var(--card);border:1px solid var(--card-border)}
+.pb-frise .pi.next{background:var(--card);border-color:var(--card-border)}
+.pb-frise .pi.active{background:var(--green-deep);border-color:var(--green-deep)}
+.pbar-date{background:var(--card);border-color:var(--card-border)}
+/* Recherche, filtres, bascule liste/favoris */
+.view-toggle{background:var(--bg);border-color:var(--card-border)}
+.chip{background:var(--card);border-color:var(--card-border)}
+.chip.on{background:var(--green-deep);border-color:var(--green-deep)}
+.filters-close{background:var(--card);border-color:var(--card-border)}
+/* Fiche d'un lieu : infos regroupées en blocs */
+.ilist{background:var(--card);border:1px solid var(--card-border);border-radius:16px;padding:0 14px;margin-top:14px}
+.irow{border-bottom-color:var(--card-border)}
+.irow:last-child{border-bottom:none}
+.dpr{background:var(--card);border-color:var(--card-border)}
+.dpr.cur{background:var(--green-deep);border-color:var(--green-deep)}
+html .dtag{background:var(--card)!important;border-color:var(--card-border)}
+.dback,.bfav,.share-btn{background:var(--card);border-color:var(--card-border)}
+/* Menu : chaque entrée en carte */
+.drawer-item{background:var(--card);border:1px solid var(--card-border);margin-bottom:5px;padding:9px 14px}
+.drawer-item:hover{background:var(--card)}
+.drawer-item:active,.drawer-item.active{background:var(--green-light);border-color:var(--gold-line)}
+/* Écrans : listes, Coran, aide, calendrier, Qibla */
+.menu-list{background:var(--card);border-color:var(--card-border)}
+.menu-item,.set-row{border-bottom-color:var(--card-border)}
+.sourate-card,.verset,.sourate-context,.qibla-status{background:var(--card);border-color:var(--card-border)}
+.verset::before{background:var(--white)}
+.aide-tile:not(.dark){background:var(--card);border-color:var(--card-border)}
+.cal-info{background:var(--card);border-color:var(--card-border)}
+.cal-times div{background:var(--white);border-color:var(--card-border)}
+.mt-zoom,.locate-fab{background:var(--card);border-color:var(--card-border)}
 </style>
 </head>
 <body>
@@ -5291,20 +5332,22 @@ function applyTheme(theme){
   document.documentElement.classList.toggle('theme-dark', theme==='dark');
   if(theme==='dark'){
     // Nuit « sapin » : vert très sombre, texte lin, tons sauge
-    document.documentElement.style.setProperty('--white','#17201b');
-    document.documentElement.style.setProperty('--bg','#101713');
-    document.documentElement.style.setProperty('--surface','#17201b');
+    document.documentElement.style.setProperty('--white','#151d18');
+    document.documentElement.style.setProperty('--bg','#0d1310');
+    document.documentElement.style.setProperty('--surface','#151d18');
+    document.documentElement.style.setProperty('--card','#1e2822');
+    document.documentElement.style.setProperty('--card-border','#2d3931');
     document.documentElement.style.setProperty('--text','#f2eee5');
     document.documentElement.style.setProperty('--text-2','#cdc8bc');
     document.documentElement.style.setProperty('--muted','#8f978e');
-    document.documentElement.style.setProperty('--border','#27322c');
-    document.documentElement.style.setProperty('--gray-100','#1d2722');
-    document.documentElement.style.setProperty('--gray-200','#27322c');
-    document.documentElement.style.setProperty('--glass-bg','rgba(23,32,27,0.92)');
+    document.documentElement.style.setProperty('--border','#28332c');
+    document.documentElement.style.setProperty('--gray-100','#212b25');
+    document.documentElement.style.setProperty('--gray-200','#2c3730');
+    document.documentElement.style.setProperty('--glass-bg','rgba(21,29,24,0.92)');
     document.documentElement.style.setProperty('--green','#9cc4ac');
     document.documentElement.style.setProperty('--green-deep','#4d8468');
     document.documentElement.style.setProperty('--green-mid','#6f9f86');
-    document.documentElement.style.setProperty('--green-light','#1e2b24');
+    document.documentElement.style.setProperty('--green-light','#243429');
     document.documentElement.style.setProperty('--green-soft','#26372e');
     document.documentElement.style.setProperty('--green-dark','#3f6f57');
     document.documentElement.style.setProperty('--green-vivid','#7fb497');
@@ -5319,7 +5362,7 @@ function applyTheme(theme){
     document.documentElement.style.setProperty('--t-restaurant','#dc9f96');
     document.documentElement.style.setProperty('--t-other','#a9afa6');
   } else {
-    ['--white','--bg','--surface','--text','--text-2','--muted','--border','--gray-100','--gray-200','--glass-bg','--green','--green-deep','--green-mid','--green-light','--green-soft','--green-dark','--green-vivid','--icon-color','--gold','--gold-light','--gold-line','--hero-bg','--hero-text','--t-mosque','--t-shop','--t-restaurant','--t-other'].forEach(v=>
+    ['--white','--bg','--surface','--card','--card-border','--text','--text-2','--muted','--border','--gray-100','--gray-200','--glass-bg','--green','--green-deep','--green-mid','--green-light','--green-soft','--green-dark','--green-vivid','--icon-color','--gold','--gold-light','--gold-line','--hero-bg','--hero-text','--t-mosque','--t-shop','--t-restaurant','--t-other'].forEach(v=>
       document.documentElement.style.removeProperty(v)
     );
   }
