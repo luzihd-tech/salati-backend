@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#ffffff">
+<meta name="theme-color" content="#fffdf9">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -15,37 +15,45 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
-  /* Palette principale — vert profond minimaliste */
-  --green:#0d6e47;--green-deep:#094f33;--green-dark:#062e1e;--green-light:#edf7f2;--green-soft:#d5eddf;
-  --green-mid:#1a8f60;--green-vivid:#12b368;
+  /* Palette premium — vert forêt profond, ivoire, laiton discret */
+  --green:#1f5d45;--green-deep:#123e2e;--green-dark:#0b2a1f;--green-light:#eef1ea;--green-soft:#dde5da;
+  --green-mid:#2c6e53;--green-vivid:#3a8a66;
 
-  /* Neutres */
-  --white:#ffffff;--bg:#f8f9fa;--surface:#ffffff;
-  --gray-100:#f1f3f2;--gray-200:#e8ecea;--gray-300:#d0d8d4;
-  --text:#0d1f18;--text-2:#3d4f47;--muted:#7a8f86;--border:#e4eae7;
+  /* Neutres chauds */
+  --white:#fffdf9;--bg:#f5f1e8;--surface:#fffdf9;
+  --gray-100:#f2ede3;--gray-200:#e8e1d3;--gray-300:#d7cebd;
+  --text:#16231d;--text-2:#44514a;--muted:#8a8d84;--border:#e9e2d4;
 
   /* Accents */
-  --gold:#c9963a;--gold-light:#fef8ed;
+  --gold:#a8834a;--gold-light:#f6efe1;--gold-line:rgba(168,131,74,0.35);
+  --hero-bg:#123e2e;--hero-text:#f4efe3;
+
+  /* Couleurs par type de lieu */
+  --t-mosque:#1c5a43;--t-shop:#9a7440;--t-restaurant:#8a3346;--t-other:#5f665f;
+
+  /* Polices */
+  --font-display:'Fraunces',Georgia,'Times New Roman',serif;
+  --font-ui:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 
   /* Système */
   --sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);
-  --header-h:56px;--radius-sm:10px;--radius-md:16px;--radius-lg:22px;--radius-xl:28px;
+  --header-h:56px;--radius-sm:10px;--radius-md:16px;--radius-lg:20px;--radius-xl:26px;
 
   /* Icon color token (adapts via JS for dark mode) */
-  --icon-color:rgba(40,70,55,0.72);
+  --icon-color:rgba(22,35,29,0.68);
 
-  /* Ombres minimalistes */
-  --shadow-xs:0 1px 4px rgba(13,47,30,0.06);
-  --shadow-sm:0 2px 12px rgba(13,47,30,0.08);
-  --shadow-md:0 8px 28px rgba(13,47,30,0.11);
-  --shadow-lg:0 16px 48px rgba(13,47,30,0.16);
+  /* Ombres douces et chaudes */
+  --shadow-xs:0 1px 2px rgba(40,32,15,0.05);
+  --shadow-sm:0 2px 10px rgba(40,32,15,0.06);
+  --shadow-md:0 8px 24px rgba(40,32,15,0.08);
+  --shadow-lg:0 18px 48px rgba(30,25,12,0.14);
 
   /* Glass */
-  --glass-bg:rgba(255,255,255,0.85);--glass-border:rgba(255,255,255,0.6);
+  --glass-bg:rgba(255,253,249,0.9);--glass-border:rgba(255,255,255,0.6);
 }
 html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--text);background:var(--bg);position:fixed;width:100%;-webkit-font-smoothing:antialiased}
 
@@ -66,7 +74,7 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
   background:var(--gray-100);border:none;color:var(--text);width:38px;height:38px;border-radius:var(--radius-sm);
   font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;
 }
-.logo{font-size:18px;font-weight:800;display:flex;align-items:center;gap:9px;letter-spacing:-0.4px;font-family:'Outfit',sans-serif;color:var(--text)}
+.logo{font-size:18px;font-weight:800;display:flex;align-items:center;gap:9px;letter-spacing:-0.4px;font-family:var(--font-display);color:var(--text)}
 .logo-badge{
   width:32px;height:32px;border-radius:10px;flex-shrink:0;
   background:var(--green-deep);
@@ -76,7 +84,7 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
 .logo-badge svg{width:18px;height:18px}
 .logo-word{display:flex;align-items:baseline;gap:1px}
 .logo-word .dot{color:var(--green-mid);font-size:22px;line-height:0;position:relative;top:2px}
-.header-title{font-size:16px;font-weight:700;font-family:'Outfit',sans-serif;letter-spacing:-0.3px;color:var(--text)}
+.header-title{font-size:16px;font-weight:700;font-family:var(--font-display);letter-spacing:-0.3px;color:var(--text)}
 
 /* ─── SIDE DRAWER ────────────────────────────────────────── */
 .drawer-overlay{
@@ -208,7 +216,7 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
   border-radius:8px;cursor:pointer;font-size:16px;font-weight:700;color:var(--text-2);
   display:flex;align-items:center;justify-content:center;
 }
-.cal-month-name{font-size:14px;font-weight:800;font-family:'Outfit',sans-serif;color:var(--text)}
+.cal-month-name{font-size:14px;font-weight:800;font-family:var(--font-display);color:var(--text)}
 .cal-grid-head{
   display:grid;grid-template-columns:repeat(7,1fr);
   padding:0 12px;margin-bottom:4px;
@@ -432,7 +440,7 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
 .dtop .drag{margin:0;cursor:pointer;padding:0}
 .dback{position:absolute;left:14px;top:50%;transform:translateY(-50%);display:inline-flex;align-items:center;gap:3px;
   background:var(--green-light);color:var(--green-deep);border:none;border-radius:20px;padding:7px 14px 7px 8px;
-  font-family:'Outfit',sans-serif;font-size:13.5px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent}
+  font-family:var(--font-ui);font-size:13.5px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .dback svg{width:18px;height:18px}
 .dback:active{transform:translateY(-50%) scale(.96)}
 .dbody{padding:0 20px}
@@ -458,10 +466,10 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
 gmp-place-details.gphoto{
   display:block;border:none;border-radius:var(--radius-lg);overflow:hidden;color-scheme:light;
   --gmp-mat-color-surface:var(--white);--gmp-mat-color-outline-decorative:transparent;
-  --gmp-mat-color-primary:var(--green);--gmp-mat-font-family:'Outfit',sans-serif;
+  --gmp-mat-color-primary:var(--green);--gmp-mat-font-family:var(--font-ui);
 }
 html.theme-dark gmp-place-details.gphoto{color-scheme:dark}
-.dname{font-size:19px;font-weight:800;margin-bottom:4px;letter-spacing:-0.4px;font-family:'Outfit',sans-serif;color:var(--text)}
+.dname{font-size:19px;font-weight:800;margin-bottom:4px;letter-spacing:-0.4px;font-family:var(--font-display);color:var(--text)}
 .daddr{font-size:12.5px;color:var(--muted);margin-bottom:14px;font-weight:500;display:flex;align-items:center;gap:5px}
 .dtags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
 .dtag{padding:5px 12px;border-radius:8px;font-size:11.5px;font-weight:700}
@@ -514,7 +522,7 @@ html.theme-dark gmp-place-details.gphoto{color-scheme:dark}
 
 .account-logged-out{text-align:center;padding-top:40px}
 .account-logged-out .ico{font-size:44px;margin-bottom:14px;display:block}
-.account-logged-out h3{font-size:19px;margin-bottom:8px;font-weight:800;font-family:'Outfit',sans-serif}
+.account-logged-out h3{font-size:19px;margin-bottom:8px;font-weight:800;font-family:var(--font-display)}
 .account-logged-out p{font-size:13px;color:var(--muted);margin-bottom:26px;line-height:1.6;font-weight:500}
 .acc-btn{width:100%;padding:15px;border-radius:var(--radius-md);font-size:14px;font-weight:700;cursor:pointer;border:none;margin-bottom:10px;transition:all 0.15s}
 .acc-btn.prim{background:var(--green-deep);color:#fff;box-shadow:0 4px 16px rgba(9,79,51,0.3)}
@@ -532,7 +540,7 @@ html.theme-dark gmp-place-details.gphoto{color-scheme:dark}
   color:#fff;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;
   margin:0 auto 12px;
 }
-.profile-name{font-size:17px;font-weight:800;font-family:'Outfit',sans-serif;color:#fff}
+.profile-name{font-size:17px;font-weight:800;font-family:var(--font-display);color:#fff}
 .profile-email{font-size:12px;color:rgba(255,255,255,0.75);font-weight:500;margin-top:2px}
 
 .menu-list{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:16px}
@@ -567,7 +575,7 @@ html.theme-dark gmp-place-details.gphoto{color-scheme:dark}
   font-size:9.5px;padding:3px 9px;border-radius:7px;font-weight:700;letter-spacing:0.5px;
   text-transform:uppercase;
 }
-.sub-card h4{font-size:15px;margin-bottom:8px;font-weight:800;font-family:'Outfit',sans-serif}
+.sub-card h4{font-size:15px;margin-bottom:8px;font-weight:800;font-family:var(--font-display)}
 .sub-card p{font-size:12.5px;opacity:0.9;line-height:1.6;margin-bottom:14px;font-weight:450}
 .sub-price{font-size:28px;font-weight:800;margin-bottom:2px;letter-spacing:-0.5px}
 .sub-price span{font-size:13px;font-weight:500;opacity:0.8}
@@ -592,7 +600,7 @@ html.theme-dark gmp-place-details.gphoto{color-scheme:dark}
 
 /* ─── QIBLA SCREEN (boussole) ────────────────────────────── */
 .qibla-hero{text-align:center;padding:8px 0 18px}
-.qibla-hero h2{font-size:19px;font-weight:800;margin-bottom:5px;font-family:'Outfit',sans-serif}
+.qibla-hero h2{font-size:19px;font-weight:800;margin-bottom:5px;font-family:var(--font-display)}
 .qibla-hero p{font-size:12.5px;color:var(--muted);font-weight:500;line-height:1.5}
 .compass-wrap{display:flex;flex-direction:column;align-items:center;padding:6px 0 28px}
 .compass-ring{
@@ -685,7 +693,7 @@ html.theme-dark gmp-place-details.gphoto{color-scheme:dark}
 .sg-privacy{font-size:11.5px;color:var(--muted);line-height:1.5;margin:12px 0 0;text-align:center}
 .sg-done{text-align:center;padding:10px 0 20px}
 .sg-done-ico{color:var(--green-deep);margin-bottom:8px}
-.sg-done-title{font-size:19px;font-weight:800;color:var(--green-deep);font-family:'Outfit',sans-serif;margin-bottom:8px}
+.sg-done-title{font-size:19px;font-weight:800;color:var(--green-deep);font-family:var(--font-display);margin-bottom:8px}
 .sg-done p{font-size:14px;color:var(--text);line-height:1.6;margin:0 0 6px}
 html.theme-dark .sg-err, html.theme-dark .sg-label i{color:#ff7b6b}
 html.theme-dark .sg-input.bad, html.theme-dark .sg-chips.bad span{border-color:#ff7b6b}
@@ -694,7 +702,7 @@ html.theme-dark .sg-input.bad, html.theme-dark .sg-chips.bad span{border-color:#
 #screen-apropos{overflow-y:auto;padding:0;padding-bottom:var(--sab)}
 .apropos-hero{background:linear-gradient(135deg,var(--green-deep),var(--green));color:#fff;padding:34px 22px 28px;text-align:center}
 .apropos-hero .emoji{font-size:40px;margin-bottom:9px}
-.apropos-hero h2{font-size:19px;font-weight:800;margin-bottom:4px;font-family:'Outfit',sans-serif}
+.apropos-hero h2{font-size:19px;font-weight:800;margin-bottom:4px;font-family:var(--font-display)}
 .apropos-hero .sub{font-size:12.5px;opacity:0.85;font-weight:500}
 .apropos-body{padding:24px 20px 44px}
 .ap-greeting{font-size:13.5px;color:var(--green-deep);font-weight:800;margin-bottom:4px;text-align:center}
@@ -704,7 +712,7 @@ html.theme-dark .sg-input.bad, html.theme-dark .sg-chips.bad span{border-color:#
 .rp-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9500;display:flex;align-items:flex-end;justify-content:center}
 .rp-box{background:var(--white);width:100%;max-width:540px;max-height:88vh;overflow-y:auto;border-radius:24px 24px 0 0;padding:18px 18px calc(22px + var(--sab));box-shadow:0 -6px 30px rgba(0,0,0,0.2)}
 .rp-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.rp-title{font-family:'Outfit',sans-serif;font-size:17px;font-weight:800;color:var(--text)}
+.rp-title{font-family:var(--font-display);font-size:17px;font-weight:800;color:var(--text)}
 .rp-x{background:var(--gray-100);border:none;border-radius:50%;width:34px;height:34px;font-size:15px;color:var(--muted);cursor:pointer}
 .rp-place{font-size:13px;color:var(--muted);font-weight:600;margin:4px 0 14px}
 .rp-label{display:block;font-size:12.5px;font-weight:700;color:var(--text);margin:12px 0 7px}
@@ -775,14 +783,14 @@ html.theme-dark .rp-err{color:#ff7b6b}
 .tracker-ring-bg{fill:none;stroke:var(--gray-200);stroke-width:8}
 .tracker-ring-fill{fill:none;stroke:var(--green-deep);stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset 0.5s ease}
 .tracker-ring-text{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.tracker-ring-pct{font-size:22px;font-weight:800;font-family:'Outfit',sans-serif;color:var(--text);letter-spacing:-0.5px}
+.tracker-ring-pct{font-size:22px;font-weight:800;font-family:var(--font-display);color:var(--text);letter-spacing:-0.5px}
 .tracker-ring-sub{font-size:10px;font-weight:700;color:var(--muted);margin-top:1px}
 .tracker-ring-label{margin-top:10px;font-size:12px;font-weight:600;color:var(--muted)}
 
 /* Stats streak */
 .tracker-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
 .tracker-stat{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px;text-align:center}
-.tracker-stat-val{font-size:22px;font-weight:800;font-family:'Outfit',sans-serif;color:var(--green-deep)}
+.tracker-stat-val{font-size:22px;font-weight:800;font-family:var(--font-display);color:var(--green-deep)}
 .tracker-stat-lbl{font-size:10.5px;color:var(--muted);font-weight:600;margin-top:3px}
 
 /* Vue journalière */
@@ -818,7 +826,7 @@ html.theme-dark .rp-err{color:#ff7b6b}
 /* Vue mensuelle */
 .month-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
 .month-nav{background:var(--gray-100);border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:13px;font-weight:700;color:var(--text-2)}
-.month-name{font-size:14px;font-weight:800;font-family:'Outfit',sans-serif;color:var(--text)}
+.month-name{font-size:14px;font-weight:800;font-family:var(--font-display);color:var(--text)}
 .month-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
 .month-day-label{font-size:9px;font-weight:800;color:var(--muted);text-align:center;padding:4px 0;text-transform:uppercase}
 .month-day{aspect-ratio:1;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:default;position:relative}
@@ -869,7 +877,7 @@ html.theme-dark .rp-err{color:#ff7b6b}
 }
 .sourate-header-left{flex-shrink:0;min-width:90px;max-width:110px}
 .sourate-header-num{font-size:10px;font-weight:700;opacity:0.7;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
-.sourate-header-name{font-size:17px;font-weight:800;font-family:'Outfit',sans-serif;margin-bottom:4px;line-height:1.2}
+.sourate-header-name{font-size:17px;font-weight:800;font-family:var(--font-display);margin-bottom:4px;line-height:1.2}
 .sourate-header-ar{font-size:18px;margin-bottom:6px;font-family:serif}
 .sourate-header-meta{font-size:10px;opacity:0.7;font-weight:500}
 .sourate-header-right{flex:1;min-width:0;border-left:1px solid rgba(255,255,255,0.2);padding-left:14px}
@@ -926,7 +934,7 @@ html.theme-dark .rp-err{color:#ff7b6b}
   padding:16px 20px 12px;border-bottom:1px solid var(--border);
   display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
 }
-.tafsir-sheet-title{font-size:13.5px;font-weight:800;color:var(--text);font-family:'Outfit',sans-serif}
+.tafsir-sheet-title{font-size:13.5px;font-weight:800;color:var(--text);font-family:var(--font-display)}
 .tafsir-sheet-sub{font-size:11px;color:var(--muted);font-weight:500;margin-top:2px}
 .tafsir-sheet-close{
   background:var(--gray-100);border:1px solid var(--border);width:28px;height:28px;
@@ -962,7 +970,7 @@ html.theme-dark .rp-err{color:#ff7b6b}
   max-width:360px;position:relative;max-height:88vh;overflow-y:auto;
   box-shadow:var(--shadow-lg);border:1px solid var(--border);
 }
-.modal h2{font-size:18px;font-weight:800;margin-bottom:5px;color:var(--text);text-align:center;font-family:'Outfit',sans-serif}
+.modal h2{font-size:18px;font-weight:800;margin-bottom:5px;color:var(--text);text-align:center;font-family:var(--font-display)}
 .modal p{font-size:12px;color:var(--muted);margin-bottom:20px;text-align:center;font-weight:500;line-height:1.5}
 .fg{margin-bottom:14px}
 .fg label{font-size:11.5px;color:var(--text-2);font-weight:700;display:block;margin-bottom:6px;letter-spacing:0.1px}
@@ -1001,7 +1009,7 @@ html.theme-dark .rp-err{color:#ff7b6b}
 .install-banner.show{transform:none}
 .ib-icon{width:42px;height:42px;border-radius:11px;flex-shrink:0;display:block}
 .ib-text{flex:1;min-width:0}
-.ib-title{font-size:14px;font-weight:800;color:var(--text);font-family:'Outfit',sans-serif;line-height:1.25}
+.ib-title{font-size:14px;font-weight:800;color:var(--text);font-family:var(--font-display);line-height:1.25}
 .ib-sub{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.3}
 .ib-add{background:var(--green-deep);color:#fff;border:none;border-radius:10px;padding:9px 14px;font-size:13px;font-weight:700;cursor:pointer;flex-shrink:0}
 .ib-add:active{opacity:.85}
@@ -1054,7 +1062,7 @@ html.theme-dark .install-banner{box-shadow:0 10px 30px rgba(0,0,0,0.55)}
   box-shadow:0 8px 24px rgba(13,110,71,0.3);
 }
 .install-badge svg{width:32px;height:32px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.install-title{font-size:18px;font-weight:800;font-family:'Outfit',sans-serif;color:var(--text);flex:1;text-align:center;letter-spacing:-0.3px}
+.install-title{font-size:18px;font-weight:800;font-family:var(--font-display);color:var(--text);flex:1;text-align:center;letter-spacing:-0.3px}
 .install-subtitle{font-size:13px;color:var(--muted);line-height:1.55;font-weight:500;margin-bottom:20px;text-align:center}
 /* Cartes OS */
 .install-os-btns{display:flex;flex-direction:column;gap:8px;margin-bottom:4px}
@@ -1162,7 +1170,7 @@ html.theme-dark .install-banner{box-shadow:0 10px 30px rgba(0,0,0,0.55)}
 .lico.sz-drw{width:32px!important;height:32px!important;stroke:#fff}
 .lico.lico-fav-on{fill:#e05252;stroke:#e05252}
 .lico.lico-fav-off{fill:none;stroke:currentColor}
-.loc-title{font-size:20px;font-weight:800;font-family:'Outfit',sans-serif;color:var(--green-dark);margin-bottom:10px}
+.loc-title{font-size:20px;font-weight:800;font-family:var(--font-display);color:var(--green-dark);margin-bottom:10px}
 .loc-desc{font-size:13.5px;color:var(--muted);line-height:1.65;font-weight:500;margin-bottom:14px}
 .loc-note{
   background:var(--green-light);color:var(--green-deep);font-size:11.5px;font-weight:700;
@@ -1190,7 +1198,7 @@ html.theme-dark .install-banner{box-shadow:0 10px 30px rgba(0,0,0,0.55)}
 
 /* ─── MODE SOMBRE : surcharges ciblées ─────────────────────── */
 html.theme-dark .loc-popup{background:var(--white)}
-html.theme-dark .sub-card{background:linear-gradient(135deg,#145c3d,#1b7a52)}
+html.theme-dark .sub-card{background:var(--hero-bg)}
 html.theme-dark .compass-ring{background:radial-gradient(circle at 50% 40%,#2b3a34,#141b19);box-shadow:0 16px 40px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(46,204,138,0.18)}
 html.theme-dark .compass-card span{color:#c4d4cc}
 html.theme-dark .compass-card span.n{color:#ff7b6b}
@@ -1202,12 +1210,157 @@ html.theme-dark .tb{background:rgba(74,144,226,0.16);color:#8ec2ff}
 html.theme-dark .to{background:rgba(230,140,60,0.16);color:#f3b27a}
 html.theme-dark .pico.t-shop,html.theme-dark .dimg.t-shop{background:rgba(201,150,58,0.18)}
 html.theme-dark .pico.t-restaurant,html.theme-dark .dimg.t-restaurant{background:rgba(181,51,74,0.22)}
-html.theme-dark .drawer-head,html.theme-dark .apropos-hero{background:linear-gradient(135deg,#145c3d,#1b7a52)}
-html.theme-dark .cal-toggle-btn.active,html.theme-dark .cal-day.today{background:#1b7a52}
+html.theme-dark .drawer-head,html.theme-dark .apropos-hero{background:var(--hero-bg)}
+html.theme-dark .cal-toggle-btn.active,html.theme-dark .cal-day.today{background:var(--green-deep)}
 html.theme-dark #screen-comment-prier,html.theme-dark .cp-image-wrap{background:var(--bg)}
 html.theme-dark .danger-row,html.theme-dark .danger-row .set-ico{color:#ff7b6b}
 html.theme-dark #loc-help-msg{color:#ff7b6b!important}
 html.theme-dark #pay-error{color:#ff7b6b!important}
+/* ═══════════════════════════════════════════════════════════════
+   STYLE PREMIUM — sobre : ivoire, vert forêt, laiton discret,
+   titres en Fraunces, lignes fines plutôt qu'ombres lourdes.
+   (toutes les couleurs passent par les variables : clair et sombre)
+   ═══════════════════════════════════════════════════════════════ */
+body{background:var(--bg)}
+
+/* En-tête */
+.header{background:var(--white);border-bottom:1px solid var(--border);box-shadow:none}
+.logo{font-family:var(--font-display);font-weight:600;font-size:20px;letter-spacing:-0.2px;gap:10px}
+.logo-badge{background:var(--hero-bg);border-radius:11px;box-shadow:inset 0 0 0 1px var(--gold-line)}
+.logo-word{gap:0}
+.logo-word .dot{display:block;width:.27em;font-size:inherit;line-height:inherit;top:0}
+.header-title{font-family:var(--font-display);font-weight:600;font-size:18px;letter-spacing:-0.1px}
+.hamburger,.back-btn{background:transparent;border:1px solid var(--border);border-radius:12px}
+.hamburger:active,.back-btn:active{background:var(--gray-100)}
+
+/* Barre des prières */
+.pbar{background:var(--white);padding:8px 12px 9px;gap:6px}
+.pi{border-radius:12px;padding:6px 2px;border:1px solid transparent}
+.pn{font-size:8.5px;font-weight:600;letter-spacing:0.7px;color:var(--muted)}
+.pt{font-size:12.5px;font-weight:600;letter-spacing:-0.1px;font-variant-numeric:tabular-nums}
+.pi.active{background:var(--green-deep);box-shadow:none}
+.pi.active .pn{color:rgba(255,253,249,0.72)}
+.pi.next{background:transparent;border-color:var(--gold-line)}
+.pi.next .pn{color:var(--gold)}
+.pi.next .pt{color:var(--text)}
+.pcity{background:transparent;border:1px solid var(--border);font-size:10.5px;font-weight:500;color:var(--text-2);padding:4px 11px}
+.pbar-date{background:transparent;border:1px solid var(--border);border-radius:10px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums}
+
+/* Recherche et filtres */
+.sbar-float{border-radius:16px;border:1px solid var(--border);box-shadow:var(--shadow-sm);background:var(--glass-bg)}
+.sinput{font-size:15px}
+.chip{border:1px solid var(--border);font-weight:500}
+.chip.on{background:var(--green-deep);border-color:var(--green-deep);box-shadow:none}
+.filters-dropdown,.suggest-list{border-radius:16px;box-shadow:var(--shadow-lg)}
+.filters-section-label{letter-spacing:0.12em;font-weight:600;color:var(--gold)}
+.filters-save-btn{box-shadow:none}
+.filter-badge,.sbar-filter-dot{background:var(--gold)}
+
+/* Boutons de la carte */
+.mt-zoom,.locate-fab{box-shadow:var(--shadow-sm)}
+
+/* Panneau du bas */
+.plist-wrap{background:var(--white);box-shadow:0 -1px 0 var(--border),0 -14px 34px rgba(30,25,12,0.08)}
+.sheet-handle .bar{width:38px;height:4px;background:var(--gray-300)}
+.sheet-arrow{display:none}
+.shdr{padding:2px 18px 10px}
+.view-toggle{background:var(--gray-100);border:1px solid var(--border);border-radius:12px}
+.vt-pill{background:var(--green-deep);border-radius:9px;box-shadow:none}
+.vt-btn{font-weight:600;font-size:12px}
+.badge{background:transparent;color:var(--gold);border:1px solid var(--gold-line);font-weight:600;font-size:11px;letter-spacing:0.2px;padding:4px 11px;border-radius:100px}
+.plist{padding:0 16px 12px}
+
+/* Liste des lieux */
+.pcard{padding:15px 2px;border-radius:0;border-bottom:1px solid var(--border);margin:0}
+.pcard.sel,.pcard:active{background:transparent}
+.pcard.sel .pcname,.pcard:active .pcname{color:var(--green)}
+.pctop{gap:14px}
+html .pico[class*="t-"]{background:var(--bg);border:1px solid var(--border);border-radius:14px;width:46px;height:46px}
+.pico.t-mosque,.dimg.t-mosque{color:var(--t-mosque)}
+.pico.t-shop,.dimg.t-shop{color:var(--t-shop)}
+.pico.t-restaurant,.dimg.t-restaurant{color:var(--t-restaurant)}
+.pico.t-other,.dimg.t-other{color:var(--t-other)}
+.pcname{font-family:var(--font-display);font-weight:600;font-size:16.5px;letter-spacing:-0.1px;margin-bottom:3px}
+.pcaddr{font-size:11.5px;font-weight:400}
+.pcdist{font-size:11px;font-weight:500;color:var(--muted);font-variant-numeric:tabular-nums}
+.pctags{gap:5px;margin-top:9px}
+html .tag[class]{background:transparent;color:var(--text-2);border:1px solid var(--border);border-radius:100px;padding:3px 9px;font-weight:500;font-size:10px}
+.pcmeta{margin:5px 0 1px}
+.pst{font-weight:600}
+.ptravel{background:transparent;border:1px solid var(--border);font-weight:600;color:var(--text-2)}
+
+/* Fiche d'un lieu */
+.dsheet{background:var(--white);border-radius:28px 28px 0 0;box-shadow:0 -12px 40px rgba(20,16,8,0.18)}
+.dtop{background:var(--white);border-radius:28px 28px 0 0}
+.dback{background:transparent;border:1px solid var(--border);color:var(--text);font-weight:600}
+.drag{background:var(--gray-300)}
+html .dimg[class*="t-"]{background:var(--bg);border:1px solid var(--border);border-radius:20px;height:120px}
+.dname{font-family:var(--font-display);font-weight:600;font-size:27px;letter-spacing:-0.3px;line-height:1.15;margin-bottom:6px}
+.daddr{font-size:13px;font-weight:400}
+html .dtag{background:transparent!important;color:var(--text-2)!important;border:1px solid var(--border);border-radius:100px;font-weight:500}
+.dpr-title{font-size:10.5px;font-weight:600;letter-spacing:0.14em;color:var(--gold);display:flex;align-items:center;gap:10px}
+.dpr-title::after{content:'';flex:1;height:1px;background:var(--gold-line)}
+.dpr{background:transparent;border:1px solid var(--border);border-radius:12px;padding:8px 2px}
+.dpr span{font-weight:500}
+.dpr b{font-weight:600}
+.dpr.cur{background:var(--green-deep);border-color:var(--green-deep)}
+.dpr.next{background:transparent;border-color:var(--gold-line)}
+.dpr.next span{color:var(--gold)}
+.ilist{border-top:1px solid var(--border)}
+.ilbl{font-weight:500}
+.ival{font-weight:600}
+.bnav{border-radius:14px;box-shadow:none;font-weight:600;letter-spacing:0.1px}
+.bfav{background:transparent;border:1px solid var(--border);border-radius:14px}
+.share-btn{background:transparent;border:1px solid var(--border);color:var(--text);border-radius:14px;font-weight:600}
+.share-btn:active{background:var(--gray-100)}
+
+/* Menu latéral */
+html .drawer-head{background:var(--hero-bg);color:var(--hero-text);border-bottom:none;box-shadow:inset 0 -1px 0 var(--gold-line);padding:28px 22px 22px}
+.drawer-avatar{background:rgba(255,253,249,0.08);border:1px solid var(--gold-line);color:var(--hero-text);font-family:var(--font-display);font-weight:600}
+.drawer-name{font-family:var(--font-display);font-weight:600;font-size:19px;color:var(--hero-text)}
+.drawer-sub{color:var(--hero-text);opacity:0.7}
+.drawer-nav{padding:12px 12px}
+.drawer-section-label{color:var(--gold);letter-spacing:0.16em;font-weight:600;font-size:9.5px}
+.drawer-item{border-radius:12px;font-weight:500;color:var(--text)}
+.drawer-item:active,.drawer-item.active{background:var(--gray-100);color:var(--green-deep);box-shadow:inset 2px 0 0 var(--gold)}
+.drawer-sep{background:var(--border)}
+
+/* Écrans : titres, cartes, réglages */
+.empty-fav .txt,.account-logged-out h3,.qibla-hero h2,.apropos-hero h2,.profile-name,.sub-card h4,.modal h2,.rp-title{font-family:var(--font-display);font-weight:600;letter-spacing:-0.2px}
+.account-logged-out h3,.qibla-hero h2{font-size:24px}
+.acc-btn{border-radius:14px;font-weight:600}
+.acc-btn.prim{box-shadow:none}
+.acc-btn.sec{background:transparent}
+html .profile-card,html .sub-card,html .apropos-hero{background:var(--hero-bg);color:var(--hero-text);box-shadow:inset 0 0 0 1px var(--gold-line)}
+html .apropos-hero{box-shadow:inset 0 -1px 0 var(--gold-line)}
+.apropos-hero h2{font-size:26px}
+.sub-card::before{background:radial-gradient(circle,var(--gold-line),transparent 70%);opacity:0.6}
+.sub-card .sub-badge{background:transparent;border:1px solid var(--gold-line);color:var(--gold)}
+.sub-btn{background:var(--gold);color:#13241b;font-weight:700}
+html.theme-dark .sub-btn{color:#13241b}
+.sub-card-light{border:1px solid var(--border)}
+.sub-btn-light{background:transparent;border:1px solid var(--gold-line);color:var(--text)}
+.menu-list{border:1px solid var(--border);border-radius:18px}
+.menu-item{font-weight:500;color:var(--text)}
+.set-section-title{color:var(--gold);letter-spacing:0.14em;font-weight:600}
+.set-row{font-weight:500;color:var(--text)}
+.toggle.on{background:var(--green-deep)}
+.ap-greeting{color:var(--gold);font-weight:600;letter-spacing:0.04em}
+.ap-text{font-weight:400}
+
+/* Qibla */
+html .compass-ring{background:radial-gradient(circle at 50% 40%,var(--white),var(--bg));box-shadow:0 18px 44px rgba(30,25,12,0.12),inset 0 0 0 1px var(--gold-line)}
+html.theme-dark .compass-ring{box-shadow:0 18px 44px rgba(0,0,0,0.45),inset 0 0 0 1px var(--gold-line)}
+.compass-ring.aligned{box-shadow:0 18px 44px rgba(30,25,12,0.16),inset 0 0 0 3px var(--gold)!important}
+.qibla-status{border:1px solid var(--border);box-shadow:none;border-radius:18px}
+.qibla-deg{font-family:var(--font-display);font-weight:600;color:var(--text)}
+.qibla-info{background:transparent;border:1px solid var(--border);color:var(--text-2)}
+
+/* Calendrier et fenêtres */
+.cal-modal,.rp-box{border-radius:24px}
+html .cal-toggle-btn.active,html .cal-day.today{background:var(--green-deep)}
+.cal-month-name{font-weight:600}
+.leaflet-container .leaflet-control-attribution{background:var(--glass-bg)}
 </style>
 </head>
 <body>
@@ -1661,9 +1814,9 @@ html.theme-dark #pay-error{color:#ff7b6b!important}
     <div class="ap-signoff">Qu'Allah mette la baraka dans cette œuvre<br>et accepte de nous tous.</div>
     <div class="ap-divider"></div>
     <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;padding-bottom:8px">
-      <button onclick="openCGU('general')" style="background:none;border:1px solid var(--border);border-radius:10px;padding:8px 16px;font-size:12px;color:var(--muted);cursor:pointer;font-family:Outfit,sans-serif"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;vertical-align:-3px;margin-right:6px"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>CGU — Application</button>
-      <button onclick="openCGU('subscription')" style="background:none;border:1px solid var(--border);border-radius:10px;padding:8px 16px;font-size:12px;color:var(--muted);cursor:pointer;font-family:Outfit,sans-serif"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;vertical-align:-3px;margin-right:6px"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/></svg>CGU — Abonnement</button>
-      <button onclick="openCGU('legal')" style="background:none;border:1px solid var(--border);border-radius:10px;padding:8px 16px;font-size:12px;color:var(--muted);cursor:pointer;font-family:Outfit,sans-serif"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;vertical-align:-3px;margin-right:6px"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>Mentions légales</button>
+      <button onclick="openCGU('general')" style="background:none;border:1px solid var(--border);border-radius:10px;padding:8px 16px;font-size:12px;color:var(--muted);cursor:pointer;font-family:var(--font-ui)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;vertical-align:-3px;margin-right:6px"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>CGU — Application</button>
+      <button onclick="openCGU('subscription')" style="background:none;border:1px solid var(--border);border-radius:10px;padding:8px 16px;font-size:12px;color:var(--muted);cursor:pointer;font-family:var(--font-ui)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;vertical-align:-3px;margin-right:6px"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/></svg>CGU — Abonnement</button>
+      <button onclick="openCGU('legal')" style="background:none;border:1px solid var(--border);border-radius:10px;padding:8px 16px;font-size:12px;color:var(--muted);cursor:pointer;font-family:var(--font-ui)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;vertical-align:-3px;margin-right:6px"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>Mentions légales</button>
     </div>
     <div class="ap-credits" id="ap-credits">
       <div class="ap-credits-title">Crédits de la carte</div>
@@ -1710,7 +1863,7 @@ html.theme-dark #pay-error{color:#ff7b6b!important}
 <div id="cgu-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9999;align-items:flex-end;justify-content:center" onclick="if(event.target===this)closeCGU()">
   <div style="background:var(--white);border-radius:24px 24px 0 0;padding:24px 20px 40px;width:100%;max-width:540px;max-height:80vh;overflow-y:auto;box-shadow:0 -4px 32px rgba(0,0,0,0.18)">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-      <div id="cgu-title" style="font-size:16px;font-weight:800;font-family:Outfit,sans-serif"></div>
+      <div id="cgu-title" style="font-size:16px;font-weight:800;font-family:var(--font-display)"></div>
       <button onclick="closeCGU()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted)">✕</button>
     </div>
     <div id="cgu-body" style="font-size:13px;color:var(--text);line-height:1.75"></div>
@@ -1724,7 +1877,7 @@ html.theme-dark #pay-error{color:#ff7b6b!important}
 <div class="quran-settings-overlay" id="quran-settings-overlay" onclick="if(event.target===this)closeQuranSettings()">
   <div class="quran-settings-sheet">
     <div class="cal-head">
-      <span style="font-size:15px;font-weight:800;font-family:'Outfit',sans-serif"><svg class="lico sz-set" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg> Réglages d'affichage</span>
+      <span style="font-size:15px;font-weight:800;font-family:var(--font-display)"><svg class="lico sz-set" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg> Réglages d'affichage</span>
       <button class="cal-close" onclick="closeQuranSettings()">✕</button>
     </div>
     <div style="padding:20px">
@@ -2199,21 +2352,21 @@ const MAP_ATTRIB = '<a href="https://openfreemap.org" target="_blank" rel="noope
 
 // Palettes : sol clair légèrement vert, rues blanches, grands axes vert sauge
 const MAP_PALETTES = {
-  light:{
-    land:'#e7efe8', residential:'#e7efe8', building:'#d6e3d9', buildingLine:'#c7d7cb',
-    park:'#cbe5d2', wood:'#c5e0cc', water:'#bfdcdb', waterLine:'#a9cfcd',
-    minor:'#ffffff', path:'#f3f7f4',
-    majorFill:'#c2e0cb', majorCase:'#a9d2b6', motorFill:'#acd8bb', motorCase:'#8fc6a2',
-    rail:'#cad7ce', railDash:'#f1f6f2', boundary:'#a9bdb1',
-    roadLabel:'#557063', placeLabel:'#1f382d', waterLabel:'#3f7b75', halo:'#eef4ef'
+  light:{ // ivoire, parcs sauge, grands axes champagne
+    land:'#f1ece1', residential:'#f1ece1', building:'#e6dfd0', buildingLine:'#dbd2c0',
+    park:'#dfe5d3', wood:'#d8e0cc', water:'#cddbd6', waterLine:'#b9ccc6',
+    minor:'#fffdf8', path:'#f7f3ea',
+    majorFill:'#f0e7d4', majorCase:'#e2d6bb', motorFill:'#e9dcbc', motorCase:'#d8c7a0',
+    rail:'#d9d1c1', railDash:'#f3eee4', boundary:'#c4b9a3',
+    roadLabel:'#6f6a5c', placeLabel:'#2b3a32', waterLabel:'#4f7a72', halo:'#f5f1e8'
   },
-  dark:{
-    land:'#111917', residential:'#111917', building:'#1c2723', buildingLine:'#24312c',
-    park:'#14281e', wood:'#142a20', water:'#0c2125', waterLine:'#123038',
-    minor:'#27332f', path:'#1e2925',
-    majorFill:'#2e4b3c', majorCase:'#1a2a23', motorFill:'#386650', motorCase:'#1c3429',
-    rail:'#27332e', railDash:'#141c19', boundary:'#3a4a43',
-    roadLabel:'#93ab9f', placeLabel:'#d3e2da', waterLabel:'#6fa7a1', halo:'#111917'
+  dark:{ // nuit vert profond, grands axes bronze
+    land:'#101614', residential:'#101614', building:'#18201d', buildingLine:'#1f2925',
+    park:'#13221b', wood:'#132419', water:'#0c1b1d', waterLine:'#12282b',
+    minor:'#222b27', path:'#1a221f',
+    majorFill:'#3a3324', majorCase:'#1d1a12', motorFill:'#4d4129', motorCase:'#241f14',
+    rail:'#232c28', railDash:'#121816', boundary:'#3a443f',
+    roadLabel:'#a39c8a', placeLabel:'#e3dccd', waterLabel:'#6f9c96', halo:'#101614'
   }
 };
 
@@ -2404,7 +2557,7 @@ function initMap(){
 }
 
 function mkIcon(type) {
-  const colors={mosque:'#0d6e47',shop:'#c9963a',restaurant:'#b5334a',other:'#6b7a75'};
+  const colors={mosque:'#1c5a43',shop:'#a8834a',restaurant:'#8a3346',other:'#5f665f'};
   const c = colors[type]||colors.other;
 
   const svgInner={
@@ -2418,7 +2571,7 @@ function mkIcon(type) {
     className:'',iconSize:[36,44],iconAnchor:[18,44],popupAnchor:[0,-44],
     html:`<div style="width:36px;height:44px;position:relative">
       <div style="position:absolute;left:11px;bottom:-1px;width:14px;height:5px;border-radius:50%;background:rgba(0,0,0,0.18);filter:blur(1px)"></div>
-      <div style="position:absolute;left:2px;top:1px;width:32px;height:32px;background:${c};border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #fff;box-shadow:0 3px 10px rgba(0,0,0,0.18);display:flex;align-items:center;justify-content:center">
+      <div style="position:absolute;left:2px;top:1px;width:32px;height:32px;background:${c};border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #fffdf8;box-shadow:0 3px 10px rgba(0,0,0,0.18);display:flex;align-items:center;justify-content:center">
         <svg style="transform:rotate(45deg);width:17px;height:17px" viewBox="0 0 24 24" fill="none">${svgInner[type]||svgInner.other}</svg>
       </div>
     </div>`
@@ -2550,24 +2703,24 @@ function watchSheetForTools(){
 function placeIcon(type){
   const icons={
     mosque:`<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12 3C10 3 8.5 4.5 8.5 6.5V7H7L6 9h1v9h10V9h1l-1-2h-1.5V6.5C15.5 4.5 14 3 12 3z" fill="#0d6e47" fill-opacity="0.15" stroke="#0d6e47" stroke-width="1.3" stroke-linejoin="round"/>
-      <path d="M10 12h4M10 15h4" stroke="#0d6e47" stroke-width="1.3" stroke-linecap="round"/>
-      <circle cx="12" cy="3" r="1" fill="#0d6e47"/>
+      <path d="M12 3C10 3 8.5 4.5 8.5 6.5V7H7L6 9h1v9h10V9h1l-1-2h-1.5V6.5C15.5 4.5 14 3 12 3z" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+      <path d="M10 12h4M10 15h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+      <circle cx="12" cy="3" r="1" fill="currentColor"/>
     </svg>`,
     shop:`<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M4 7h16l-1.5 9a1 1 0 01-1 .9H6.5a1 1 0 01-1-.9L4 7z" fill="#c9963a" fill-opacity="0.15" stroke="#c9963a" stroke-width="1.3" stroke-linejoin="round"/>
-      <path d="M4 7l2-4h12l2 4" stroke="#c9963a" stroke-width="1.3" stroke-linejoin="round"/>
-      <path d="M9 11v4M12 11v4M15 11v4" stroke="#c9963a" stroke-width="1.2" stroke-linecap="round"/>
+      <path d="M4 7h16l-1.5 9a1 1 0 01-1 .9H6.5a1 1 0 01-1-.9L4 7z" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+      <path d="M4 7l2-4h12l2 4" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+      <path d="M9 11v4M12 11v4M15 11v4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
     </svg>`,
     restaurant:`<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12 2v7c0 2.2-1.8 4-4 4v9" stroke="#b5334a" stroke-width="1.4" stroke-linecap="round"/>
-      <path d="M16 2v4a3 3 0 003 3v11" stroke="#b5334a" stroke-width="1.4" stroke-linecap="round"/>
-      <path d="M8 2v4" stroke="#b5334a" stroke-width="1.4" stroke-linecap="round"/>
+      <path d="M12 2v7c0 2.2-1.8 4-4 4v9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+      <path d="M16 2v4a3 3 0 003 3v11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+      <path d="M8 2v4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
     </svg>`,
     other:`<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="12" cy="11" r="5" stroke="#6b7a75" stroke-width="1.4"/>
-      <path d="M12 2v2M12 18v2M2 11h2M18 11h2" stroke="#6b7a75" stroke-width="1.4" stroke-linecap="round"/>
-      <circle cx="12" cy="11" r="2" fill="#6b7a75" fill-opacity="0.3"/>
+      <circle cx="12" cy="11" r="5" stroke="currentColor" stroke-width="1.4"/>
+      <path d="M12 2v2M12 18v2M2 11h2M18 11h2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+      <circle cx="12" cy="11" r="2" fill="currentColor" fill-opacity="0.3"/>
     </svg>`
   };
   return icons[type]||icons.other;
@@ -4197,7 +4350,7 @@ function renderAidePriere(){
   c.innerHTML=`
     <div style="padding:8px 0 18px;text-align:center">
       <div style="margin-bottom:8px"><svg class="lico sz-xl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /> <path d="M7 20h8l-4 -4v-7l4 3l2 -2" /></svg></div>
-      <div style="font-size:17px;font-weight:800;font-family:'Outfit',sans-serif">Aide à la prière</div>
+      <div style="font-size:17px;font-weight:800;font-family:var(--font-display)">Aide à la prière</div>
       <div style="font-size:12.5px;color:var(--muted);margin-top:3px">Tout pour t'accompagner dans ta pratique quotidienne</div>
     </div>
     <div class="menu-list">
@@ -4223,8 +4376,8 @@ function renderCommentPrier(){
   const c=document.getElementById('comment-prier-content');
   c.innerHTML=`
     <div style="display:flex;gap:0;padding:16px 16px 0;border-bottom:1px solid var(--border);background:var(--white)">
-      <button id="tab-ablutions" onclick="switchPrayerTab('ablutions')" style="flex:1;padding:10px;background:none;border:none;border-bottom:2.5px solid var(--green-deep);font-size:14px;font-weight:700;color:var(--green-deep);cursor:pointer;font-family:Outfit,sans-serif"><svg class="tab-ico-svg" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M32 8c0 0-14 12-14 24a14 14 0 0028 0C46 20 32 8 32 8z"/><path d="M24 36c0 4 3.6 8 8 8"/></svg> Ablutions</button>
-      <button id="tab-priere" onclick="switchPrayerTab('priere')" style="flex:1;padding:10px;background:none;border:none;border-bottom:2.5px solid transparent;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;font-family:Outfit,sans-serif"><svg class="tab-ico-svg" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 22 Q22 10 32 8 Q42 10 42 22"/><line x1="13" y1="14" x2="13" y2="8"/><line x1="11" y1="8" x2="15" y2="8"/><path d="M10 18 Q10 14 13 14 Q16 14 16 18"/><line x1="51" y1="14" x2="51" y2="8"/><line x1="49" y1="8" x2="53" y2="8"/><path d="M48 18 Q48 14 51 14 Q54 14 54 18"/><rect x="8" y="22" width="48" height="28" rx="2"/><path d="M26 50 L26 36 Q26 30 32 30 Q38 30 38 36 L38 50"/><path d="M14 34 Q14 30 17 30 Q20 30 20 34"/><path d="M44 34 Q44 30 47 30 Q50 30 50 34"/><line x1="4" y1="50" x2="60" y2="50"/></svg> Prière</button>
+      <button id="tab-ablutions" onclick="switchPrayerTab('ablutions')" style="flex:1;padding:10px;background:none;border:none;border-bottom:2.5px solid var(--green-deep);font-size:14px;font-weight:700;color:var(--green-deep);cursor:pointer;font-family:var(--font-ui)"><svg class="tab-ico-svg" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M32 8c0 0-14 12-14 24a14 14 0 0028 0C46 20 32 8 32 8z"/><path d="M24 36c0 4 3.6 8 8 8"/></svg> Ablutions</button>
+      <button id="tab-priere" onclick="switchPrayerTab('priere')" style="flex:1;padding:10px;background:none;border:none;border-bottom:2.5px solid transparent;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;font-family:var(--font-ui)"><svg class="tab-ico-svg" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 22 Q22 10 32 8 Q42 10 42 22"/><line x1="13" y1="14" x2="13" y2="8"/><line x1="11" y1="8" x2="15" y2="8"/><path d="M10 18 Q10 14 13 14 Q16 14 16 18"/><line x1="51" y1="14" x2="51" y2="8"/><line x1="49" y1="8" x2="53" y2="8"/><path d="M48 18 Q48 14 51 14 Q54 14 54 18"/><rect x="8" y="22" width="48" height="28" rx="2"/><path d="M26 50 L26 36 Q26 30 32 30 Q38 30 38 36 L38 50"/><path d="M14 34 Q14 30 17 30 Q20 30 20 34"/><path d="M44 34 Q44 30 47 30 Q50 30 50 34"/><line x1="4" y1="50" x2="60" y2="50"/></svg> Prière</button>
     </div>
     <div id="panel-ablutions" style="padding:16px;background:var(--white)">
       <img src="img/guide-ablutions.jpg" loading="lazy" decoding="async" style="width:100%;border-radius:14px;display:block" alt="Guide ablutions">
@@ -4412,7 +4565,7 @@ function renderTrackerView(){
 function renderRing(pct, size=110){
   const r=44, circ=2*Math.PI*r;
   const offset=circ-(pct/100)*circ;
-  const color = pct===100?'#0d6e47':pct>=60?'#1a8f60':pct>=40?'#c9963a':'#b5334a';
+  const color = pct===100?'#1c5a43':pct>=60?'#2c6e53':pct>=40?'#a8834a':'#8a3346';
   return `
     <div class="tracker-ring-wrap">
       <div class="tracker-ring" style="width:${size}px;height:${size}px">
@@ -4530,7 +4683,7 @@ function renderMonthView(){
         const isToday=todayKey(d)===todayKey(todayD);
         const pct=isFuture?-1:getPct(todayKey(d));
         const r=7,circ=2*Math.PI*r;
-        const color=pct===100?'#0d6e47':pct>=60?'#1a8f60':pct>=40?'#c9963a':'#e4eae7';
+        const color=pct===100?'#1c5a43':pct>=60?'#2c6e53':pct>=40?'#a8834a':'#e9e2d4';
         const fill=pct<0?0:pct/100*circ;
         const miniRing=isFuture?`<svg class="month-mini-ring" viewBox="0 0 20 20"><circle cx="10" cy="10" r="${r}" fill="none" stroke="var(--gray-200)" stroke-width="2.5"/></svg>`:
           `<svg class="month-mini-ring" viewBox="0 0 20 20" style="transform:rotate(-90deg)"><circle cx="10" cy="10" r="${r}" fill="none" stroke="var(--gray-200)" stroke-width="2.5"/><circle cx="10" cy="10" r="${r}" fill="none" stroke="${color}" stroke-width="2.5" stroke-dasharray="${circ}" stroke-dashoffset="${circ-fill}"/></svg>`;
@@ -4591,14 +4744,14 @@ function payAppearance(){
   return {
     theme: dark ? 'night' : 'stripe',
     variables: {
-      colorPrimary: dark ? '#2ecc8a' : '#0d6e47',
-      colorBackground: dark ? '#232e29' : '#ffffff',
-      colorText: dark ? '#eef3f0' : '#14201b',
+      colorPrimary: dark ? '#5cc195' : '#123e2e',
+      colorBackground: dark ? '#1a2320' : '#fffdf9',
+      colorText: dark ? '#efe9dd' : '#16231d',
       colorDanger: dark ? '#ff7b6b' : '#c0392b',
       borderRadius: '12px',
       fontFamily: 'Inter, -apple-system, "Segoe UI", sans-serif'
     },
-    rules: { '.Input': { border: dark ? '1px solid #2c3a35' : '1px solid #dfe7e2' } }
+    rules: { '.Input': { border: dark ? '1px solid #26302b' : '1px solid #e9e2d4' } }
   };
 }
 // Messages d'erreur en français (Stripe renvoie un code pour chaque refus)
@@ -4635,7 +4788,7 @@ function payShowSheet(){
     <div style="width:40px;height:4px;background:var(--border);border-radius:2px;margin:-14px auto 18px"></div>
     <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
       <div>
-        <div style="font-size:18px;font-weight:800;font-family:Outfit,sans-serif;color:var(--text)">Soutenir Prayer Spot</div>
+        <div style="font-size:18px;font-weight:800;font-family:var(--font-display);color:var(--text)">Soutenir Prayer Spot</div>
         <div style="font-size:13px;color:var(--muted);margin-top:3px">1,99 € par mois · Résiliable à tout moment</div>
       </div>
       <button id="pay-close" onclick="closePaySheet()" aria-label="Fermer" style="flex-shrink:0;width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--gray-100);color:var(--muted);font-size:14px;cursor:pointer">✕</button>
@@ -4870,29 +5023,36 @@ function setTheme(val){
 function applyTheme(theme){
   document.documentElement.classList.toggle('theme-dark', theme==='dark');
   if(theme==='dark'){
-    document.documentElement.style.setProperty('--white','#1c2120');
-    document.documentElement.style.setProperty('--bg','#141918');
-    document.documentElement.style.setProperty('--surface','#1c2120');
-    document.documentElement.style.setProperty('--text','#eef3f0');
-    document.documentElement.style.setProperty('--text-2','#c4d4cc');
-    document.documentElement.style.setProperty('--muted','#7a9488');
-    document.documentElement.style.setProperty('--border','#2c3a35');
-    document.documentElement.style.setProperty('--gray-100','#232e29');
-    document.documentElement.style.setProperty('--gray-200','#2c3a35');
-    document.documentElement.style.setProperty('--glass-bg','rgba(28,33,32,0.92)');
-    // Vert éclairci pour être lisible sur fond sombre
-    document.documentElement.style.setProperty('--green','#2ecc8a');
-    document.documentElement.style.setProperty('--green-deep','#25a870');
-    document.documentElement.style.setProperty('--green-mid','#2ecc8a');
-    document.documentElement.style.setProperty('--green-light','#1a3028');
-    document.documentElement.style.setProperty('--green-soft','#1e3a2e');
-    document.documentElement.style.setProperty('--green-dark','#1a8f60');
-    document.documentElement.style.setProperty('--green-vivid','#2ecc8a');
-    document.documentElement.style.setProperty('--icon-color','rgba(200,225,215,0.85)');
+    // Nuit premium : vert presque noir, texte ivoire, laiton
+    document.documentElement.style.setProperty('--white','#141b18');
+    document.documentElement.style.setProperty('--bg','#0d1311');
+    document.documentElement.style.setProperty('--surface','#141b18');
+    document.documentElement.style.setProperty('--text','#efe9dd');
+    document.documentElement.style.setProperty('--text-2','#cfc7b7');
+    document.documentElement.style.setProperty('--muted','#8c9189');
+    document.documentElement.style.setProperty('--border','#26302b');
+    document.documentElement.style.setProperty('--gray-100','#1a2320');
+    document.documentElement.style.setProperty('--gray-200','#25302b');
+    document.documentElement.style.setProperty('--glass-bg','rgba(20,27,24,0.92)');
+    document.documentElement.style.setProperty('--green','#6fbf98');
+    document.documentElement.style.setProperty('--green-deep','#2f7d5d');
+    document.documentElement.style.setProperty('--green-mid','#4fae86');
+    document.documentElement.style.setProperty('--green-light','#17261f');
+    document.documentElement.style.setProperty('--green-soft','#1d3329');
+    document.documentElement.style.setProperty('--green-dark','#2a7556');
+    document.documentElement.style.setProperty('--green-vivid','#5cc195');
+    document.documentElement.style.setProperty('--icon-color','rgba(230,224,210,0.8)');
+    document.documentElement.style.setProperty('--gold','#c9a66b');
+    document.documentElement.style.setProperty('--gold-light','#2a2417');
+    document.documentElement.style.setProperty('--gold-line','rgba(201,166,107,0.35)');
+    document.documentElement.style.setProperty('--hero-bg','#0f2a1f');
+    document.documentElement.style.setProperty('--hero-text','#f1ebdf');
+    document.documentElement.style.setProperty('--t-mosque','#6fbf98');
+    document.documentElement.style.setProperty('--t-shop','#d1ad72');
+    document.documentElement.style.setProperty('--t-restaurant','#d98494');
+    document.documentElement.style.setProperty('--t-other','#a7ada5');
   } else {
-    ['--white','--bg','--surface','--text','--text-2','--muted','--border',
-     '--gray-100','--gray-200','--green','--green-deep','--green-mid',
-     '--green-light','--green-soft','--green-dark','--green-vivid','--glass-bg','--icon-color'].forEach(v=>
+    ['--white','--bg','--surface','--text','--text-2','--muted','--border','--gray-100','--gray-200','--glass-bg','--green','--green-deep','--green-mid','--green-light','--green-soft','--green-dark','--green-vivid','--icon-color','--gold','--gold-light','--gold-line','--hero-bg','--hero-text','--t-mosque','--t-shop','--t-restaurant','--t-other'].forEach(v=>
       document.documentElement.style.removeProperty(v)
     );
   }
@@ -5186,7 +5346,7 @@ function installVisual(kind){
   const tabs = (cx, cy) => `<g ${ico}><rect x="${cx-8}" y="${cy-5}" width="12" height="12" rx="2"/><path d="M${cx-4} ${cy-9}h10a2 2 0 0 1 2 2v10"/></g>`;
   const home = (cx, cy) => `<g ${ico}><path d="M${cx-8} ${cy-1}l8-7 8 7"/><path d="M${cx-6} ${cy-2}v9h12v-9"/></g>`;
   const burger = (cx, cy) => `<path ${ico} d="M${cx-8} ${cy-6}h16M${cx-8} ${cy}h16M${cx-8} ${cy+6}h16"/>`;
-  const addr = (x, w) => `<rect x="${x}" y="19" width="${w}" height="26" rx="13" fill="var(--white)" stroke="var(--border)"/><text x="${x + w/2}" y="36" text-anchor="middle" font-size="11.5" font-family="Outfit,sans-serif" fill="var(--muted)">prayerspot.fr</text>`;
+  const addr = (x, w) => `<rect x="${x}" y="19" width="${w}" height="26" rx="13" fill="var(--white)" stroke="var(--border)"/><text x="${x + w/2}" y="36" text-anchor="middle" font-size="11.5" font-family="Inter,sans-serif" fill="var(--muted)">prayerspot.fr</text>`;
   const bar = '<rect x="4" y="9" width="272" height="46" rx="23" fill="var(--gray-100)" stroke="var(--border)"/>';
   const K = {
     ios26:     bar + back(26, 32) + addr(46, 172) + dots(246, 32) + ring(246, 32),
@@ -5800,7 +5960,7 @@ function renderSouratesList(list){
     const [num, nameEn, nameAr, nameFr, versets, type] = s;
     const pct = getSouratePct(num, versets);
     const r = 12, circ = 2*Math.PI*r;
-    const color = pct===100?'#25a870':pct>0?'#0d6e47':'#e4eae7';
+    const color = pct===100?'#3a8a66':pct>0?'#1c5a43':'#e9e2d4';
     const offset = circ - (pct/100)*circ;
     return `
       <div class="sourate-card" onclick="openSourate(${num})">
