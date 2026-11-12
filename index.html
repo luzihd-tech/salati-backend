@@ -1517,6 +1517,53 @@ html .screen:not(#screen-explorer){background:var(--pat-fond) 0 0/150px repeat l
 .filters-close{flex-shrink:0;width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--white);color:var(--text-2);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
 .filters-close:active{background:var(--gray-100)}
 .filters-close svg{width:16px;height:16px}
+/* ─── Bande des prières : prochaine prière + compte à rebours, dates claires, frise ─── */
+.pbar{padding:8px 14px 8px;gap:6px}
+.pb-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.pb-next{min-width:0;display:flex;flex-direction:column;gap:1px}
+.pb-main{display:flex;align-items:baseline;gap:8px}
+.pb-main b{font-family:var(--font-display);font-weight:600;font-size:24px;color:var(--text);letter-spacing:-.2px;line-height:1.05}
+.pb-main span{font-size:15px;font-weight:600;color:var(--text-2);font-variant-numeric:tabular-nums}
+.pb-sub{display:flex;align-items:center;gap:8px;min-width:0;white-space:nowrap}
+.pb-count{font-size:12px;color:var(--green);font-weight:600}
+.pbar-date{display:flex;flex-direction:column;align-items:flex-end;gap:1px;padding:5px 11px;border-radius:12px;background:var(--white);border:1px solid var(--border);line-height:1.2;cursor:pointer;flex-shrink:0}
+.pb-greg{font-size:12.5px;font-weight:600;color:var(--text)}
+.pb-hij{font-size:10.5px;color:var(--green);font-weight:500}
+html .pcity{background:none;border:none;padding:0;font-size:11px;color:var(--muted);gap:3px;font-weight:500;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.pcity::before{content:'·';margin-right:5px;color:var(--muted)}
+.pcity .lico{width:11px!important;height:11px!important;flex-shrink:0}
+.pb-frise{display:flex;gap:4px}
+.pb-frise .pi{position:relative;padding:5px 2px 7px}
+.pi-prog{position:absolute;left:12%;right:12%;bottom:3px;height:2px;border-radius:2px;background:rgba(255,253,246,.28);overflow:hidden;display:block}
+.pi-prog i{display:block;height:100%;background:#fffdf6;border-radius:2px}
+
+/* ─── Calendrier ─── */
+.cal-modal{max-width:360px;max-height:calc(100vh - 32px);overflow-y:auto;background:var(--pat-fond) 0 0/150px repeat,var(--white)}
+.cal-grid{gap:3px}
+.cal-day{cursor:pointer;position:relative;border:1px solid transparent;border-radius:10px}
+.cal-day:not(.empty):active{background:var(--gray-100)}
+.cal-day.sel{border-color:var(--green)}
+.cal-day.today{background:var(--green-deep);color:#fff}
+.cal-mark{position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:var(--green-deep);display:block}
+.cal-day.nuit .cal-mark{background:var(--t-shop)}
+.cal-day.blanc .cal-mark{background:none;border:1px solid var(--green);width:6px;height:6px}
+.cal-day.today .cal-mark{background:#fff;border-color:#fff}
+.cal-legend{display:flex;flex-wrap:wrap;gap:4px 12px;padding:2px 16px 8px;font-size:10.5px;color:var(--text-2)}
+.cal-legend span{display:inline-flex;align-items:center;gap:5px}
+.lg{width:7px;height:7px;border-radius:50%;display:inline-block;background:var(--green-deep)}
+.lg.nuit{background:var(--t-shop)}
+.lg.blanc{background:none;border:1px solid var(--green)}
+.cal-info{margin:2px 14px 6px;padding:12px;border:1px solid var(--border);border-radius:16px;background:var(--bg)}
+.cal-info-date{font-family:var(--font-display);font-size:18px;font-weight:600;color:var(--text)}
+.cal-info-hij{font-size:12px;color:var(--green);margin-top:1px}
+.cal-info-ev{display:inline-block;margin-top:8px;font-size:11.5px;font-weight:600;padding:3px 10px;border-radius:100px;background:var(--green-light);color:var(--green-deep)}
+.cal-info-ev.nuit{background:transparent;border:1px solid var(--t-shop);color:var(--t-shop)}
+.cal-info-ev.blanc{background:transparent;border:1px solid var(--gold-line);color:var(--green)}
+.cal-times{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;margin-top:10px}
+.cal-times div{display:flex;flex-direction:column;align-items:center;gap:1px;border:1px solid var(--border);border-radius:10px;padding:5px 0;background:var(--white)}
+.cal-times span{font-size:10px;color:var(--muted);font-weight:500}
+.cal-times b{font-size:12.5px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums}
+.cal-note{padding:2px 16px 4px;font-size:10.5px;color:var(--muted);line-height:1.45;margin:0}
 /* Bande du haut (logo Prayer Spot) : même fond à motifs + grande rosace qui dépasse à droite */
 .header{background:var(--pat-fond) 0 0/150px repeat,var(--white);overflow:hidden}
 .header::before{content:'';position:absolute;z-index:-1;pointer-events:none;right:-40px;top:calc(50% + var(--sat) / 2);width:160px;height:160px;transform:translateY(-50%);
@@ -1615,13 +1662,14 @@ html .screen:not(#screen-explorer){background:var(--pat-fond) 0 0/150px repeat l
 <!-- EXPLORER SCREEN -->
 <div class="screen" id="screen-explorer">
   <div class="pbar">
-    <div class="pbar-top">
-      <div id="ptimes" style="display:flex;gap:3px;flex:1"></div>
-      <button class="pbar-date" id="pbar-date" onclick="openCalendarModal()"></button>
+    <div class="pb-head">
+      <div class="pb-next" aria-live="polite">
+        <div class="pb-main"><b id="pb-next-name">—</b><span id="pb-next-time"></span></div>
+        <div class="pb-sub"><span class="pb-count" id="pb-count"></span><span class="pcity" onclick="openPrayerCityPicker()" role="button" aria-label="Changer la ville des horaires"><svg class="lico sz-vt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg><span id="cityname">Ma position</span></span></div>
+      </div>
+      <button class="pbar-date" id="pbar-date" onclick="openCalendarModal()" aria-label="Ouvrir le calendrier"></button>
     </div>
-    <div class="pbar-bottom">
-      <div class="pcity" onclick="openPrayerCityPicker()"><svg class="lico sz-vt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg> Horaires : <span id="cityname">Ma position</span></div>
-    </div>
+    <div id="ptimes" class="pb-frise"></div>
   </div>
   <div class="maplist-wrap">
     <div id="map"></div>
@@ -2120,7 +2168,7 @@ html .screen:not(#screen-explorer){background:var(--pat-fond) 0 0/150px repeat l
   </div>
 </div>
 <div class="cal-overlay" id="cal-overlay" style="display:none" onclick="if(event.target===this)closeCalendarModal()">
-  <div class="cal-modal">
+  <div class="cal-modal" role="dialog" aria-label="Calendrier">
     <div class="cal-head">
       <div class="cal-toggle">
         <button class="cal-toggle-btn active" id="cal-greg-btn" onclick="setCalType('gregorian')">Grégorien</button>
@@ -2137,6 +2185,11 @@ html .screen:not(#screen-explorer){background:var(--pat-fond) 0 0/150px repeat l
       <span>Lu</span><span>Ma</span><span>Me</span><span>Je</span><span>Ve</span><span>Sa</span><span>Di</span>
     </div>
     <div class="cal-grid" id="cal-grid"></div>
+    <div class="cal-legend">
+      <span><i class="lg fete"></i>Grande date</span><span><i class="lg nuit"></i>10 derniers jours du Ramadan</span><span><i class="lg blanc"></i>Jours blancs</span>
+    </div>
+    <div class="cal-info" id="cal-info"></div>
+    <p class="cal-note">Dates hégiriennes calculées (calendrier Umm al-Qura) : elles peuvent varier d'un jour selon l'observation de la lune.</p>
     <div class="cal-today-btn-wrap">
       <button class="cal-today-btn" onclick="calGoToday()">Aujourd'hui</button>
     </div>
@@ -4200,39 +4253,76 @@ function loadSavedPrayerTimes(){
   }catch{ return null; }
 }
 
+let prayerBarTimes = null;
 function renderPrayers(p){
-  // Si p est null (aucun horaire dispo et rien de sauvegardé), afficher des tirets
+  // Sauvegarde automatique à chaque fois qu'on reçoit de vrais horaires
+  if(p) savePrayerTimes(p);
+  prayerBarTimes = p || null;
+  drawPrayerBar();
+}
+
+// Durée lisible : « 37 min », « 2 h 05 »
+function fmtDuree(m){
+  m = Math.max(0, Math.round(m));
+  if(m < 60) return m + ' min';
+  return Math.floor(m / 60) + ' h ' + String(m % 60).padStart(2, '0');
+}
+
+function drawPrayerBar(){
+  const box = document.getElementById('ptimes');
+  if(!box) return;
+  const p = prayerBarTimes;
+  const allKeys=['Fajr','Chourouk','Dhohr','Asr','Maghrib','Icha'];
+  const setHead = (lbl, name, time, count) => {
+    const q = id => document.getElementById(id);
+    if(q('pb-next-name')) q('pb-next-name').textContent = name;
+    if(q('pb-next-time')) q('pb-next-time').textContent = time;
+    if(q('pb-count')) q('pb-count').textContent = count;
+  };
+  // Aucun horaire disponible (et rien de sauvegardé) : des tirets
   if(!p){
-    document.getElementById('ptimes').innerHTML=
-      ['Fajr','Chourouk','Dhohr','Asr','Maghrib','Icha'].map(k=>
-        `<div class="pi${k==='Chourouk'?' chourouk':''}"><span class="pn">${k}</span><span class="pt">--:--</span></div>`
-      ).join('');
+    box.innerHTML = allKeys.map(k=>`<div class="pi${k==='Chourouk'?' chourouk':''}"><span class="pn">${k}</span><span class="pt">--:--</span></div>`).join('');
+    setHead('Prochaine prière', '—', '', 'Horaires indisponibles');
     return;
   }
-
-  // Sauvegarde automatique à chaque fois qu'on reçoit de vrais horaires
-  savePrayerTimes(p);
-
-  const allKeys=['Fajr','Chourouk','Dhohr','Asr','Maghrib','Icha'];
   const prayerKeys=['Fajr','Dhohr','Asr','Maghrib','Icha']; // Chourouk exclu : ce n'est pas une prière
-  const now=new Date(),nm=now.getHours()*60+now.getMinutes();
-
-  const items=allKeys.map(k=>{const t=p[k]||'--:--';const[h,m]=t.split(':').map(Number);return{name:k,time:t.slice(0,5),min:h*60+m,isPrayer:prayerKeys.includes(k)};});
-
-  // Calcule active/next uniquement parmi les vraies prières
+  const now=new Date(), nm=now.getHours()*60+now.getMinutes()+now.getSeconds()/60;
+  const items=allKeys.map(k=>{const t=p[k]||'--:--';return{name:k,time:t.slice(0,5),min:toMin(t),isPrayer:prayerKeys.includes(k)};});
   const prayerItems=items.filter(it=>it.isPrayer);
-  let ai=-1;prayerItems.forEach((it,i)=>{if(it.min<=nm)ai=i;});
-  const activeKey = ai>=0 ? prayerItems[ai].name : null;
-  const nextKey = ai<prayerItems.length-1 ? prayerItems[ai+1].name : prayerItems[0].name;
-
-  document.getElementById('ptimes').innerHTML=items.map(it=>{
+  let ai=-1; prayerItems.forEach((it,i)=>{ if(it.min<=nm) ai=i; });
+  const active = ai>=0 ? prayerItems[ai] : null;
+  const next = ai<prayerItems.length-1 ? prayerItems[ai+1] : null;
+  // Après Icha : la prochaine est le Fajr de demain
+  let nextName, nextTime, nextMin;
+  if(next){ nextName=next.name; nextTime=next.time; nextMin=next.min; }
+  else {
+    let f = prayerItems[0].time;
+    try{ const d=new Date(now); d.setDate(d.getDate()+1); const loc=lastPrayer||{lat:uLat,lng:uLng}; const t=PT_CALC(loc.lat, loc.lng, d); if(t && t.Fajr) f=t.Fajr; }catch(e){}
+    nextName='Fajr'; nextTime=f.slice(0,5); nextMin=toMin(f)+1440;
+  }
+  // Barre de progression dans la prière en cours (de son heure jusqu'à la suivante)
+  let prog = 0;
+  if(active && !isNaN(nextMin) && nextMin>active.min) prog = Math.min(100, Math.max(0, (nm-active.min)/(nextMin-active.min)*100));
+  box.innerHTML=items.map(it=>{
     let cls='pi';
     if(!it.isPrayer) cls+=' chourouk';
-    else if(it.name===activeKey) cls+=' active';
-    else if(it.name===nextKey) cls+=' next';
-    return `<div class="${cls}"><span class="pn">${it.name}</span><span class="pt">${it.time}</span></div>`;
+    else if(active && it.name===active.name) cls+=' active';
+    else if(it.name===nextName) cls+=' next';
+    const bar = (active && it.name===active.name) ? `<i class="pi-prog"><i style="width:${prog.toFixed(1)}%"></i></i>` : '';
+    return `<div class="${cls}"><span class="pn">${it.name}</span><span class="pt">${it.time}</span>${bar}</div>`;
   }).join('');
+  // En-tête : c'est l'heure (15 premières minutes) ou la prochaine prière avec le temps restant
+  if(active && nm-active.min < 15){
+    const depuis = Math.floor(nm-active.min);
+    setHead('', active.name, active.time, depuis < 1 ? "C'est l'heure · à l'instant" : `C'est l'heure · depuis ${fmtDuree(depuis)}`);
+  } else {
+    const reste = nextMin - nm;
+    setHead('', nextName, nextTime, reste < 1 ? 'maintenant' : `dans ${fmtDuree(reste)}`);
+  }
 }
+// Compte à rebours et frise à jour sans recharger les horaires
+setInterval(()=>{ try{ drawPrayerBar(); updateDateBtn(); }catch(e){} }, 30000);
+document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible'){ try{ drawPrayerBar(); updateDateBtn(); }catch(e){} } });
 
 // ============================================================
 // BOUSSOLE QIBLA
@@ -5868,7 +5958,18 @@ const MONTH_FR = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Ao
 const MONTH_AR = ['Mouharram','Safar','Rabi al-Awwal','Rabi al-Thani','Joumada al-Oula','Joumada al-Thania','Rajab','Chaabane','Ramadan','Chawwal','Dhou al-Qaada','Dhou al-Hijja'];
 
 // Conversion grégorien → hégire (algorithme Umalqura approximatif)
+const HIJRI_FMT = (() => { try{ const f = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura-nu-latn', {day:'numeric', month:'numeric', year:'numeric'}); return f.resolvedOptions().calendar === 'islamic-umalqura' ? f : null; }catch(e){ return null; } })();
 function toHijri(date){
+  if(HIJRI_FMT){
+    try{
+      const parts = HIJRI_FMT.formatToParts(date), g = t => parseInt((parts.find(x => x.type === t) || {}).value, 10);
+      const r = { day:g('day'), month:g('month'), year:g('year') };
+      if(r.day && r.month && r.year) return r;
+    }catch(e){}
+  }
+  return toHijriTab(date);
+}
+function toHijriTab(date){
   const jd = Math.floor((date.getTime() / 86400000) + 2440587.5);
   let l = jd - 1948440 + 10632;
   const n = Math.floor((l - 1) / 10631);
@@ -5881,26 +5982,18 @@ function toHijri(date){
   return { day, month, year };
 }
 
+const HIJRI_COURT = ['Mouharram','Safar','Rabi I','Rabi II','Joumada I','Joumada II','Rajab','Chaabane','Ramadan','Chawwal','Dhou l-Qaada','Dhou l-Hijja'];
+const JOUR_COURT = ['Dim.','Lun.','Mar.','Mer.','Jeu.','Ven.','Sam.'];
+const MOIS_COURT = ['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
 function updateDateBtn(){
   const btn = document.getElementById('pbar-date');
   if(!btn) return;
-  const now = new Date();
-  if(calType === 'hijri'){
-    const h = toHijri(now);
-    const shortMonths = ['Mouh','Saf','Rab1','Rab2','Jou1','Jou2','Raj','Chaa','Ram','Chaw','DhQ','DhH'];
-    btn.textContent = `${h.day} ${shortMonths[h.month-1]} ${h.year}`;
-  } else {
-    const days = ['Di','Lu','Ma','Me','Je','Ve','Sa'];
-    const d = now;
-    const dd = String(d.getDate()).padStart(2,'0');
-    const mm = String(d.getMonth()+1).padStart(2,'0');
-    const yy = String(d.getFullYear()).slice(2);
-    btn.textContent = `${days[d.getDay()]} ${dd}.${mm}.${yy}`;
-  }
+  const d = new Date(), h = toHijri(d);
+  btn.innerHTML = `<span class="pb-greg">${JOUR_COURT[d.getDay()]} ${d.getDate()} ${MOIS_COURT[d.getMonth()]}</span><span class="pb-hij">${h.day} ${HIJRI_COURT[h.month-1]} ${h.year}</span>`;
 }
 
 function openCalendarModal(){
-  calOffset = 0;
+  calOffset = 0; calSel = null;
   document.getElementById('cal-overlay').style.display = 'flex';
   renderCalendar();
 }
@@ -5918,7 +6011,25 @@ function setCalType(type){
 }
 
 function calChangeMonth(dir){ calOffset += dir; renderCalendar(); }
-function calGoToday(){ calOffset = 0; renderCalendar(); }
+function calGoToday(){ calOffset = 0; calSel = null; renderCalendar(); }
+
+// Grandes dates de l'année hégirienne (calculées : à ±1 jour selon l'observation de la lune)
+function hijriEvent(h){
+  const m = h.month, d = h.day;
+  if(m===1 && d===1) return { kind:'fete', label:"Nouvel an de l'Hégire" };
+  if(m===1 && d===10) return { kind:'fete', label:'Achoura' };
+  if(m===9 && d===1) return { kind:'fete', label:'Début du Ramadan' };
+  if(m===9 && d>=21) return { kind:'nuit', label:'10 derniers jours du Ramadan' };
+  if(m===10 && d===1) return { kind:'fete', label:'Aïd al-Fitr' };
+  if(m===12 && d===9) return { kind:'fete', label:"Jour d'Arafat" };
+  if(m===12 && d===10) return { kind:'fete', label:'Aïd al-Adha' };
+  // Jours blancs : 13, 14 et 15 de chaque mois (sauf Ramadan, et pas le 13 Dhou l-Hijja, jour où l'on ne jeûne pas)
+  if(d>=13 && d<=15 && m!==9 && !(m===12 && d===13)) return { kind:'blanc', label:'Jour blanc · jeûne recommandé' };
+  return null;
+}
+
+let calSel = null; // jour choisi dans le calendrier (Date), null = aujourd'hui
+function calSelect(y, m, d){ calSel = new Date(y, m, d); renderCalendar(); }
 
 function renderCalendar(){
   const today = new Date();
@@ -5927,36 +6038,52 @@ function renderCalendar(){
   const daysInMonth = new Date(year, month+1, 0).getDate();
   const firstDow = new Date(year, month, 1).getDay();
   const startOffset = firstDow === 0 ? 6 : firstDow - 1;
+  const sel = calSel || today;
 
   if(calType === 'gregorian'){
     document.getElementById('cal-month-name').textContent = `${MONTH_FR[month]} ${year}`;
   } else {
-    // Nom du mois hégire du 1er du mois grégorien
-    const h = toHijri(new Date(year, month, 15));
-    document.getElementById('cal-month-name').textContent = `${MONTH_AR[h.month-1]} ${h.year}`;
+    const h1 = toHijri(new Date(year, month, 1)), h2 = toHijri(new Date(year, month, daysInMonth));
+    document.getElementById('cal-month-name').textContent = h1.month === h2.month ? `${MONTH_AR[h1.month-1]} ${h1.year}` : `${HIJRI_COURT[h1.month-1]} – ${HIJRI_COURT[h2.month-1]} ${h2.year}`;
   }
 
   const grid = document.getElementById('cal-grid');
   let html = Array(startOffset).fill('<div class="cal-day empty"></div>').join('');
-
   for(let d=1; d<=daysInMonth; d++){
     const date = new Date(year, month, d);
     const isToday = todayKey(date) === todayKey(today);
-    const h = toHijri(date);
-
-    if(calType === 'gregorian'){
-      html += `<div class="cal-day${isToday?' today':''}">
-        <span class="cal-day-num">${d}</span>
-        <span class="cal-day-hijri">${h.day}</span>
+    const isSel = todayKey(date) === todayKey(sel);
+    const h = toHijri(date), ev = hijriEvent(h);
+    const cls = 'cal-day' + (isToday?' today':'') + (isSel?' sel':'') + (ev?' '+ev.kind:'');
+    const big = calType === 'gregorian' ? d : h.day, small = calType === 'gregorian' ? h.day : d;
+    html += `<div class="${cls}" role="button" onclick="calSelect(${year},${month},${d})"${ev?` title="${ev.label}"`:''}>
+        <span class="cal-day-num">${big}</span>
+        <span class="cal-day-hijri">${small}</span>${ev?'<i class="cal-mark"></i>':''}
       </div>`;
-    } else {
-      html += `<div class="cal-day${isToday?' today':''}">
-        <span class="cal-day-num">${h.day}</span>
-        <span class="cal-day-hijri">${d}</span>
-      </div>`;
-    }
   }
   grid.innerHTML = html;
+  renderCalInfo(sel);
+}
+
+// Panneau sous la grille : la date choisie, sa grande date éventuelle et ses 5 horaires
+function renderCalInfo(date){
+  const box = document.getElementById('cal-info');
+  if(!box) return;
+  const h = toHijri(date), ev = hijriEvent(h);
+  const jours = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+  let t = null;
+  try{
+    if(lastPrayer && lastPrayer.day === dayKey(date)) t = lastPrayer.times;
+    else { const loc = lastPrayer || { lat:uLat, lng:uLng }; t = PT_CALC(loc.lat, loc.lng, date); }
+  }catch(e){}
+  const isToday = todayKey(date) === todayKey(new Date());
+  box.innerHTML = `
+    <div class="cal-info-top">
+      <div><div class="cal-info-date">${isToday ? "Aujourd'hui" : jours[date.getDay()]} ${date.getDate()} ${MONTH_FR[date.getMonth()].toLowerCase()}</div>
+      <div class="cal-info-hij">${h.day} ${MONTH_AR[h.month-1]} ${h.year}</div></div>
+    </div>
+    ${ev ? `<div class="cal-info-ev ${ev.kind}">${ev.label}</div>` : ''}
+    ${t ? `<div class="cal-times">${PRAYER_LIST.map(([k,l]) => `<div><span>${l}</span><b>${(t[k]||'--:--').slice(0,5)}</b></div>`).join('')}</div>` : ''}`;
 }
 
 // ============================================================
