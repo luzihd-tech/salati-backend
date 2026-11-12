@@ -1511,6 +1511,10 @@ html .screen:not(#screen-explorer){background:var(--pat-fond) 0 0/150px repeat l
 .dsheet{background:var(--pat-fond) 0 0/150px repeat local,var(--white)}
 .plist-wrap{background:var(--pat-fond) 0 0/150px repeat,var(--white)}
 .drawer{background:var(--pat-fond) 0 0/150px repeat,var(--white)}
+/* Bande du haut (logo Prayer Spot) : même fond à motifs + grande rosace qui dépasse à droite */
+.header{background:var(--pat-fond) 0 0/150px repeat,var(--white);overflow:hidden}
+.header::before{content:'';position:absolute;z-index:-1;pointer-events:none;right:-40px;top:calc(50% + var(--sat) / 2);width:160px;height:160px;transform:translateY(-50%);
+  background:var(--green-deep);opacity:.09;-webkit-mask:var(--pat-rosace) no-repeat center/contain;mask:var(--pat-rosace) no-repeat center/contain}
 .compass-ring::before{content:'';position:absolute;inset:17%;pointer-events:none;background:var(--green-deep);opacity:.06;-webkit-mask:var(--pat-rosace) no-repeat center/contain;mask:var(--pat-rosace) no-repeat center/contain}
 .account-logged-out .ico{position:relative;isolation:isolate;width:120px;height:120px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;color:var(--green-deep)}
 .account-logged-out .ico::before{content:'';position:absolute;inset:0;z-index:-1;background:var(--green-deep);opacity:.1;-webkit-mask:var(--pat-rosace) no-repeat center/contain;mask:var(--pat-rosace) no-repeat center/contain}
