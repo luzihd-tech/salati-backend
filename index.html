@@ -316,16 +316,29 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
 .filters-save-btn{background:var(--green-deep);color:#fff;box-shadow:0 3px 10px rgba(9,79,51,0.25)}
 .filters-save-btn:active{background:var(--green-dark)}
 
-/* FAB localisation */
-.locate-fab{
-  position:absolute;right:14px;z-index:400;bottom:calc(32% + 16px);
-  background:var(--white);border:1px solid var(--border);width:44px;height:44px;border-radius:50%;
-  box-shadow:var(--shadow-md);font-size:18px;color:var(--green-deep);
-  display:flex;align-items:center;justify-content:center;cursor:pointer;
-  transition:bottom 0.25s ease;
+/* Boutons de la carte (zoom + ma position) : une colonne alignée, toujours posée juste au-dessus du panneau du bas */
+.map-tools{
+  position:absolute;right:14px;bottom:calc(32% + 14px);z-index:400;
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  transition:opacity .2s ease;
 }
-.leaflet-control-zoom{margin-right:14px!important;margin-bottom:calc(32% + 70px)!important;transition:margin-bottom 0.25s ease;border:none!important;box-shadow:var(--shadow-sm)!important;border-radius:var(--radius-sm)!important}
-.leaflet-control-zoom a{border-radius:var(--radius-sm)!important;font-weight:700!important}
+.map-tools.off{opacity:0;pointer-events:none}
+.mt-zoom{
+  display:flex;flex-direction:column;width:44px;overflow:hidden;
+  background:var(--white);border:1px solid var(--border);border-radius:22px;box-shadow:var(--shadow-md);
+}
+.mt-zoom button{
+  width:100%;height:42px;border:none;background:none;padding:0;cursor:pointer;
+  color:var(--green-deep);display:flex;align-items:center;justify-content:center;
+}
+.mt-zoom button:active,.locate-fab:active{background:var(--gray-100)}
+.mt-zoom svg{width:20px;height:20px}
+.mt-zoom i{display:block;height:1px;margin:0 11px;background:var(--border)}
+.locate-fab{
+  background:var(--white);border:1px solid var(--border);width:44px;height:44px;border-radius:50%;
+  box-shadow:var(--shadow-md);font-size:18px;color:var(--green-deep);padding:0;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+}
 
 /* Bottom sheet */
 .plist-wrap{
@@ -387,8 +400,12 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMac
 .pst i{width:7px;height:7px;border-radius:50%;background:currentColor;display:inline-block}
 .pst.on{color:var(--green)}
 .pst.off{color:var(--muted)}
-.ptravel{font-size:11px;color:var(--muted);font-weight:600}
+.ptravel{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--text-2);background:var(--gray-100);border-radius:100px;padding:2px 8px 2px 6px;line-height:1.35}
+.ptravel b{font-weight:700}
+.ptravel svg{width:13px;height:13px;fill:currentColor;flex-shrink:0}
 .dmeta .pst,.dmeta .ptravel{font-size:12.5px}
+.dmeta .ptravel{padding:3px 10px 3px 8px}
+.dmeta .ptravel svg{width:15px;height:15px}
 .dprayers{margin:4px 0 14px}
 .dpr-title{font-size:12px;font-weight:800;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em}
 .dpr-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
@@ -1348,7 +1365,14 @@ html.theme-dark #pay-error{color:#ff7b6b!important}
         </div>
       </div>
     </div>
-    <button class="locate-fab" id="locate-fab" onclick="locateMe()"><svg class="lico sz-fab" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg></button>
+    <div class="map-tools" id="map-tools">
+      <div class="mt-zoom">
+        <button type="button" aria-label="Zoomer" onclick="if(map)map.zoomIn()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+        <i></i>
+        <button type="button" aria-label="Dézoomer" onclick="if(map)map.zoomOut()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14"/></svg></button>
+      </div>
+      <button class="locate-fab" id="locate-fab" aria-label="Ma position" onclick="locateMe()"><svg class="lico sz-fab" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg></button>
+    </div>
     <div class="plist-wrap" id="plist-wrap">
       <div class="sheet-handle" id="sheet-handle"><span class="sheet-arrow" id="sheet-arrow">↑</span><div class="bar"></div><span class="sheet-arrow" id="sheet-arrow2">↑</span></div>
       <div class="shdr">
@@ -2363,7 +2387,7 @@ function initMapCredit(){ showMapCredit(); }
 
 function initMap(){
   map = L.map('map', {zoomControl:false, tap:true}).setView([uLat, uLng], 12);
-  L.control.zoom({position:'bottomright'}).addTo(map);
+  watchSheetForTools(); // zoom et « ma position » : nos propres boutons, alignés au-dessus du panneau
   if(map.attributionControl){ map.attributionControl.setPosition('bottomleft'); map.attributionControl.setPrefix(false); initMapCredit(); } // crédit visible, au-dessus du panneau
   setTimeout(()=>{ try{ repositionFab(); }catch(e){} }, 0);
   setBaseMap(); // OpenFreeMap aux couleurs Prayer Spot (secours OSM automatique)
@@ -2494,16 +2518,29 @@ function initSheetDrag(){
   sheet.addEventListener('touchcancel', endDrag);
 }
 
+// Boutons de la carte et crédit : posés sur la hauteur RÉELLE du panneau du bas
+// (suivent le doigt pendant qu'on le fait glisser, et l'animation quand il s'ouvre / se ferme)
 function repositionFab(){
-  const fab=document.getElementById('locate-fab');
-  const zoomCtrl=document.querySelector('.leaflet-control-zoom');
-  if(!fab) return;
-  const pct = sheetState==='expanded'?82:sheetState==='collapsed'?6:32;
-  fab.style.bottom = `calc(${pct}% + 16px)`;
-  if(zoomCtrl) zoomCtrl.style.marginBottom = `calc(${pct}% + 70px)`;
+  const tools=document.getElementById('map-tools');
+  const sheet=document.getElementById('plist-wrap');
+  if(!tools||!sheet) return;
+  const sheetH=sheet.offsetHeight;
+  tools.style.bottom=(sheetH+14)+'px';
+  // Plus assez de carte visible (panneau grand ouvert) : on masque les boutons plutôt que de chevaucher la recherche
+  const wrapH=sheet.parentElement.offsetHeight;
+  const bar=document.querySelector('.float-controls');
+  const top=bar ? bar.offsetTop+bar.offsetHeight : 90;
+  tools.classList.toggle('off', wrapH-sheetH-14-tools.offsetHeight < top+10);
   // Crédit de la carte : juste au-dessus du panneau du bas, toujours visible
   const attrCorner=document.querySelector('#map .leaflet-bottom.leaflet-left');
-  if(attrCorner) attrCorner.style.bottom = `calc(${pct}% + 4px)`;
+  if(attrCorner) attrCorner.style.bottom=(sheetH+4)+'px';
+}
+function watchSheetForTools(){
+  const sheet=document.getElementById('plist-wrap');
+  if(!sheet||sheet.dataset.toolsWatch) return;
+  sheet.dataset.toolsWatch='1';
+  if(window.ResizeObserver) new ResizeObserver(()=>repositionFab()).observe(sheet);
+  else { sheet.addEventListener('transitionend', repositionFab); window.addEventListener('resize', repositionFab); }
 }
 
 // ============================================================
@@ -2704,7 +2741,7 @@ function renderList() {
         <div style="flex:1;min-width:0">
           <div class="pcname">${p.name}${p.verified?' <span style="color:#0a8f5c;font-size:9px">✓</span>':''}</div>
           <div class="pcaddr">${p.address}</div>
-          <div class="pcmeta">${statusHtml(p)}${uHasPos ? `<span class="ptravel">${travelText(p.dist)}</span>` : ''}</div>
+          <div class="pcmeta">${statusHtml(p)}${uHasPos ? travelHtml(p.dist) : ''}</div>
           <div class="pctags">
             ${p.ablution?'<span class="tag tg"><svg class="tag-ico" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M32 8c0 0-14 12-14 24a14 14 0 0028 0C46 20 32 8 32 8z"/><path d="M24 36c0 4 3.6 8 8 8"/></svg> Ablutions</span>':''}
             ${p.wc?'<span class="tag tb"><svg class="tag-ico" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="56" height="48" rx="12"/><polyline points="9,20 14,44 19,30 24,44 29,20"/><path d="M55,22 A13,13 0 1,0 55,42"/></svg> WC</span>':''}
@@ -2944,12 +2981,24 @@ function openAtNextPrayer(p){
   return !!(w && specOpenAt(w, at));
 }
 // Temps de trajet estimé à partir de la distance (rues ≈ 1,3 × la ligne droite)
-function travelText(km){
-  if(km == null || !isFinite(km)) return '';
+const TRAVEL_ICO = { // piéton / voiture (Material Icons, licence Apache 2.0)
+  walk: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM9.8 8.9L7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.1-2 .6-3C14.8 12 16.8 13 19 13v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1L6 8.3V13h2V9.6l1.8-.7"/></svg>',
+  car: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/></svg>'
+};
+function travelInfo(km){
+  if(km == null || !isFinite(km)) return null;
   const road = km * 1.3;
-  if(road <= 1.5) return `≈ ${Math.max(1, Math.round(road / 4.8 * 60))} min à pied`;
+  if(road <= 1.5){ const m = Math.max(1, Math.round(road / 4.8 * 60)); return { mode:'walk', dur:`${m} min`, words:`${m} min à pied` }; }
   const mins = Math.round(road / (road < 10 ? 25 : 45) * 60) + 2;
-  return mins < 60 ? `≈ ${mins} min en voiture` : `≈ ${Math.floor(mins / 60)} h ${String(mins % 60).padStart(2, '0')} en voiture`;
+  const dur = mins < 60 ? `${mins} min` : `${Math.floor(mins / 60)} h ${String(mins % 60).padStart(2, '0')}`;
+  return { mode:'car', dur, words:`${dur} en voiture` };
+}
+function travelText(km){ const t = travelInfo(km); return t ? t.words : ''; }
+// Petite pastille : icône piéton ou voiture + durée (sur la fiche, avec « à pied » / « en voiture »)
+function travelHtml(km, long){
+  const t = travelInfo(km);
+  if(!t) return '';
+  return `<span class="ptravel ${t.mode}" title="Estimation : environ ${t.words}">${TRAVEL_ICO[t.mode]}<b>${long ? t.words : t.dur}</b></span>`;
 }
 // Heures de prière du jour sur la fiche (exactes pour ce lieu : demandées au serveur, sinon calculées)
 const placeTimesCache = new Map();
@@ -3065,7 +3114,7 @@ function openDetail(id) {
     ${p.image_url ? `<div class="dimg"><img class="dimg-photo" src="${escAttr(p.image_url)}" alt="${escAttr(p.name)}" onerror="this.style.display='none';this.parentElement.classList.add('t-${escAttr(p.type)}')"></div>` : `<div class="dimg t-${p.type}" id="dimg-box"><div class="dimg-icon">${placeIcon(p.type)}</div></div>`}
     <div class="dname">${p.name}</div>
     <div class="daddr"><svg class="lico sz-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg> ${p.address}</div>
-    <div class="dmeta">${statusHtml(p)}${uHasPos ? `<span class="ptravel">${travelText(dist(uLat, uLng, p.lat, p.lng))}</span>` : ''}</div>
+    <div class="dmeta">${statusHtml(p)}${uHasPos ? travelHtml(dist(uLat, uLng, p.lat, p.lng), true) : ''}</div>
     <div class="dtags">
       ${p.ablution?'<span class="dtag tg"><svg class="tag-ico" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M32 8c0 0-14 12-14 24a14 14 0 0028 0C46 20 32 8 32 8z"/><path d="M24 36c0 4 3.6 8 8 8"/></svg> Ablutions</span>':'<span class="dtag to">✕ Pas d\u2019ablutions</span>'}
       ${p.wc?'<span class="dtag tb"><svg class="tag-ico" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="56" height="48" rx="12"/><polyline points="9,20 14,44 19,30 24,44 29,20"/><path d="M55,22 A13,13 0 1,0 55,42"/></svg> Toilettes</span>':''}
