@@ -1518,24 +1518,23 @@ html .screen:not(#screen-explorer){background:var(--pat-fond) 0 0/150px repeat l
 .filters-close:active{background:var(--gray-100)}
 .filters-close svg{width:16px;height:16px}
 /* ─── Bande des prières : prochaine prière + compte à rebours, dates claires, frise ─── */
-.pbar{padding:8px 14px 8px;gap:6px}
+.pbar{padding:8px 14px 8px;gap:7px}
 .pb-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .pb-next{min-width:0;display:flex;flex-direction:column;gap:1px}
-.pb-main{display:flex;align-items:baseline;gap:8px}
-.pb-main b{font-family:var(--font-display);font-weight:600;font-size:24px;color:var(--text);letter-spacing:-.2px;line-height:1.05}
-.pb-main span{font-size:15px;font-weight:600;color:var(--text-2);font-variant-numeric:tabular-nums}
-.pb-sub{display:flex;align-items:center;gap:8px;min-width:0;white-space:nowrap}
-.pb-count{font-size:12px;color:var(--green);font-weight:600}
-.pbar-date{display:flex;flex-direction:column;align-items:flex-end;gap:1px;padding:5px 11px;border-radius:12px;background:var(--white);border:1px solid var(--border);line-height:1.2;cursor:pointer;flex-shrink:0}
+.pb-cur{font-family:var(--font-display);font-weight:600;font-size:26px;color:var(--text);letter-spacing:-.2px;line-height:1.05}
+.pb-count{font-size:12px;color:var(--muted);font-weight:500;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pb-side{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+.pbar-date{padding:5px 11px;border-radius:12px;background:var(--white);border:1px solid var(--border);line-height:1.2;cursor:pointer}
 .pb-greg{font-size:12.5px;font-weight:600;color:var(--text)}
-.pb-hij{font-size:10.5px;color:var(--green);font-weight:500}
-html .pcity{background:none;border:none;padding:0;font-size:11px;color:var(--muted);gap:3px;font-weight:500;min-width:0;overflow:hidden;text-overflow:ellipsis}
-.pcity::before{content:'·';margin-right:5px;color:var(--muted)}
+html .pcity{background:none;border:none;padding:0 2px;font-size:10.5px;color:var(--muted);gap:3px;font-weight:500;white-space:nowrap}
 .pcity .lico{width:11px!important;height:11px!important;flex-shrink:0}
 .pb-frise{display:flex;gap:4px}
-.pb-frise .pi{position:relative;padding:5px 2px 7px}
-.pi-prog{position:absolute;left:12%;right:12%;bottom:3px;height:2px;border-radius:2px;background:rgba(255,253,246,.28);overflow:hidden;display:block}
-.pi-prog i{display:block;height:100%;background:#fffdf6;border-radius:2px}
+.pb-frise .pi{padding:5px 2px 6px}
+.pb-frise .pi.next{background:transparent;border-color:transparent}
+.pb-frise .pi.next .pn{color:var(--muted)}
+.pb-frise .pi.chourouk.active{opacity:1}
+.pb-frise .pi.chourouk.active .pn{color:rgba(255,253,246,.75)}
+.pb-frise .pi.chourouk.active .pt{color:#fff}
 
 /* ─── Calendrier ─── */
 .cal-modal{max-width:360px;max-height:calc(100vh - 32px);overflow-y:auto;background:var(--pat-fond) 0 0/150px repeat,var(--white)}
@@ -1664,10 +1663,13 @@ html .pcity{background:none;border:none;padding:0;font-size:11px;color:var(--mut
   <div class="pbar">
     <div class="pb-head">
       <div class="pb-next" aria-live="polite">
-        <div class="pb-main"><b id="pb-next-name">—</b><span id="pb-next-time"></span></div>
-        <div class="pb-sub"><span class="pb-count" id="pb-count"></span><span class="pcity" onclick="openPrayerCityPicker()" role="button" aria-label="Changer la ville des horaires"><svg class="lico sz-vt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg><span id="cityname">Ma position</span></span></div>
+        <b class="pb-cur" id="pb-cur">—</b>
+        <span class="pb-count" id="pb-count"></span>
       </div>
-      <button class="pbar-date" id="pbar-date" onclick="openCalendarModal()" aria-label="Ouvrir le calendrier"></button>
+      <div class="pb-side">
+        <button class="pbar-date" id="pbar-date" onclick="openCalendarModal()" aria-label="Ouvrir le calendrier"></button>
+        <div class="pcity" onclick="openPrayerCityPicker()" role="button"><svg class="lico sz-vt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg> Horaires : <span id="cityname">Ma position</span></div>
+      </div>
     </div>
     <div id="ptimes" class="pb-frise"></div>
   </div>
@@ -2434,6 +2436,7 @@ let activeRadius=10; // km par défaut pour la vue Proximité
 let uLat=48.8566, uLng=2.3522, filtered=[];
 let uHasPos=false; // vraie position (ou ville choisie) connue → temps de trajet affichés
 let prayerLat=48.8566, prayerLng=2.3522, prayerCityName='Paris', nearestMosqueForPrayer=null;
+let prayerManual=false; // true = l'utilisateur a choisi une autre ville pour les horaires
 let markers={}, uMarker=null, mapInitialized=false;
 let listView='proximity';
 let settings=(function(){
@@ -3853,7 +3856,12 @@ function askPosition(opts){
 function onPositionFound(lat, lng, silent){
   saveLastPosition(lat, lng);
   applyPosition(lat, lng);
-  if(silent){ fetchPrayers(lat, lng); return; }
+  // Les horaires suivent la position… sauf si l'utilisateur a choisi une autre ville
+  if(silent){
+    if(!prayerManual){ prayerLat=lat; prayerLng=lng; prayerCityName='Ma position'; fetchPrayers(lat, lng); }
+    return;
+  }
+  prayerManual=false;
   prayerLat=lat; prayerLng=lng; prayerCityName='Ma position';
   const cn=document.getElementById('cityname'); if(cn) cn.textContent='Ma position';
   const si=document.getElementById('sinput'); if(si){ si.value=''; si.placeholder='Ma position'; }
@@ -4036,7 +4044,11 @@ function initLocation(){
 
     const st = locState();
     const lastPos = st==='1' ? loadLastPosition() : null;
-    if(lastPos) applyPosition(lastPos.lat, lastPos.lng);
+    if(lastPos){
+      applyPosition(lastPos.lat, lastPos.lng);
+      // Horaires : on part de la dernière position connue, pas de Paris
+      if(!prayerManual){ prayerLat=lastPos.lat; prayerLng=lastPos.lng; prayerCityName='Ma position'; }
+    }
 
     queryLocPermission().then(perm=>{
       const st2 = locState();
@@ -4110,6 +4122,7 @@ async function fetchPrayers(lat, lng){
     const r = await fetch(`${API}/prayer-times?${params}`, { signal: AbortSignal.timeout(20000) });
     if(r.ok){
       const data = await r.json();
+      if(lat !== prayerLat || lng !== prayerLng) return; // une demande plus récente (autre endroit) prime
       if(data.times){
         renderPrayers(data.times);
         savePrayerTimes(data.times);
@@ -4122,6 +4135,7 @@ async function fetchPrayers(lat, lng){
     console.log('Prayer times backend erreur:', err.message);
   }
 
+  if(lat !== prayerLat || lng !== prayerLng) return;
   // Dernier recours : derniers horaires connus (sauvegardés en local)
   const saved = loadSavedPrayerTimes();
   if(saved){
@@ -4194,7 +4208,7 @@ function usePreciseLocationForPrayer(){
 }
 
 async function setPrayerLocation(lat, lng, cityName, isGps=false){
-  prayerLat=lat; prayerLng=lng; prayerCityName=cityName;
+  prayerLat=lat; prayerLng=lng; prayerCityName=cityName; prayerManual=!isGps;
   if(isGps){
     document.getElementById('cityname').textContent='Ma position';
     const sinput=document.getElementById('sinput');
@@ -4268,57 +4282,45 @@ function fmtDuree(m){
   return Math.floor(m / 60) + ' h ' + String(m % 60).padStart(2, '0');
 }
 
+// Temps restant au format « 01h54 », « 00h18 »
+function fmtReste(m){ m = Math.max(0, Math.floor(m)); return String(Math.floor(m/60)).padStart(2,'0') + 'h' + String(m%60).padStart(2,'0'); }
+
+// En gros : la prière en cours. En petit : la prochaine et le temps restant. Frise : seule la prière en cours en vert.
 function drawPrayerBar(){
   const box = document.getElementById('ptimes');
   if(!box) return;
   const p = prayerBarTimes;
   const allKeys=['Fajr','Chourouk','Dhohr','Asr','Maghrib','Icha'];
-  const setHead = (lbl, name, time, count) => {
-    const q = id => document.getElementById(id);
-    if(q('pb-next-name')) q('pb-next-name').textContent = name;
-    if(q('pb-next-time')) q('pb-next-time').textContent = time;
-    if(q('pb-count')) q('pb-count').textContent = count;
+  const setHead = (cur, count) => {
+    const a = document.getElementById('pb-cur'), c = document.getElementById('pb-count');
+    if(a) a.textContent = cur; if(c) c.textContent = count;
   };
-  // Aucun horaire disponible (et rien de sauvegardé) : des tirets
   if(!p){
     box.innerHTML = allKeys.map(k=>`<div class="pi${k==='Chourouk'?' chourouk':''}"><span class="pn">${k}</span><span class="pt">--:--</span></div>`).join('');
-    setHead('Prochaine prière', '—', '', 'Horaires indisponibles');
+    setHead('—', 'Horaires indisponibles');
     return;
   }
-  const prayerKeys=['Fajr','Dhohr','Asr','Maghrib','Icha']; // Chourouk exclu : ce n'est pas une prière
   const now=new Date(), nm=now.getHours()*60+now.getMinutes()+now.getSeconds()/60;
-  const items=allKeys.map(k=>{const t=p[k]||'--:--';return{name:k,time:t.slice(0,5),min:toMin(t),isPrayer:prayerKeys.includes(k)};});
-  const prayerItems=items.filter(it=>it.isPrayer);
-  let ai=-1; prayerItems.forEach((it,i)=>{ if(it.min<=nm) ai=i; });
-  const active = ai>=0 ? prayerItems[ai] : null;
-  const next = ai<prayerItems.length-1 ? prayerItems[ai+1] : null;
-  // Après Icha : la prochaine est le Fajr de demain
-  let nextName, nextTime, nextMin;
-  if(next){ nextName=next.name; nextTime=next.time; nextMin=next.min; }
+  const items=allKeys.map(k=>{const t=p[k]||'--:--';return{name:k,time:t.slice(0,5),min:toMin(t)};});
+  // Moment en cours : la dernière heure passée (Chourouk compris) ; avant le Fajr, c'est encore Icha
+  let ci=-1; items.forEach((it,i)=>{ if(!isNaN(it.min) && it.min<=nm) ci=i; });
+  const cur = ci>=0 ? items[ci] : items[items.length-1];
+  // Prochaine prière (Chourouk n'en est pas une) ; après Icha, le Fajr de demain
+  const prayers = items.filter(it=>it.name!=='Chourouk');
+  let next = prayers.find(it=>!isNaN(it.min) && it.min>nm), nextMin;
+  if(next) nextMin = next.min;
   else {
-    let f = prayerItems[0].time;
-    try{ const d=new Date(now); d.setDate(d.getDate()+1); const loc=lastPrayer||{lat:uLat,lng:uLng}; const t=PT_CALC(loc.lat, loc.lng, d); if(t && t.Fajr) f=t.Fajr; }catch(e){}
-    nextName='Fajr'; nextTime=f.slice(0,5); nextMin=toMin(f)+1440;
+    let f = prayers[0].time;
+    try{ const d=new Date(now); d.setDate(d.getDate()+1); const t=PT_CALC(prayerLat, prayerLng, d); if(t && t.Fajr) f=t.Fajr; }catch(e){}
+    next = { name:'Fajr', time:f.slice(0,5) }; nextMin = toMin(f)+1440;
   }
-  // Barre de progression dans la prière en cours (de son heure jusqu'à la suivante)
-  let prog = 0;
-  if(active && !isNaN(nextMin) && nextMin>active.min) prog = Math.min(100, Math.max(0, (nm-active.min)/(nextMin-active.min)*100));
   box.innerHTML=items.map(it=>{
     let cls='pi';
-    if(!it.isPrayer) cls+=' chourouk';
-    else if(active && it.name===active.name) cls+=' active';
-    else if(it.name===nextName) cls+=' next';
-    const bar = (active && it.name===active.name) ? `<i class="pi-prog"><i style="width:${prog.toFixed(1)}%"></i></i>` : '';
-    return `<div class="${cls}"><span class="pn">${it.name}</span><span class="pt">${it.time}</span>${bar}</div>`;
+    if(it.name==='Chourouk') cls+=' chourouk';
+    if(it===cur) cls+=' active';
+    return `<div class="${cls}"><span class="pn">${it.name}</span><span class="pt">${it.time}</span></div>`;
   }).join('');
-  // En-tête : c'est l'heure (15 premières minutes) ou la prochaine prière avec le temps restant
-  if(active && nm-active.min < 15){
-    const depuis = Math.floor(nm-active.min);
-    setHead('', active.name, active.time, depuis < 1 ? "C'est l'heure · à l'instant" : `C'est l'heure · depuis ${fmtDuree(depuis)}`);
-  } else {
-    const reste = nextMin - nm;
-    setHead('', nextName, nextTime, reste < 1 ? 'maintenant' : `dans ${fmtDuree(reste)}`);
-  }
+  setHead(cur.name, `${next.name} dans ${fmtReste(nextMin - nm)}`);
 }
 // Compte à rebours et frise à jour sans recharger les horaires
 setInterval(()=>{ try{ drawPrayerBar(); updateDateBtn(); }catch(e){} }, 30000);
@@ -5989,7 +5991,8 @@ function updateDateBtn(){
   const btn = document.getElementById('pbar-date');
   if(!btn) return;
   const d = new Date(), h = toHijri(d);
-  btn.innerHTML = `<span class="pb-greg">${JOUR_COURT[d.getDay()]} ${d.getDate()} ${MOIS_COURT[d.getMonth()]}</span><span class="pb-hij">${h.day} ${HIJRI_COURT[h.month-1]} ${h.year}</span>`;
+  btn.innerHTML = `<span class="pb-greg">${JOUR_COURT[d.getDay()]} ${d.getDate()} ${MOIS_COURT[d.getMonth()]}</span>`;
+  btn.title = `${h.day} ${MONTH_AR[h.month-1]} ${h.year}`;
 }
 
 function openCalendarModal(){
@@ -6074,7 +6077,7 @@ function renderCalInfo(date){
   let t = null;
   try{
     if(lastPrayer && lastPrayer.day === dayKey(date)) t = lastPrayer.times;
-    else { const loc = lastPrayer || { lat:uLat, lng:uLng }; t = PT_CALC(loc.lat, loc.lng, date); }
+    else t = PT_CALC(prayerLat, prayerLng, date); // même ville que la bande des horaires
   }catch(e){}
   const isToday = todayKey(date) === todayKey(new Date());
   box.innerHTML = `
