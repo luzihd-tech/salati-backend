@@ -1600,7 +1600,7 @@ html .tag[class],.ptravel{background:var(--white);border-color:var(--card-border
 html .dtag{background:var(--card)!important;border-color:var(--card-border)}
 .dback,.bfav,.share-btn{background:var(--card);border-color:var(--card-border)}
 /* Menu : chaque entrée en carte */
-.drawer-item{background:var(--card);border:1px solid var(--card-border);margin-bottom:5px;padding:9px 14px}
+.drawer-item{background:var(--card);border:1px solid var(--card-border);margin-bottom:4px;padding:8px 14px}
 .drawer-item:hover{background:var(--card)}
 .drawer-item:active,.drawer-item.active{background:var(--green-light);border-color:var(--gold-line)}
 /* Écrans : listes, Coran, aide, calendrier, Qibla */
@@ -1615,8 +1615,8 @@ html .dtag{background:var(--card)!important;border-color:var(--card-border)}
 /* ═══ ZELLIGE : motif à droite des cartes, qui s'efface vers la gauche ═══ */
 :root{--pat-zellige:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%221.25%22 stroke-linejoin=%22round%22%3E%3Cpolygon points=%2220.00,0.00 14.14,5.86 14.14,14.14 5.86,14.14 0.00,20.00 -5.86,14.14 -14.14,14.14 -14.14,5.86 -20.00,0.00 -14.14,-5.86 -14.14,-14.14 -5.86,-14.14 -0.00,-20.00 5.86,-14.14 14.14,-14.14 14.14,-5.86%22/%3E%3Cpolygon points=%229.61,3.98 5.63,5.63 3.98,9.61 0.00,7.96 -3.98,9.61 -5.63,5.63 -9.61,3.98 -7.96,0.00 -9.61,-3.98 -5.63,-5.63 -3.98,-9.61 -0.00,-7.96 3.98,-9.61 5.63,-5.63 9.61,-3.98 7.96,-0.00%22/%3E%3Cpolygon points=%2260.00,0.00 54.14,5.86 54.14,14.14 45.86,14.14 40.00,20.00 34.14,14.14 25.86,14.14 25.86,5.86 20.00,0.00 25.86,-5.86 25.86,-14.14 34.14,-14.14 40.00,-20.00 45.86,-14.14 54.14,-14.14 54.14,-5.86%22/%3E%3Cpolygon points=%2249.61,3.98 45.63,5.63 43.98,9.61 40.00,7.96 36.02,9.61 34.37,5.63 30.39,3.98 32.04,0.00 30.39,-3.98 34.37,-5.63 36.02,-9.61 40.00,-7.96 43.98,-9.61 45.63,-5.63 49.61,-3.98 47.96,-0.00%22/%3E%3Cpolygon points=%2220.00,40.00 14.14,45.86 14.14,54.14 5.86,54.14 0.00,60.00 -5.86,54.14 -14.14,54.14 -14.14,45.86 -20.00,40.00 -14.14,34.14 -14.14,25.86 -5.86,25.86 -0.00,20.00 5.86,25.86 14.14,25.86 14.14,34.14%22/%3E%3Cpolygon points=%229.61,43.98 5.63,45.63 3.98,49.61 0.00,47.96 -3.98,49.61 -5.63,45.63 -9.61,43.98 -7.96,40.00 -9.61,36.02 -5.63,34.37 -3.98,30.39 -0.00,32.04 3.98,30.39 5.63,34.37 9.61,36.02 7.96,40.00%22/%3E%3Cpolygon points=%2260.00,40.00 54.14,45.86 54.14,54.14 45.86,54.14 40.00,60.00 34.14,54.14 25.86,54.14 25.86,45.86 20.00,40.00 25.86,34.14 25.86,25.86 34.14,25.86 40.00,20.00 45.86,25.86 54.14,25.86 54.14,34.14%22/%3E%3Cpolygon points=%2249.61,43.98 45.63,45.63 43.98,49.61 40.00,47.96 36.02,49.61 34.37,45.63 30.39,43.98 32.04,40.00 30.39,36.02 34.37,34.37 36.02,30.39 40.00,32.04 43.98,30.39 45.63,34.37 49.61,36.02 47.96,40.00%22/%3E%3Cpolygon points=%2224.19,21.74 21.74,24.19 18.26,24.19 15.81,21.74 15.81,18.26 18.26,15.81 21.74,15.81 24.19,18.26%22/%3E%3C/svg%3E");--zel:var(--green-deep);--zel-op:0.15;--zel-size:32px}
 html.theme-dark{--zel:var(--green);--zel-op:0.115}
-.pcard,.drawer-item,.pb-frise .pi,.dpr,.ilist,.cal-info{position:relative;isolation:isolate;overflow:hidden}
-.pcard::after,.drawer-item::after,.pb-frise .pi::after,.dpr::after,.ilist::after,.cal-info::after{
+.pcard,.drawer-item,.pb-frise .pi,.dpr,.ilist,.cal-info,.sout-intention,.sout-offer,.sout-free-item{position:relative;isolation:isolate;overflow:hidden}
+.pcard::after,.drawer-item::after,.pb-frise .pi::after,.dpr::after,.ilist::after,.cal-info::after,.sout-intention::after,.sout-offer::after,.sout-free-item::after{
   content:'';position:absolute;top:0;right:0;bottom:0;width:var(--zel-w,54%);z-index:-1;pointer-events:none;
   background:var(--zel);opacity:var(--zel-op);
   -webkit-mask:var(--pat-zellige) right calc(var(--zel-size)/-2) center/var(--zel-size) var(--zel-size) repeat,linear-gradient(to left,#000 25%,transparent 100%);
@@ -1628,6 +1628,28 @@ html.theme-dark{--zel:var(--green);--zel-op:0.115}
 html.theme-dark .pb-frise .pi,html.theme-dark .dpr{--zel-op:0.14}
 html .pb-frise .pi.active,html .dpr.cur{--zel:#fff;--zel-op:0.2}
 .ilist,.cal-info{--zel-w:44%}
+/* ═══ SOUTENIR LE PROJET ═══ */
+.drawer-sep{margin:6px 14px}
+.drawer-nav{padding-top:8px}
+.sout-intention{background:var(--card);border:1px solid var(--card-border);border-radius:18px;padding:18px 18px 6px;margin:0 0 20px}
+.sout-kicker{font-size:10.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.sout-intention p{font-family:var(--font-display);font-size:17px;line-height:1.55;color:var(--text);margin:0 0 12px;font-weight:500}
+.sout-offer{background:var(--card);border-color:var(--card-border);border-radius:18px;padding:18px;margin:6px 0 4px}
+.sout-points{display:flex;flex-direction:column;gap:6px;margin:2px 0 16px;font-size:12.5px;color:var(--text-2);font-weight:500}
+.sub-btn-light.sout-btn{background:var(--green-deep);border-color:var(--green-deep);color:#fff;border-radius:14px;padding:13px;font-size:14px;font-weight:600}
+.sub-btn-light.sout-btn:active{opacity:.85}
+.apropos-body>.sout-btn{margin:4px 0 6px}
+.sout-note{font-size:11.5px;color:var(--muted);text-align:center;margin-top:10px;line-height:1.5}
+.sout-cancel{margin-top:12px;background:none;border:1px solid rgba(255,255,255,0.35);border-radius:100px;padding:8px 16px;font-size:12.5px;color:rgba(255,255,255,0.85);cursor:pointer;font-weight:600}
+.sout-free{display:flex;flex-direction:column;gap:8px}
+.sout-free-item{display:flex;align-items:center;gap:13px;width:100%;text-align:left;background:var(--card);border:1px solid var(--card-border);border-radius:14px;padding:12px 14px;font:inherit;color:var(--text);cursor:pointer}
+div.sout-free-item{cursor:default}
+.sout-free-item svg{width:21px;height:21px;color:var(--green-deep);flex-shrink:0}
+html.theme-dark .sout-free-item svg{color:var(--green)}
+.sout-free-item b{display:block;font-size:14px;font-weight:600}
+.sout-free-item small{display:block;font-size:12px;color:var(--muted);margin-top:1px}
+.sout-more{color:var(--green-deep);font-weight:600;text-decoration:underline;cursor:pointer}
+html.theme-dark .sout-more{color:var(--green)}
 </style>
 </head>
 <body>
@@ -1703,6 +1725,10 @@ html .pb-frise .pi.active,html .dpr.cur{--zel:#fff;--zel-op:0.2}
       <span>Paramètres</span>
     </div>
     <div class="drawer-sep"></div>
+    <div class="drawer-item" data-screen="soutenir" onclick="navFromDrawer('soutenir')">
+      <span class="d-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 14h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 16"/><path d="m7 20 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9"/><path d="m2 15 6 6"/><path d="M19.5 8.5c.7-.7 1.5-1.6 1.5-2.7A2.73 2.73 0 0 0 16 4a2.78 2.78 0 0 0-5 1.8c0 1.2.8 2 1.5 2.8L16 12Z"/></svg></span>
+      <span>Soutenir le projet</span>
+    </div>
     <div class="drawer-item" data-screen="apropos" onclick="navFromDrawer('apropos')">
       <span class="d-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/><path d="M12 16v-4M12 8h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
       <span>À propos</span>
@@ -2008,6 +2034,31 @@ html .pb-frise .pi.active,html .dpr.cur{--zel:#fff;--zel-op:0.2}
 </div>
 
 <!-- A PROPOS SCREEN -->
+<!-- SOUTENIR LE PROJET -->
+<div class="screen" id="screen-soutenir">
+  <div class="apropos-hero">
+    <div class="emoji"><svg class="lico sz-xl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 14h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 16"/><path d="m7 20 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9"/><path d="m2 15 6 6"/><path d="M19.5 8.5c.7-.7 1.5-1.6 1.5-2.7A2.73 2.73 0 0 0 16 4a2.78 2.78 0 0 0-5 1.8c0 1.2.8 2 1.5 2.8L16 12Z"/></svg></div>
+    <h2>Soutenir Prayer Spot</h2>
+    <div class="sub">Gratuit pour tous, pour la satisfaction d'Allah</div>
+  </div>
+  <div class="apropos-body">
+    <div class="sout-intention">
+      <div class="sout-kicker">Mon intention</div>
+      <p>J'ai développé Prayer Spot avec une intention première : rechercher la satisfaction d'Allah. C'est pour Lui que je le fais, en espérant aider chaque musulman à accomplir sa prière à l'heure, même loin de chez lui.</p>
+    </div>
+    <p class="ap-text">Parce que c'est une application au service de la religion, je ne veux faire payer personne pour l'utiliser. Prayer Spot est <b>gratuit, sans publicité</b>, et toutes ses fonctionnalités resteront ouvertes à tous.</p>
+    <p class="ap-text">Si tu le souhaites, tu peux soutenir le projet avec un abonnement <b>volontaire</b>. Il n'apporte <b>aucun avantage</b> : rien n'est débloqué, rien n'est réservé aux abonnés. Il sert uniquement à faire vivre l'application (serveurs, cartes, données des lieux) et à rémunérer le temps que j'y consacre pour la maintenir et l'améliorer.</p>
+    <div id="sout-card"></div>
+    <div class="ap-section-title">Aider sans payer</div>
+    <div class="sout-free">
+      <button class="sout-free-item" onclick="shareApp()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg><span><b>Partager l'app</b><small>Autour de toi, à la mosquée, en famille</small></span></button>
+      <button class="sout-free-item" onclick="suggestPlace()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.1-7-11.5A7 7 0 0 1 19 9.5c0 1-.2 1.9-.6 2.8"/><circle cx="12" cy="9.5" r="2.5"/><path d="M18 15v6M15 18h6"/></svg><span><b>Suggérer un lieu</b><small>Une mosquée ou une salle de prière qui manque</small></span></button>
+      <div class="sout-free-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/><path d="M19 3v4M17 5h4"/></svg><span><b>Une invocation</b><small>Pense au projet dans tes douas</small></span></div>
+    </div>
+    <div class="ap-signoff">Qu'Allah accepte de nous tous<br>et mette la baraka dans cette œuvre.</div>
+  </div>
+</div>
+
 <div class="screen" id="screen-apropos">
   <div class="apropos-hero">
     <div class="emoji"><svg class="lico sz-xl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h4"/><path d="M7 22V6a5 5 0 0 0-2-4 5 5 0 0 0-2 4v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M12.268 2a2 2 0 0 0 3.464 2"/><path d="M14 5v3"/><path d="M16 22v-3a2 2 0 0 0-4 0v3"/><path d="M21 13c-.663-1.497-1.667-2.754-2.9-3.63C16.826 8.47 15.422 8 14 8s-2.826.47-4.1 1.37C8.667 10.246 7.663 11.503 7 13"/></svg></div>
@@ -2058,10 +2109,10 @@ html .pb-frise .pi.active,html .dpr.cur{--zel:#fff;--zel-op:0.2}
 
     <div class="ap-divider"></div>
 
-    <div class="ap-section-title"><svg class="lico sz-set" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 12H3a2 2 0 0 0 0 4h4"/><path d="M11 14H3a2 2 0 0 0 0 4h4"/><path d="M7 16v1a2 2 0 0 0 2 2h4"/><path d="M13 12v-2a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2v2"/><path d="M15 17a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4v-1h10v1z"/><path d="m21 12-4.6 4.6a2 2 0 0 1-1.4.4"/><path d="M17 12V8a2 2 0 0 0-4 0v4"/></svg> Aider le projet et les développeurs</div>
-    <p class="ap-text">Cette application a été développée avec l'intention d'aider les musulmans à préserver leur prière à l'heure, même à l'extérieur, et à faciliter l'accomplissement de cette adoration immense.</p>
-    <p class="ap-text">Si tu le souhaites, il est possible de souscrire à un abonnement de <b>1,99€ par mois</b>, conçu comme une <b>Sadaqa Jariyah</b> — une aumône continue. Il permet de soutenir le développement de l'application et contribue également à <b>rémunérer le développeur</b> qui la maintient et l'améliore.</p>
-    <p class="ap-text">Cet abonnement n'offre aucun avantage supplémentaire : il s'agit simplement d'une contribution sincère pour participer à une cause bénéfique pour la communauté musulmane, dont la récompense — par la permission d'Allah — continue tant que l'application sert les musulmans.</p>
+    <div class="ap-section-title"><svg class="lico sz-set" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 12H3a2 2 0 0 0 0 4h4"/><path d="M11 14H3a2 2 0 0 0 0 4h4"/><path d="M7 16v1a2 2 0 0 0 2 2h4"/><path d="M13 12v-2a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2v2"/><path d="M15 17a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4v-1h10v1z"/><path d="m21 12-4.6 4.6a2 2 0 0 1-1.4.4"/><path d="M17 12V8a2 2 0 0 0-4 0v4"/></svg> Soutenir le projet</div>
+    <p class="ap-text">J'ai développé cette application avec une intention première : rechercher la satisfaction d'Allah. C'est pour Lui que je le fais, en espérant aider les musulmans à préserver leur prière à l'heure, même à l'extérieur, et à faciliter l'accomplissement de cette adoration immense.</p>
+    <p class="ap-text">Parce que c'est une application au service de la religion, je ne veux faire payer personne : Prayer Spot est <b>gratuit, sans publicité</b>, et le restera.</p>
+    <p class="ap-text">Si tu le souhaites, tu peux soutenir le projet avec un abonnement volontaire de <b>1,99€ par mois</b>. Il n'offre <b>aucun avantage</b> : il sert uniquement à faire vivre l'application et à rémunérer le temps que j'y consacre pour la maintenir et l'améliorer.</p>
     <p class="ap-text">Soutenir ce projet, c'est participer — avec la permission d'Allah — à faciliter la prière pour des milliers de musulmans.</p>
 
     <div class="ap-quote">
@@ -2083,6 +2134,7 @@ html .pb-frise .pi.active,html .dpr.cur{--zel:#fff;--zel-op:0.2}
     </div>
 
     <p class="ap-text">Et peut-être qu'Allah inscrira pour toi une part de récompense dans chaque prière accomplie grâce à cette cause.</p>
+    <button class="sub-btn-light sout-btn" onclick="showScreen('soutenir')">Soutenir le projet</button>
 
     <div class="ap-divider"></div>
     <div class="ap-signoff">Qu'Allah mette la baraka dans cette œuvre<br>et accepte de nous tous.</div>
@@ -2500,8 +2552,10 @@ let settings=(function(){
   try{ return JSON.parse(localStorage.getItem('ps_settings')||'{}'); }catch{ return {}; }
 })();
 if(settings.autoLocate === undefined) settings.autoLocate = false;
-let prayerTrackerEnabled = localStorage.getItem('salati_tracker_enabled')==='1';
-const SCREEN_LABELS={explorer:'Explorer',favoris:'Favoris',compte:'Compte',apropos:'À propos',parametres:'Paramètres',qibla:'Boussole Qibla',suggerer:'Suggérer un lieu','aide-priere':'Aide à la prière','comment-prier':'Comment prier','suivi-priere':'Suivi de prière','noble-coran':'Noble Coran'};
+// Suivi de prière : un seul réglage, partagé par la tuile « Aide à la prière » et l'écran du suivi
+try{ if(localStorage.getItem('salati_tracker_enabled')==='1') localStorage.setItem('ps_tracker_enabled','1'); localStorage.removeItem('salati_tracker_enabled'); }catch(e){}
+function trackerOn(){ try{ return localStorage.getItem('ps_tracker_enabled')==='1'; }catch(e){ return false; } }
+const SCREEN_LABELS={explorer:'Explorer',favoris:'Favoris',compte:'Compte',apropos:'À propos',parametres:'Paramètres',qibla:'Boussole Qibla',suggerer:'Suggérer un lieu','aide-priere':'Aide à la prière','comment-prier':'Comment prier','suivi-priere':'Suivi de prière','noble-coran':'Noble Coran',soutenir:'Soutenir le projet'};
 const DRAWER_ROOT_SCREENS=['explorer','favoris','compte','apropos','qibla','suggerer'];
 let navStack=['explorer'];
 
@@ -2604,6 +2658,7 @@ function showScreen(name, skipPush){
   if(name==='suivi-priere') renderSuiviPriere();
   if(name==='noble-coran') renderNobleCoranList();
   if(name==='suggerer') renderSuggest();
+  if(name==='soutenir'){ renderSoutenir(); if(session) syncSubscriptionStatus(); }
   if(name==='qibla') initQibla();
   else stopQibla();
   if(name!=='sourate'){ try{ stopVersetTracking(); }catch(e){} }
@@ -3665,6 +3720,28 @@ function reportByMail(){
 // Si l'envoi échoue : bouton « Envoyer par e-mail » (boîte mail pré-remplie, comme avant).
 const SUGGEST_MAIL = 'spotprayer@gmail.com';
 function suggestPlace(){ navFromDrawer('suggerer'); }
+// ============================================================
+// SOUTENIR LE PROJET
+// ============================================================
+function renderSoutenir(){
+  const c=document.getElementById('sout-card'); if(!c) return;
+  if(isSubscribed){
+    c.innerHTML=`<div class="sub-card"><span class="sub-badge">ACTIF</span><h4>Merci pour ton soutien</h4><p>Qu'Allah te récompense et accepte de nous tous.</p><div class="sub-active">✓ Abonnement de soutien actif · 1,99€/mois</div><button class="sout-cancel" onclick="toggleSubscription()">Résilier l'abonnement</button></div>`;
+  } else {
+    c.innerHTML=`<div class="sub-card-light sout-offer">
+      <div class="sub-card-light-top"><span class="sub-card-light-title">Abonnement de soutien</span><span class="sub-card-light-price">1,99€<span>/mois</span></span></div>
+      <div class="sout-points"><span>✓ 100 % volontaire, aucun avantage</span><span>✓ Sans engagement</span><span>✓ Résiliable à tout moment</span></div>
+      <button class="sub-btn-light sout-btn" onclick="subscribe()">Soutenir le projet</button>
+      ${session?'':'<div class="sout-note">Un compte gratuit est nécessaire, pour pouvoir gérer ou résilier ton soutien.</div>'}
+    </div>`;
+  }
+}
+function shareApp(){
+  const url='https://prayerspot.fr', text="Prayer Spot : trouve où prier autour de toi, les horaires de prière et la Qibla. Gratuit et sans publicité.";
+  if(navigator.share){ navigator.share({title:'Prayer Spot', text, url}).catch(()=>{}); return; }
+  try{ navigator.clipboard.writeText(text+' '+url).then(()=>showToast('Lien copié, tu peux le partager ✓'),()=>showToast(url)); }catch(e){ showToast(url); }
+}
+
 
 function renderSuggest(){
   document.querySelectorAll('#screen-suggerer [data-ico]').forEach(el=>{ if(!el.innerHTML) el.innerHTML = placeIcon(el.dataset.ico); });
@@ -4142,7 +4219,7 @@ function loadLastPosition(){
     const p = JSON.parse(raw);
     if(!p.lat || !p.lng) return null;
     const age = Date.now() - (p.ts||0);
-    if(age > 24*60*60*1000) return null; // expire après 24h
+    if(age > 30*24*60*60*1000) return null; // gardée 30 jours (le GPS corrige juste après)
     return p;
   }catch(e){ return null; }
 }
@@ -4638,16 +4715,16 @@ function renderCompte(){
     <div class="sub-card">
       <span class="sub-badge">ACTIF</span>
       <h4><svg class="lico sz-set" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 12H3a2 2 0 0 0 0 4h4"/><path d="M11 14H3a2 2 0 0 0 0 4h4"/><path d="M7 16v1a2 2 0 0 0 2 2h4"/><path d="M13 12v-2a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2v2"/><path d="M15 17a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4v-1h10v1z"/><path d="m21 12-4.6 4.6a2 2 0 0 1-1.4.4"/><path d="M17 12V8a2 2 0 0 0-4 0v4"/></svg> Merci pour ton soutien</h4>
-      <p>Tu contribues chaque mois au développement de Prayer Spot. C'est une <b>Sadaqa Jariyah</b> dont la récompense continue tant que l'application aide des musulmans à prier, qu'Allah te récompense.</p>
+      <p>Tu soutiens chaque mois Prayer Spot. Merci, qu'Allah te récompense et accepte de nous tous.</p>
       <div class="sub-active">✓ Abonnement actif — 1,99€/mois</div>
       <button onclick="toggleSubscription()" style="margin-top:12px;background:none;border:1px solid rgba(255,255,255,0.35);border-radius:100px;padding:8px 16px;font-size:12.5px;color:rgba(255,255,255,0.85);cursor:pointer;font-weight:600">Résilier l'abonnement</button>
     </div>`:`
     <div class="sub-card-light">
       <div class="sub-card-light-top">
-        <span class="sub-card-light-title"><svg class="lico sz-vt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 12H3a2 2 0 0 0 0 4h4"/><path d="M11 14H3a2 2 0 0 0 0 4h4"/><path d="M7 16v1a2 2 0 0 0 2 2h4"/><path d="M13 12v-2a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2v2"/><path d="M15 17a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4v-1h10v1z"/><path d="m21 12-4.6 4.6a2 2 0 0 1-1.4.4"/><path d="M17 12V8a2 2 0 0 0-4 0v4"/></svg> Sadaqa Jariyah</span>
+        <span class="sub-card-light-title"><svg class="lico sz-vt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 12H3a2 2 0 0 0 0 4h4"/><path d="M11 14H3a2 2 0 0 0 0 4h4"/><path d="M7 16v1a2 2 0 0 0 2 2h4"/><path d="M13 12v-2a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2v2"/><path d="M15 17a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4v-1h10v1z"/><path d="m21 12-4.6 4.6a2 2 0 0 1-1.4.4"/><path d="M17 12V8a2 2 0 0 0-4 0v4"/></svg> Soutenir le projet</span>
         <span class="sub-card-light-price">1,99€<span>/mois</span></span>
       </div>
-      <p class="sub-card-light-desc">En soutenant Prayer Spot, tu participes à une <b>Sadaqa Jariyah</b> — une aumône dont la récompense se poursuit auprès d'Allah tant que cette application aide des musulmans à accomplir leur prière. Cet abonnement contribue également à <b>rémunérer le développeur</b> qui maintient et améliore l'application. Aucune fonctionnalité supplémentaire n'y est liée : c'est une contribution sincère et désintéressée.</p>
+      <p class="sub-card-light-desc">Prayer Spot est gratuit pour tous. Ce soutien est volontaire et n'apporte <b>aucun avantage</b> : il sert à faire vivre l'application et à rémunérer le temps que j'y consacre. <span class="sout-more" onclick="showScreen('soutenir')">En savoir plus</span></p>
       <button class="sub-btn-light" onclick="subscribe()">Soutenir le projet</button>
     </div>`}
     <div class="menu-list">
@@ -4676,8 +4753,8 @@ function renderAidePriere(){
         <div class="aide-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4.5" r="1.8"/><path d="M7 20h8l-4-4v-6.5l4 2.5"/><path d="M11 9.5 7.5 12"/></svg></div><b>La prière</b><span>Chaque position, pas à pas</span>
       </div>
       <div class="aide-tile" role="button" onclick="showScreen('suivi-priere')">
-        <div class="aide-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="16" rx="3"/><path d="M8 2.5v4M16 2.5v4M3.5 9.5h17"/><path d="m9 15 2 2 4-4"/></svg></div><b>Suivi de prière</b><span>${prayerTrackerEnabled?'Activé · note tes prières':'Désactivé'}</span>
-        <button class="toggle${prayerTrackerEnabled?' on':''}" aria-label="Activer le suivi de prière" onclick="event.stopPropagation();toggleSuiviPriere()"></button>
+        <div class="aide-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="16" rx="3"/><path d="M8 2.5v4M16 2.5v4M3.5 9.5h17"/><path d="m9 15 2 2 4-4"/></svg></div><b>Suivi de prière</b><span>${trackerOn()?'Activé · note tes prières':'Désactivé'}</span>
+        <button class="toggle${trackerOn()?' on':''}" aria-label="Activer le suivi de prière" onclick="event.stopPropagation();toggleSuiviPriere()"></button>
       </div>
       <div class="aide-tile dark" role="button" onclick="showScreen('noble-coran')">
         <div class="aide-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5C10 5 6.5 4.6 3.5 5.2v13c3-.6 6.5-.2 8.5 1.3 2-1.5 5.5-1.9 8.5-1.3v-13c-3-.6-6.5-.2-8.5 1.3z"/><path d="M12 6.5v13"/></svg></div><b>Noble Coran</b><span>Lire et suivre ta lecture</span>
@@ -4687,10 +4764,10 @@ function renderAidePriere(){
 }
 
 function toggleSuiviPriere(){
-  prayerTrackerEnabled=!prayerTrackerEnabled;
-  localStorage.setItem('salati_tracker_enabled', prayerTrackerEnabled?'1':'0');
+  const on=!trackerOn();
+  try{ if(on) localStorage.setItem('ps_tracker_enabled','1'); else localStorage.removeItem('ps_tracker_enabled'); }catch(e){}
   renderAidePriere();
-  showToast(prayerTrackerEnabled?'Suivi de prière activé ✅':'Suivi de prière désactivé');
+  showToast(on?'Suivi de prière activé ✅':'Suivi de prière désactivé');
 }
 
 // ============================================================
@@ -5237,7 +5314,7 @@ function paySuccess(){
   closePaySheet(true);
   isSubscribed = true;
   try{ renderCompte(); updateDrawerProfile(); }catch(e){}
-  showToast("Merci pour ta Sadaqa Jariyah 🤲 Qu'Allah te récompense");
+  showToast("Merci pour ton soutien 🤲 Qu'Allah te récompense");
   syncSubscriptionStatus();
 }
 
@@ -5568,6 +5645,7 @@ async function restoreSession(){
 }
 
 function updateDrawerProfile(){
+  try{ renderSoutenir(); }catch(e){}
   const avatar=document.getElementById('drawer-avatar');
   const name=document.getElementById('drawer-name');
   const sub=document.getElementById('drawer-sub');
@@ -5985,7 +6063,7 @@ async function initApp(){
   if(params.get('subscription') === 'success'){
     await new Promise(r=>setTimeout(r,2500));
     await syncSubscriptionStatus();
-    showToast("Merci pour ta Sadaqa Jariyah 🤲 Qu'Allah te récompense");
+    showToast("Merci pour ton soutien 🤲 Qu'Allah te récompense");
     window.history.replaceState({}, '', window.location.pathname);
     navStack=['compte']; showScreen('compte', true);
   } else if(params.get('subscription') === 'cancelled'){
@@ -6842,7 +6920,7 @@ const CGU_CONTENT = {
     title: "CGU — Abonnement",
     body: `
       <p style="margin-bottom:14px"><b>Abonnement Prayer Spot</b><br>Éditeur : First Class Drive (marque Prayer Spot)<br>Prix : 1,99€/mois</p>
-      <p style="margin-bottom:10px"><b>1. Nature de l'abonnement</b><br>L'abonnement à Prayer Spot est une contribution volontaire. Il ne donne accès à aucune fonctionnalité supplémentaire. Il s'agit d'une Sadaqa Jariyah — une aumône continue — destinée à soutenir le développement et la maintenance de l'application, et à rémunérer le développeur.</p>
+      <p style="margin-bottom:10px"><b>1. Nature de l'abonnement</b><br>L'abonnement à Prayer Spot est une contribution volontaire. Il ne donne accès à aucune fonctionnalité supplémentaire. Il s'agit d'un soutien volontaire, sans contrepartie, destiné à soutenir le développement et la maintenance de l'application, et à rémunérer le développeur.</p>
       <p style="margin-bottom:10px"><b>2. Facturation</b><br>L'abonnement est facturé 1,99€ par mois via Stripe, une plateforme de paiement sécurisée. Le prélèvement est effectué à la date d'anniversaire de l'abonnement.</p>
       <p style="margin-bottom:10px"><b>3. Résiliation</b><br>L'abonnement peut être résilié à tout moment depuis la section "Compte" de l'application ou en écrivant à spotprayer@gmail.com. La résiliation prend effet à la fin de la période en cours.</p>
       <p style="margin-bottom:10px"><b>4. Remboursement</b><br>Conformément à la réglementation européenne, vous disposez d'un droit de rétractation de 14 jours suivant la souscription. Passé ce délai, aucun remboursement ne sera effectué pour la période en cours.</p>
