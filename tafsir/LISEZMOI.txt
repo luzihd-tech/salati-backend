@@ -1,0 +1,4 @@
+Explications des versets (une par verset, dans l'ordre) : Al-Mukhtasar fi Tafsir al-Qur'an al-Karim,
+traduction française (Markaz Tafsir). Copie des fichiers du projet ouvert spa5k/tafsir_api
+(dossier tafsir/french-mokhtasar), hébergée ici pour un chargement fiable.
+Fichier n.json = tableau des explications de la sourate n (index 0 = verset 1).

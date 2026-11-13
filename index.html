@@ -943,6 +943,8 @@ html.theme-dark .rp-err{color:#ff7b6b}
 }
 .tafsir-sheet-body{overflow-y:auto;padding:18px 20px 32px;flex:1}
 .tafsir-text{font-size:13.5px;line-height:1.75;color:var(--text-2);font-weight:500}
+.tafsir-text+.tafsir-text{margin-top:8px}
+#tafsir-body .tafsir-text{text-align:left}
 .tafsir-source{font-size:10.5px;color:var(--muted);margin-top:14px;font-weight:500;font-style:italic}
 .tafsir-loading{text-align:center;padding:32px;color:var(--muted);font-size:13px}
 .verset.read{background:var(--green-light)}
@@ -1615,8 +1617,8 @@ html .dtag{background:var(--card)!important;border-color:var(--card-border)}
 /* ═══ ZELLIGE : motif à droite des cartes, qui s'efface vers la gauche ═══ */
 :root{--pat-zellige:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%221.25%22 stroke-linejoin=%22round%22%3E%3Cpolygon points=%2220.00,0.00 14.14,5.86 14.14,14.14 5.86,14.14 0.00,20.00 -5.86,14.14 -14.14,14.14 -14.14,5.86 -20.00,0.00 -14.14,-5.86 -14.14,-14.14 -5.86,-14.14 -0.00,-20.00 5.86,-14.14 14.14,-14.14 14.14,-5.86%22/%3E%3Cpolygon points=%229.61,3.98 5.63,5.63 3.98,9.61 0.00,7.96 -3.98,9.61 -5.63,5.63 -9.61,3.98 -7.96,0.00 -9.61,-3.98 -5.63,-5.63 -3.98,-9.61 -0.00,-7.96 3.98,-9.61 5.63,-5.63 9.61,-3.98 7.96,-0.00%22/%3E%3Cpolygon points=%2260.00,0.00 54.14,5.86 54.14,14.14 45.86,14.14 40.00,20.00 34.14,14.14 25.86,14.14 25.86,5.86 20.00,0.00 25.86,-5.86 25.86,-14.14 34.14,-14.14 40.00,-20.00 45.86,-14.14 54.14,-14.14 54.14,-5.86%22/%3E%3Cpolygon points=%2249.61,3.98 45.63,5.63 43.98,9.61 40.00,7.96 36.02,9.61 34.37,5.63 30.39,3.98 32.04,0.00 30.39,-3.98 34.37,-5.63 36.02,-9.61 40.00,-7.96 43.98,-9.61 45.63,-5.63 49.61,-3.98 47.96,-0.00%22/%3E%3Cpolygon points=%2220.00,40.00 14.14,45.86 14.14,54.14 5.86,54.14 0.00,60.00 -5.86,54.14 -14.14,54.14 -14.14,45.86 -20.00,40.00 -14.14,34.14 -14.14,25.86 -5.86,25.86 -0.00,20.00 5.86,25.86 14.14,25.86 14.14,34.14%22/%3E%3Cpolygon points=%229.61,43.98 5.63,45.63 3.98,49.61 0.00,47.96 -3.98,49.61 -5.63,45.63 -9.61,43.98 -7.96,40.00 -9.61,36.02 -5.63,34.37 -3.98,30.39 -0.00,32.04 3.98,30.39 5.63,34.37 9.61,36.02 7.96,40.00%22/%3E%3Cpolygon points=%2260.00,40.00 54.14,45.86 54.14,54.14 45.86,54.14 40.00,60.00 34.14,54.14 25.86,54.14 25.86,45.86 20.00,40.00 25.86,34.14 25.86,25.86 34.14,25.86 40.00,20.00 45.86,25.86 54.14,25.86 54.14,34.14%22/%3E%3Cpolygon points=%2249.61,43.98 45.63,45.63 43.98,49.61 40.00,47.96 36.02,49.61 34.37,45.63 30.39,43.98 32.04,40.00 30.39,36.02 34.37,34.37 36.02,30.39 40.00,32.04 43.98,30.39 45.63,34.37 49.61,36.02 47.96,40.00%22/%3E%3Cpolygon points=%2224.19,21.74 21.74,24.19 18.26,24.19 15.81,21.74 15.81,18.26 18.26,15.81 21.74,15.81 24.19,18.26%22/%3E%3C/svg%3E");--zel:var(--green-deep);--zel-op:0.15;--zel-size:32px}
 html.theme-dark{--zel:var(--green);--zel-op:0.115}
-.pcard,.drawer-item,.pb-frise .pi,.dpr,.ilist,.cal-info,.sout-intention,.sout-offer,.sout-free-item{position:relative;isolation:isolate;overflow:hidden}
-.pcard::after,.drawer-item::after,.pb-frise .pi::after,.dpr::after,.ilist::after,.cal-info::after,.sout-intention::after,.sout-offer::after,.sout-free-item::after{
+.pcard,.drawer-item,.pb-frise .pi,.dpr,.ilist,.cal-info,.sout-intention,.sout-offer,.sout-free-item,.menu-list,.tracker-toggle-card,.tracker-stat,.tracker-list,.sg-type,.sg-stat,.qibla-status,.qibla-info,.sub-card-light,.acc-btn.prim{position:relative;isolation:isolate;overflow:hidden}
+.pcard::after,.drawer-item::after,.pb-frise .pi::after,.dpr::after,.ilist::after,.cal-info::after,.sout-intention::after,.sout-offer::after,.sout-free-item::after,.menu-list::after,.tracker-toggle-card::after,.tracker-stat::after,.tracker-list::after,.sg-type::after,.sg-stat::after,.qibla-status::after,.qibla-info::after,.sub-card-light::after,.acc-btn.prim::after{
   content:'';position:absolute;top:0;right:0;bottom:0;width:var(--zel-w,54%);z-index:-1;pointer-events:none;
   background:var(--zel);opacity:var(--zel-op);
   -webkit-mask:var(--pat-zellige) right calc(var(--zel-size)/-2) center/var(--zel-size) var(--zel-size) repeat,linear-gradient(to left,#000 25%,transparent 100%);
@@ -1628,6 +1630,9 @@ html.theme-dark{--zel:var(--green);--zel-op:0.115}
 html.theme-dark .pb-frise .pi,html.theme-dark .dpr{--zel-op:0.14}
 html .pb-frise .pi.active,html .dpr.cur{--zel:#fff;--zel-op:0.2}
 .ilist,.cal-info{--zel-w:44%}
+/* Verset retrouvé en reprenant la lecture */
+@keyframes resumeFlash{0%,35%{background:var(--green-light);box-shadow:0 0 0 2px var(--gold-line)}100%{box-shadow:0 0 0 0 transparent}}
+.verset.resume-flash{animation:resumeFlash 2.2s ease-out}
 /* ═══ SOUTENIR LE PROJET ═══ */
 .drawer-sep{margin:6px 14px}
 .drawer-nav{padding-top:8px}
@@ -1650,6 +1655,71 @@ html.theme-dark .sout-free-item svg{color:var(--green)}
 .sout-free-item small{display:block;font-size:12px;color:var(--muted);margin-top:1px}
 .sout-more{color:var(--green-deep);font-weight:600;text-decoration:underline;cursor:pointer}
 html.theme-dark .sout-more{color:var(--green)}
+/* ═══ LOT NOVEMBRE ═══ */
+/* Recherche : loupe, groupes de suggestions, bandeau « Autour de » */
+.sbar-ico{width:18px;height:18px;color:var(--muted);flex-shrink:0;margin:0 2px 0 4px}
+.sinput::-webkit-search-cancel-button{display:none}
+.suggest-list{max-height:min(60vh,420px)}
+.sg-group{padding:10px 16px 6px;font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);background:var(--gray-100);border-bottom:1px solid var(--border)}
+.suggest-item .si-ico{opacity:.75;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:9px;background:var(--gray-100);color:var(--text-2)}
+.suggest-item .si-ico svg{width:16px;height:16px}
+html .suggest-item .si-ico.si-place{opacity:1;width:30px;height:30px;border-radius:9px}
+.suggest-item .si-txt{flex:1;min-width:0}
+.suggest-item .si-txt>div:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.si-dist{font-size:11px;color:var(--muted);font-weight:500;flex-shrink:0;font-variant-numeric:tabular-nums}
+.around-chip{pointer-events:auto;align-self:flex-start;display:flex;align-items:center;gap:7px;max-width:100%;background:var(--glass-bg);border:1px solid var(--border);box-shadow:var(--shadow-sm);border-radius:100px;padding:6px 6px 6px 12px;font-size:12.5px;color:var(--text-2)}
+.around-chip[hidden]{display:none}
+.around-chip svg{width:14px;height:14px;color:#b0894a;flex-shrink:0}
+.around-chip span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.around-chip b{color:var(--text);font-weight:600}
+.around-chip button{width:26px;height:26px;border-radius:50%;border:none;background:var(--gray-100);color:var(--text-2);font-size:12px;cursor:pointer;flex-shrink:0}
+
+/* Partager un verset en image */
+.verset-footer{gap:6px}
+.vshare-btn svg{flex-shrink:0}
+.vshare-sheet{max-height:92vh;display:flex;flex-direction:column}
+.vshare-preview{padding:4px 18px 10px;display:flex;justify-content:center;min-height:160px;align-items:center;overflow:auto}
+.vshare-preview img{display:block;max-width:100%;max-height:56vh;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.vshare-actions{display:flex;gap:10px;padding:8px 18px calc(16px + var(--sab,0px))}
+.vshare-main,.vshare-sec{flex:1;padding:13px;border-radius:14px;font:600 14px var(--font-ui);cursor:pointer}
+.vshare-main{background:var(--green-deep);color:#fff;border:1px solid var(--green-deep)}
+.vshare-sec{background:var(--card);color:var(--text);border:1px solid var(--card-border)}
+.vshare-main:disabled,.vshare-sec:disabled{opacity:.5}
+
+/* Horaires : Ma position — au centre, sous les heures, facile à toucher */
+.pb-side{justify-content:center}
+.pb-city-row{display:flex;justify-content:center;margin-top:-1px}
+html .pcity{position:relative;display:inline-flex;align-items:center;gap:5px;background:var(--card);border:1px solid var(--card-border);border-radius:100px;padding:4px 12px 4px 11px;font-size:12px;font-weight:500;color:var(--text-2);cursor:pointer;font-family:var(--font-ui);min-height:28px;white-space:nowrap;line-height:1.2}
+html .pcity::before{content:'';position:absolute;inset:-7px -6px}
+html .pcity:active{background:var(--green-light)}
+.pcity .lico{width:13px!important;height:13px!important;color:var(--green-deep)}
+html.theme-dark .pcity .lico{color:var(--green)}
+.pcity #cityname{font-weight:600;color:var(--text)}
+.pc-chev{width:13px;height:13px;color:var(--muted);flex-shrink:0}
+/* Motif : réglages sur les blocs de listes, boutons foncés en blanc */
+.menu-list{--zel-w:40%}
+.acc-btn.prim{--zel:#fff;--zel-op:.13;--zel-w:44%}
+.sg-type{--zel-w:60%;--zel-size:26px}
+.tracker-stat{--zel-w:60%}
+.tracker-list{--zel-w:36%}
+.qibla-status,.qibla-info{--zel-w:40%}
+/* Liste : bouton « Afficher plus » */
+.plist-more{display:flex;flex-direction:column;align-items:center;gap:2px;width:100%;margin:2px 0 8px;padding:11px;border-radius:14px;border:1px dashed var(--gold-line);background:transparent;color:var(--green-deep);font:600 13.5px var(--font-ui);cursor:pointer}
+.plist-more span{font-size:11px;font-weight:500;color:var(--muted)}
+.plist-more:active{background:var(--green-light)}
+html.theme-dark .plist-more{color:var(--green)}
+/* Vendredi : Joumou'a en doré discret */
+:root{--joumoua:#9c7a3c;--joumoua-soft:rgba(176,141,74,.10)}
+html.theme-dark{--joumoua:#d3b06a;--joumoua-soft:rgba(211,176,106,.10)}
+.jumua{color:var(--joumoua);font-weight:600}
+.pb-frise .pi.jumua-day .pn{color:var(--joumoua);letter-spacing:.02em}
+.pb-frise .pi.jumua-day:not(.active){border-color:rgba(176,141,74,.35)}
+.pb-frise .pi.jumua-day.active .pn{color:#e9cf96}
+.dpr.cur .jumua{color:#e9cf96}
+.cal-day.fri:not(.today){background:var(--joumoua-soft)}
+.cal-day.fri:not(.today) .cal-day-num{color:var(--joumoua)}
+.cal-grid-head .fri{color:var(--joumoua);font-weight:700}
+.cal-times .jumua-day{border-color:rgba(176,141,74,.35)!important}
 </style>
 </head>
 <body>
@@ -1751,17 +1821,18 @@ html.theme-dark .sout-more{color:var(--green)}
       </div>
       <div class="pb-side">
         <button class="pbar-date" id="pbar-date" onclick="openCalendarModal()" aria-label="Ouvrir le calendrier"></button>
-        <div class="pcity" onclick="openPrayerCityPicker()" role="button"><svg class="lico sz-vt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg> Horaires : <span id="cityname">Ma position</span></div>
       </div>
     </div>
     <div id="ptimes" class="pb-frise"></div>
+    <div class="pb-city-row"><button class="pcity" onclick="openPrayerCityPicker()" aria-label="Choisir la ville des horaires"><svg class="lico sz-vt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg> Horaires : <span id="cityname">Ma position</span><svg class="pc-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button></div>
   </div>
   <div class="maplist-wrap">
     <div id="map"></div>
     <div class="float-controls">
       <div class="sbar-float">
+        <svg class="sbar-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         <div style="flex:1;position:relative;min-width:0;">
-          <input class="sinput" id="sinput" placeholder="Ville, adresse, nom de lieu..." oninput="onSearchInput()" onkeydown="if(event.key==='Enter'){event.preventDefault();selectFirstSuggestionOrSearch();}" autocomplete="off" style="width:100%;">
+          <input class="sinput" id="sinput" type="search" enterkeyhint="search" placeholder="Ville, adresse ou mosquée…" aria-label="Rechercher une ville, une adresse ou une mosquée" oninput="onSearchInput()" onkeydown="if(event.key==='Enter'){event.preventDefault();selectFirstSuggestionOrSearch();}" autocomplete="off" style="width:100%;">
           <div class="suggest-list" id="suggest-list"></div>
         </div>
         <div class="sbar-divider"></div>
@@ -1775,6 +1846,7 @@ html.theme-dark .sout-more{color:var(--green)}
           <span class="sbar-filter-dot"></span>
         </button>
       </div>
+      <div class="around-chip" id="around-chip" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 5-8 12-8 12s-8-7-8-12a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg><span>Autour de : <b id="around-label"></b></span><button onclick="backToMyPosition()" aria-label="Revenir à ma position">✕</button></div>
       <div class="filters-row" style="display:none">
         <button class="filters-toggle" id="filters-toggle-btn-legacy" style="display:none">
           <span class="filter-badge" id="filter-count-badge" style="display:none">0</span>
@@ -2264,6 +2336,22 @@ html.theme-dark .sout-more{color:var(--green)}
     </div>
   </div>
 </div>
+<div class="tafsir-overlay" id="vshare-overlay" onclick="if(event.target===this)closeVerseShare()">
+  <div class="tafsir-sheet vshare-sheet">
+    <div class="tafsir-sheet-head">
+      <div>
+        <div class="tafsir-sheet-title">Partager ce verset</div>
+        <div class="tafsir-sheet-sub" id="vshare-ref"></div>
+      </div>
+      <button class="tafsir-sheet-close" onclick="closeVerseShare()">✕</button>
+    </div>
+    <div class="vshare-preview" id="vshare-preview"><div class="tafsir-loading">Préparation de l'image…</div></div>
+    <div class="vshare-actions">
+      <button class="vshare-main" id="vshare-share" onclick="shareVerseImage()">Partager l'image</button>
+      <button class="vshare-sec" id="vshare-save" onclick="saveVerseImage()">Enregistrer</button>
+    </div>
+  </div>
+</div>
 <div class="tafsir-overlay" id="tafsir-overlay" onclick="if(event.target===this)closeTafsir()">
   <div class="tafsir-sheet">
     <div class="tafsir-sheet-head">
@@ -2293,7 +2381,7 @@ html.theme-dark .sout-more{color:var(--green)}
       <button class="cal-nav-btn" onclick="calChangeMonth(1)">›</button>
     </div>
     <div class="cal-grid-head">
-      <span>Lu</span><span>Ma</span><span>Me</span><span>Je</span><span>Ve</span><span>Sa</span><span>Di</span>
+      <span>Lu</span><span>Ma</span><span>Me</span><span>Je</span><span class="fri">Ve</span><span>Sa</span><span>Di</span>
     </div>
     <div class="cal-grid" id="cal-grid"></div>
     <div class="cal-legend">
@@ -2707,9 +2795,15 @@ const MAP_PALETTES = {
 
 let baseLayer = null, baseKind = null, baseStyleJson = null, vectorFailed = false, vectorLibP = null;
 
-function mapThemeName(){
-  try{ return localStorage.getItem('ps_theme')==='dark' ? 'dark' : 'light'; }catch(e){ return 'light'; }
+// Thème : 'light', 'dark' ou 'auto' (suit le réglage du téléphone ; choix par défaut)
+function themePref(){ try{ const v = localStorage.getItem('ps_theme'); return v==='dark'||v==='light' ? v : 'auto'; }catch(e){ return 'auto'; } }
+function effectiveTheme(){
+  const p = themePref();
+  if(p !== 'auto') return p;
+  try{ return window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }catch(e){ return 'light'; }
 }
+try{ matchMedia('(prefers-color-scheme: dark)').addEventListener('change', ()=>{ if(themePref()==='auto') applyTheme(effectiveTheme()); }); }catch(e){}
+function mapThemeName(){ return effectiveTheme(); }
 
 function loadVectorLibs(){
   if(window.maplibregl && L.maplibreGL) return Promise.resolve();
@@ -3077,15 +3171,14 @@ function matchesFilter(p, f){
 }
 
 function applyFilter() {
-  const q = document.getElementById('sinput').value.toLowerCase();
   let base = listView==='favorites' ? PLACES.filter(p=>favorites.includes(p.id)) : PLACES;
   filtered = base.filter(p => {
     let ok = activeFilters.size===0 || [...activeFilters].every(f=>matchesFilter(p,f));
-    if(ok&&q) ok=(p.name+p.address+p.desc+p.city).toLowerCase().includes(q);
     return ok;
   }).map(p=>({...p,dist:dist(uLat,uLng,p.lat,p.lng)}))
     .filter(p => listView==='favorites' || p.dist<=activeRadius) // filtre par rayon en mode Proximité
     .sort((a,b)=>a.dist-b.dist);
+  listShown = 5;
   renderList(); renderMarkers();
 }
 
@@ -3112,39 +3205,76 @@ function showProximityView(){
 // ============================================================
 // RECHERCHE GÉOGRAPHIQUE (ville, adresse) — appui sur Entrée
 // ============================================================
-let searchDebounce=null;
-let currentSuggestions=[];
-
-function onSearchInput(){
-  applyFilter(); // garde le filtrage local instantané sur les lieux déjà chargés
-  const q = document.getElementById('sinput').value.trim();
-  clearTimeout(searchDebounce);
-  if(q.length<3){ hideSuggestions(); return; }
-  searchDebounce = setTimeout(()=>fetchSuggestions(q), 350);
+let searchDebounce=null, searchSeq=0;
+let currentSuggestions=[]; // { kind:'place', id } ou { kind:'addr', lat, lon, main, sub, label, city }
+const SG_ICO = {
+  addr:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 5-8 12-8 12s-8-7-8-12a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>',
+  city:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2M10 6h4M10 10h4M10 14h4M10 18h4"/></svg>'
+};
+function normTxt(t){ return (t||'').toString().normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase(); }
+function escHtml(t){ return (t||'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function searchLocalPlaces(q){
+  const n = normTxt(q); if(n.length < 2) return [];
+  return PLACES.filter(p => normTxt(`${p.name} ${p.address} ${p.city||''}`).includes(n))
+    .map(p => ({ p, d: dist(uLat,uLng,p.lat,p.lng), starts: normTxt(p.name).startsWith(n) || normTxt(p.name).includes(' '+n) }))
+    .sort((a,b) => (b.starts - a.starts) || (a.d - b.d)).slice(0, 4);
 }
-
-async function fetchSuggestions(q){
+function onSearchInput(){
+  const q = document.getElementById('sinput').value.trim();
+  clearTimeout(searchDebounce); searchSeq++;
+  if(q.length < 2){ hideSuggestions(); currentSuggestions = []; return; }
+  renderSuggestions(searchLocalPlaces(q), q.length >= 3 ? null : []);
+  if(q.length >= 3){ const seq = searchSeq; searchDebounce = setTimeout(()=>fetchAddressSuggestions(q, seq), 300); }
+}
+// Adresses : service officiel français (Géoplateforme / Base Adresse Nationale), proche de la position d'abord
+async function geocodeFR(q, limit){
+  const base = `https://data.geopf.fr/geocodage/search?q=${encodeURIComponent(q)}&autocomplete=1&limit=${limit||5}`;
+  let r = await fetch(base + (uLat && uLng ? `&lat=${uLat.toFixed(4)}&lon=${uLng.toFixed(4)}` : ''));
+  if(!r.ok) r = await fetch(base);
+  if(!r.ok) throw new Error('HTTP '+r.status);
+  const d = await r.json();
+  return (d.features||[]).map(f => {
+    const pr = f.properties||{}, [lon, lat] = (f.geometry||{}).coordinates||[];
+    const city = pr.type === 'municipality';
+    return { kind:'addr', lat, lon, city, main: city ? (pr.city||pr.name) : pr.name,
+      sub: city ? (pr.context||'') : [pr.postcode, pr.city].filter(Boolean).join(' '), label: pr.label || pr.name };
+  }).filter(x => isFinite(x.lat) && isFinite(x.lon));
+}
+// Secours : OpenStreetMap
+async function geocodeOSM(q, limit){
+  const r = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=${limit||5}&countrycodes=fr&addressdetails=1`);
+  const res = await r.json();
+  return res.map(pl => { const a = pl.address||{}, parts = pl.display_name.split(',').map(x=>x.trim());
+    const city = pl.addresstype === 'city' || pl.type === 'city' || pl.type === 'administrative';
+    const main = a.house_number && a.road ? `${a.house_number} ${a.road}` : (a.road || parts[0]);
+    const town = a.city || a.town || a.village || '';
+    return { kind:'addr', lat:+pl.lat, lon:+pl.lon, city, main: city ? (town||parts[0]) : main,
+      sub: city ? parts.slice(1,3).join(', ') : [a.postcode, town].filter(Boolean).join(' '), label: city ? (town||parts[0]) : `${main}${town?', '+town:''}` }; });
+}
+async function geocode(q, limit){ try{ return await geocodeFR(q, limit); }catch(e){ return await geocodeOSM(q, limit); } }
+async function fetchAddressSuggestions(q, seq){
+  let addrs = [], failed = false;
+  try{ addrs = await geocode(q, 5); }catch(e){ failed = true; }
+  if(seq !== searchSeq) return; // l'utilisateur a continué de taper
+  renderSuggestions(searchLocalPlaces(q), addrs, failed);
+}
+function renderSuggestions(places, addrs, failed){
   const list = document.getElementById('suggest-list');
-  list.innerHTML = '<div class="suggest-loading">Recherche en cours...</div>';
-  list.classList.add('show');
-  try{
-    const r = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=5&countrycodes=fr&addressdetails=1`);
-    const results = await r.json();
-    currentSuggestions = results;
-    if(!results.length){
-      list.innerHTML = '<div class="suggest-loading">Aucun résultat trouvé</div>';
-      return;
-    }
-    list.innerHTML = results.map((place,i)=>{
-      const main = place.display_name.split(',')[0];
-      const rest = place.display_name.split(',').slice(1,3).join(',').trim();
-      const icon = place.type==='city'||place.type==='administrative'||place.addresstype==='city' ? 'city' : 'map-pin';
-      const iconSvg = `<svg class="lico sz-vt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${icon==='city'?'<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>':'<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>'}</svg>`;
-      return `<div class="suggest-item" onclick="selectSuggestion(${i})"><span class="si-ico">${iconSvg}</span><div><div>${main}</div><div class="si-sub">${rest}</div></div></div>`;
-    }).join('');
-  }catch{
-    list.innerHTML = '<div class="suggest-loading">Recherche indisponible</div>';
+  currentSuggestions = [];
+  let html = '';
+  if(places.length){
+    html += '<div class="sg-group">Lieux Prayer Spot</div>';
+    places.forEach(({p, d}) => { const i = currentSuggestions.push({ kind:'place', id:p.id }) - 1;
+      html += `<div class="suggest-item" onclick="selectSuggestion(${i})"><span class="si-ico si-place pico t-${p.type}">${placeIcon(p.type)}</span><div class="si-txt"><div>${escHtml(p.name)}</div><div class="si-sub">${escHtml(p.address||p.city||'')}</div></div><span class="si-dist">${d<1?Math.round(d*1000)+' m':d.toFixed(d<10?1:0)+' km'}</span></div>`; });
   }
+  html += '<div class="sg-group">Adresses et villes</div>';
+  if(addrs === null) html += '<div class="suggest-loading">Recherche des adresses…</div>';
+  else if(failed) html += '<div class="suggest-loading">Recherche d\'adresse indisponible pour le moment</div>';
+  else if(!addrs.length) html += `<div class="suggest-loading">${document.getElementById('sinput').value.trim().length < 3 ? 'Continue d\'écrire…' : 'Aucune adresse trouvée'}</div>`;
+  else addrs.forEach(a => { const i = currentSuggestions.push(a) - 1;
+    html += `<div class="suggest-item" onclick="selectSuggestion(${i})"><span class="si-ico">${a.city?SG_ICO.city:SG_ICO.addr}</span><div class="si-txt"><div>${escHtml(a.main)}</div><div class="si-sub">${escHtml(a.sub)}</div></div></div>`; });
+  list.innerHTML = html;
+  list.classList.add('show');
 }
 
 function hideSuggestions(){
@@ -3152,57 +3282,58 @@ function hideSuggestions(){
 }
 
 function selectSuggestion(i){
-  const place = currentSuggestions[i];
-  if(!place) return;
-  goToPlace(place);
+  const s = currentSuggestions[i];
+  if(!s) return;
+  document.getElementById('sinput').value = ''; hideSuggestions(); currentSuggestions = [];
+  try{ document.getElementById('sinput').blur(); }catch(e){}
+  if(s.kind === 'place'){
+    const p = PLACES.find(x => x.id === s.id); if(!p) return;
+    if(mapInitialized) map.setView([p.lat, p.lng], 16, { animate:true });
+    openDetail(p.id);
+    return;
+  }
+  goToPlace(s);
 }
 
 function selectFirstSuggestionOrSearch(){
-  if(currentSuggestions.length){
-    selectSuggestion(0);
-  } else {
-    searchLocation();
-  }
+  if(currentSuggestions.length) selectSuggestion(0);
+  else searchLocation();
 }
 
-function goToPlace(place){
-  uLat = parseFloat(place.lat);
-  uLng = parseFloat(place.lon);
-  uHasPos = false; // ville ou adresse recherchée : pas de temps de trajet depuis ce point
-
+// Une adresse ou une ville choisie : la carte et la liste montrent les lieux autour de ce point
+function goToPlace(a){
+  uLat = +a.lat; uLng = +a.lon;
+  uHasPos = false; // pas de temps de trajet depuis un point recherché
   if(mapInitialized){
-    map.setView([uLat,uLng], 13, {animate:true});
+    map.setView([uLat,uLng], a.city ? 13 : 15, {animate:true});
     if(uMarker) map.removeLayer(uMarker);
-    uMarker = L.circleMarker([uLat,uLng], {radius:9, fillColor:'#0a8f5c', color:'#fff', weight:2.5, fillOpacity:1}).addTo(map).bindPopup(place.display_name.split(',')[0]);
+    uMarker = L.circleMarker([uLat,uLng], {radius:9, fillColor:'#b0894a', color:'#fff', weight:2.5, fillOpacity:1}).addTo(map).bindPopup(escHtml(a.label));
   }
-
-  const cityName = place.display_name.split(',')[0];
-  document.getElementById('sinput').value = '';
-  hideSuggestions();
-  currentSuggestions=[];
-
+  hideSuggestions(); currentSuggestions = [];
+  setAroundChip(a.label);
   showProximityView();
   applyFilter();
-  showToast(cityName);
+}
+function setAroundChip(label){
+  const c = document.getElementById('around-chip'); if(!c) return;
+  if(label){ document.getElementById('around-label').textContent = label; c.hidden = false; }
+  else c.hidden = true;
+}
+function backToMyPosition(){
+  setAroundChip(null);
+  if(gpsPos) applyPosition(gpsPos.lat, gpsPos.lng); else locateMe();
 }
 
 async function searchLocation(){
   const q = document.getElementById('sinput').value.trim();
-  if(!q) return;
-
-  // Si la recherche correspond déjà à un lieu connu, pas besoin de géocoder : on garde le filtre local
-  const matchesKnownPlace = PLACES.some(p => (p.name+p.address+p.desc+p.city).toLowerCase().includes(q.toLowerCase()));
-  if(matchesKnownPlace){ hideSuggestions(); applyFilter(); return; }
-
-  showToast('Recherche de "'+q+'"...');
+  if(q.length < 2) return;
+  const pl = searchLocalPlaces(q);
+  if(pl.length){ currentSuggestions = [{ kind:'place', id: pl[0].p.id }]; selectSuggestion(0); return; }
   try{
-    const r = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1&countrycodes=fr`);
-    const results = await r.json();
-    if(!results.length){
-      showToast('Aucun lieu trouvé pour "'+q+'"');
-      return;
-    }
-    goToPlace(results[0]);
+    const res = await geocode(q, 1);
+    if(!res.length){ showToast('Aucune adresse trouvée pour « '+q+' »'); return; }
+    document.getElementById('sinput').value = '';
+    goToPlace(res[0]);
   }catch(err){
     showToast('Recherche impossible, vérifie ta connexion');
   }
@@ -3212,6 +3343,8 @@ document.addEventListener('click', function(e){
   if(!e.target.closest('.sbar-float')) hideSuggestions();
 });
 
+let listShown = 5;
+function showMorePlaces(){ listShown += 5; renderList(); }
 function renderList() {
   const n=filtered.length;
   document.getElementById('cbadge').textContent=n+' lieu'+(n>1?'x':'');
@@ -3222,7 +3355,10 @@ function renderList() {
     document.getElementById('plist').innerHTML=`<div style="padding:30px;text-align:center;color:var(--muted);font-size:12px">${emptyMsg}</div>`;
     return;
   }
-  document.getElementById('plist').innerHTML=filtered.map(p=>`
+  const limited = listView!=='favorites' && n > listShown;
+  const shown = limited ? filtered.slice(0, listShown) : filtered;
+  const rest = n - shown.length;
+  document.getElementById('plist').innerHTML=shown.map(p=>`
     <div class="pcard${selected===p.id?' sel':''}" id="card-${p.id}" onclick="openDetail('${p.id}')">
       <div class="pctop">
         <div class="pico t-${p.type}">${placeIcon(p.type)}</div>
@@ -3238,7 +3374,7 @@ function renderList() {
         </div>
         <div class="pcdist">${p.dist<1?Math.round(p.dist*1000)+'m':p.dist.toFixed(1)+'km'}</div>
       </div>
-    </div>`).join('');
+    </div>`).join('') + (limited ? `<button class="plist-more" onclick="showMorePlaces()">Afficher ${Math.min(5,rest)} lieu${Math.min(5,rest)>1?'x':''} de plus<span>${rest} autre${rest>1?'s':''} à proximité</span></button>` : '');
 }
 
 function renderMarkers() {
@@ -3390,6 +3526,11 @@ const toMin = s => { const m = /^(\d{1,2}):(\d{2})/.exec(s || ''); return m ? (+
 const fmtMin = m => { m = ((Math.round(m) % 1440) + 1440) % 1440; return Math.floor(m / 60) + 'h' + String(m % 60).padStart(2, '0'); };
 const fmtH = s => fmtMin(toMin(s));
 const PRAYER_LIST = [['Fajr','Fajr'],['Dhohr','Dhohr'],['Asr','Asr'],['Maghrib','Maghrib'],['Icha','Icha']];
+// Le vendredi, Dhohr s'appelle Joumou'a (l'heure affichée reste celle du Dhohr calculé)
+const JOUMOUA = "Joumou'a";
+function isFriday(d){ return (d || new Date()).getDay() === 5; }
+function prayerName(k, d){ return k === 'Dhohr' && isFriday(d) ? JOUMOUA : k; }
+function prayerNameHtml(k, d){ return k === 'Dhohr' && isFriday(d) ? `<span class="jumua">${JOUMOUA}</span>` : k; }
 const OPEN_MARGIN = 60; // une mosquée est considérée ouverte 1 h avant → 1 h après chaque prière
 const isPrayerPlace = p => p.type === 'mosque' || p.type === 'other';
 
@@ -3397,7 +3538,7 @@ function mosqueStatus(p, now){
   const t = timesForPlace(p, now);
   if(!t) return null;
   const n = now.getHours() * 60 + now.getMinutes();
-  const list = PRAYER_LIST.map(([k, label]) => ({ label, m: toMin(t[k]) })).filter(x => !isNaN(x.m));
+  const list = PRAYER_LIST.map(([k, label]) => ({ label: prayerName(k), m: toMin(t[k]) })).filter(x => !isNaN(x.m));
   if(!list.length) return null;
   const cur = list.find(x => n >= x.m - OPEN_MARGIN && n <= x.m + OPEN_MARGIN);
   if(cur) return { open: true, text: `Ouverte · ${cur.label} ${fmtMin(cur.m)}` };
@@ -3498,7 +3639,7 @@ function prayerChipsHtml(p, exact){
   const cur = list.find(x => n >= x.m - OPEN_MARGIN && n <= x.m + OPEN_MARGIN);
   const nxt = list.find(x => x.m > n);
   return `<div class="dpr-title">Heures de prière aujourd'hui</div>
-    <div class="dpr-grid">${list.map(x => `<div class="dpr${cur === x ? ' cur' : nxt === x && !cur ? ' next' : ''}"><span>${x.label}</span><b>${fmtH(x.s)}</b></div>`).join('')}</div>
+    <div class="dpr-grid">${list.map(x => `<div class="dpr${cur === x ? ' cur' : nxt === x && !cur ? ' next' : ''}"><span>${prayerNameHtml(x.label)}</span><b>${fmtH(x.s)}</b></div>`).join('')}</div>
     <div class="dpr-note">Lieu considéré ouvert 1 h avant et 1 h après chaque prière (estimation). L'heure de la prière en commun peut varier selon la mosquée.</div>`;
 }
 async function loadPlacePrayerTimes(p){
@@ -3998,7 +4139,7 @@ function onPositionFound(lat, lng, silent){
   prayerManual=false;
   prayerLat=lat; prayerLng=lng; prayerCityName='Ma position';
   const cn=document.getElementById('cityname'); if(cn) cn.textContent='Ma position';
-  const si=document.getElementById('sinput'); if(si){ si.value=''; si.placeholder='Ma position'; }
+  const si=document.getElementById('sinput'); if(si){ si.value=''; }
   fetchPrayers(lat, lng);
   try{ findNearestMosqueForPrayer(lat, lng); }catch(e){}
   showToast('Position trouvée ✓');
@@ -4148,7 +4289,7 @@ function searchCityInstead(){
   hideLocHelp();
   try{ if(typeof showScreen==='function' && document.getElementById('sinput') && !document.getElementById('sinput').offsetParent) showScreen('explorer'); }catch(e){}
   const si = document.getElementById('sinput');
-  if(si){ si.placeholder='Ville, adresse, nom de lieu...'; setTimeout(()=>si.focus(), 150); }
+  if(si){ setTimeout(()=>si.focus(), 150); }
 }
 
 // Détecte les changements faits dans les réglages pendant que l'app est ouverte
@@ -4223,7 +4364,9 @@ function loadLastPosition(){
     return p;
   }catch(e){ return null; }
 }
+let gpsPos = null;
 function applyPosition(lat, lng){
+  gpsPos = { lat, lng }; setAroundChip(null);
   uLat=lat; uLng=lng; uHasPos=true; // vraie position : les temps de trajet ont un sens
   if(mapInitialized){
     map.setView([uLat,uLng],14,{animate:true});
@@ -4346,11 +4489,11 @@ async function setPrayerLocation(lat, lng, cityName, isGps=false){
   if(isGps){
     document.getElementById('cityname').textContent='Ma position';
     const sinput=document.getElementById('sinput');
-    if(sinput){ sinput.value=''; sinput.placeholder='Ma position'; }
+    if(sinput){ sinput.value=''; }
   } else {
     document.getElementById('cityname').textContent=cityName;
     const sinput=document.getElementById('sinput');
-    if(sinput){ sinput.value=''; sinput.placeholder='Ville, adresse, nom de lieu...'; }
+    if(sinput){ sinput.value=''; }
   }
   fetchPrayers(lat, lng);
   showToast('Horaires mis à jour ✓');
@@ -4452,9 +4595,10 @@ function drawPrayerBar(){
     let cls='pi';
     if(it.name==='Chourouk') cls+=' chourouk';
     if(it===cur) cls+=' active';
-    return `<div class="${cls}"><span class="pn">${it.name}</span><span class="pt">${it.time}</span></div>`;
+    const fri = it.name==='Dhohr' && isFriday(now);
+    return `<div class="${cls}${fri?' jumua-day':''}"><span class="pn">${prayerName(it.name, now)}</span><span class="pt">${it.time}</span></div>`;
   }).join('');
-  setHead(cur.name, `${next.name} dans ${fmtReste(nextMin - nm)}`);
+  setHead(prayerName(cur.name, now), `${prayerName(next.name, nextMin >= 1440 ? new Date(now.getTime()+864e5) : now)} dans ${fmtReste(nextMin - nm)}`);
 }
 // Compte à rebours et frise à jour sans recharger les horaires
 setInterval(()=>{ try{ drawPrayerBar(); updateDateBtn(); }catch(e){} }, 30000);
@@ -4889,7 +5033,7 @@ function renderSuiviPriere(){
   const enabled = localStorage.getItem('ps_tracker_enabled') === '1';
 
   const toggleRow = `
-    <div style="display:flex;align-items:center;justify-content:space-between;background:var(--white);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px 16px;margin-bottom:20px">
+    <div class="tracker-toggle-card" style="display:flex;align-items:center;justify-content:space-between;background:var(--white);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px 16px;margin-bottom:20px">
       <div>
         <div style="font-size:13.5px;font-weight:700;color:var(--text)">Suivi de prière</div>
         <div style="font-size:11px;color:var(--muted);margin-top:2px;font-weight:500">Suivi quotidien, hebdomadaire et mensuel</div>
@@ -5342,7 +5486,7 @@ async function subscribeViaCheckout(){
 // ============================================================
 function renderParametres(){
   const c=document.getElementById('parametres-content');
-  const theme=localStorage.getItem('ps_theme')||'light';
+  const theme=themePref();
   const lang=localStorage.getItem('ps_lang')||'fr';
   const radius=localStorage.getItem('ps_default_radius')||'10';
 
@@ -5370,8 +5514,9 @@ function renderParametres(){
     <div class="menu-list">
       <div class="set-row">
         <span class="set-ico"><svg class="lico sz-set" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg></span>
-        <div class="set-label">Thème<div class="set-sub">Apparence de l'application</div></div>
+        <div class="set-label">Thème<div class="set-sub">Automatique : comme ton téléphone</div></div>
         <select class="set-select" onchange="setTheme(this.value)">
+          <option value="auto" ${theme==='auto'?'selected':''}>Automatique</option>
           <option value="light" ${theme==='light'?'selected':''}>Clair</option>
           <option value="dark" ${theme==='dark'?'selected':''}>Sombre</option>
         </select>
@@ -5416,9 +5561,9 @@ function setDefaultRadius(val){
 }
 
 function setTheme(val){
-  localStorage.setItem('ps_theme', val);
-  applyTheme(val);
-  showToast(val==='dark'?'Thème sombre activé 🌙':'Thème clair activé ☀️');
+  try{ localStorage.setItem('ps_theme', val); }catch(e){}
+  applyTheme(effectiveTheme());
+  showToast(val==='auto'?'Thème automatique : comme ton téléphone':val==='dark'?'Thème sombre activé 🌙':'Thème clair activé ☀️');
 }
 
 function applyTheme(theme){
@@ -6033,8 +6178,7 @@ async function initApp(){
 
   // Affiche le popup de localisation uniquement à la première visite
   // Applique le thème et le rayon sauvegardés
-  const savedTheme = localStorage.getItem('ps_theme');
-  if(savedTheme) applyTheme(savedTheme);
+  applyTheme(effectiveTheme());
   const savedRadius = localStorage.getItem('ps_default_radius');
   if(savedRadius){ activeRadius = parseInt(savedRadius); const sel=document.getElementById('radius-select'); if(sel) sel.value=savedRadius; }
   updateDateBtn();
@@ -6194,7 +6338,7 @@ function renderCalendar(){
     const isToday = todayKey(date) === todayKey(today);
     const isSel = todayKey(date) === todayKey(sel);
     const h = toHijri(date), ev = hijriEvent(h);
-    const cls = 'cal-day' + (isToday?' today':'') + (isSel?' sel':'') + (ev?' '+ev.kind:'');
+    const cls = 'cal-day' + (isToday?' today':'') + (isSel?' sel':'') + (ev?' '+ev.kind:'') + (date.getDay()===5?' fri':'');
     const big = calType === 'gregorian' ? d : h.day, small = calType === 'gregorian' ? h.day : d;
     html += `<div class="${cls}" role="button" onclick="calSelect(${year},${month},${d})"${ev?` title="${ev.label}"`:''}>
         <span class="cal-day-num">${big}</span>
@@ -6223,7 +6367,7 @@ function renderCalInfo(date){
       <div class="cal-info-hij">${h.day} ${MONTH_AR[h.month-1]} ${h.year}</div></div>
     </div>
     ${ev ? `<div class="cal-info-ev ${ev.kind}">${ev.label}</div>` : ''}
-    ${t ? `<div class="cal-times">${PRAYER_LIST.map(([k,l]) => `<div><span>${l}</span><b>${(t[k]||'--:--').slice(0,5)}</b></div>`).join('')}</div>` : ''}`;
+    ${t ? `<div class="cal-times">${PRAYER_LIST.map(([k,l]) => `<div${k==='Dhohr'&&isFriday(date)?' class="jumua-day"':''}><span>${prayerNameHtml(k, date)}</span><b>${(t[k]||'--:--').slice(0,5)}</b></div>`).join('')}</div>` : ''}`;
 }
 
 // ============================================================
@@ -6364,6 +6508,16 @@ function getSourateReadCount(num, total){
   const p = getQuranProgress(num);
   return Object.keys(p).filter(k=>{ const v = +k; return p[k] && Number.isInteger(v) && v >= 1 && v <= max; }).length;
 }
+// Dernière position de lecture : la sourate et le verset exacts où l'on s'est arrêté
+function getQuranLast(){ try{ const o = JSON.parse(localStorage.getItem('ps_quran_last')||'null'); return (o && o.s>=1 && o.s<=114 && o.v>=1) ? o : null; }catch(e){ return null; } }
+function getQuranPos(num){ try{ return (JSON.parse(localStorage.getItem('ps_quran_pos')||'{}')||{})[num] || 0; }catch(e){ return 0; } }
+function saveQuranPos(num, v){
+  try{
+    const pos = JSON.parse(localStorage.getItem('ps_quran_pos')||'{}') || {}; pos[num] = v;
+    localStorage.setItem('ps_quran_pos', JSON.stringify(pos));
+    localStorage.setItem('ps_quran_last', JSON.stringify({ s:num, v, t:Date.now() }));
+  }catch(e){}
+}
 function getSouratePct(num, total){
   const t = total || sourateTotal(num);
   const count = getSourateReadCount(num, t);
@@ -6397,14 +6551,16 @@ function filterSourates(){
 
 // Carte mise en avant : la sourate en cours de lecture, sinon Al-Fatiha
 function sourateFeatureHtml(){
-  const cur = SOURATES_META.find(s => { const p = getSouratePct(s[0], s[4]); return p > 0 && p < 100; });
+  const last = getQuranLast();
+  const cur = last ? SOURATES_META[last.s-1] : SOURATES_META.find(s => { const p = getSouratePct(s[0], s[4]); return p > 0 && p < 100; });
   const s = cur || SOURATES_META[0];
   const [num, nameEn, nameAr, nameFr, versets, type] = s;
-  return `<div class="sourate-feature" onclick="openSourate(${num})">
+  const v = last ? Math.min(last.v, versets) : 0;
+  return `<div class="sourate-feature" onclick="openSourate(${num}${v ? ','+v : ''})">
       <div class="sf-label">${cur ? 'Reprendre la lecture' : 'Commencer par'}</div>
       <div class="sf-name">${nameEn}</div>
       <div class="sf-ar">${nameAr}</div>
-      <div class="sf-meta">${nameFr} · ${versets} versets · ${type}</div>
+      <div class="sf-meta">${v ? `Verset ${v} sur ${versets} · ${nameFr}` : `${nameFr} · ${versets} versets · ${type}`}</div>
       <div class="sf-btn">${cur ? 'Continuer' : 'Lire'} <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </div>
     <div class="sl-label">Les 114 sourates</div>`;
@@ -6443,7 +6599,7 @@ function renderSouratesList(list, withFeature){
   }).join('');
 }
 
-async function openSourate(num){
+async function openSourate(num, atVerse){
   stopVersetTracking();
   currentSourateNum = num;
   const meta = SOURATES_META[num-1];
@@ -6487,6 +6643,7 @@ async function openSourate(num){
 
     if(!allVerses.length) throw new Error('Aucun verset reçu');
 
+    verseStore = {};
     const versetsHtml = allVerses.map(v => {
       const vNum = v.verse_number;
       const arText = v.text_uthmani || '';
@@ -6494,12 +6651,14 @@ async function openSourate(num){
       const frText = ((v.translations||[]).find(t=>t.resource_id===136)?.text||'').replace(/<sup[^>]*>[\s\S]*?<\/sup>/gi,'').replace(/<[^>]*>/g,'').trim();
       const translit = ((v.translations||[]).find(t=>t.resource_id===57)?.text||'').replace(/<sup[^>]*>[\s\S]*?<\/sup>/gi,'').replace(/<[^>]*>/g,'').trim();
       const isRead = progress[vNum] || false;
+      verseStore[vNum] = { ar: arText, fr: frText };
       return `<div class="verset${isRead?' read':''}" id="v-${vNum}" data-v="${vNum}" onclick="selectVerset(this,${num},${vNum})">
         <div class="verset-num">${vNum}</div>
         <div class="verset-ar">${arText}</div>
         <div class="verset-translit">${translit}</div>
         <div class="verset-fr">${frText}</div>
         <div class="verset-footer">
+          <button class="tafsir-btn vshare-btn" onclick="event.stopPropagation();openVerseShare(${num},${vNum})" aria-label="Partager ce verset en image"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg> Partager</button>
           <button class="tafsir-btn" onclick="event.stopPropagation();openTafsir(${num},${vNum})">ⓘ Explication</button>
         </div>
       </div>`;
@@ -6521,12 +6680,21 @@ async function openSourate(num){
       <div class="sourate-progress-bar" id="s-progress" style="width:${getSouratePct(num,versets)}%"></div>
       ${versetsHtml}`;
 
-    // Scroll vers le dernier verset lu
-    const readKeys = Object.keys(progress).filter(k=>progress[k]);
-    if(readKeys.length > 0){
-      const lastRead = Math.max(...readKeys.map(Number));
-      const el = document.getElementById(`v-${lastRead}`);
-      if(el) setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'start'}), 300);
+    // Reprend là où l'on s'était arrêté : verset demandé, sinon dernière position dans cette sourate,
+    // sinon (anciens utilisateurs) le verset lu le plus loin
+    let target = atVerse || getQuranPos(num);
+    if(!target){ const readKeys = Object.keys(progress).filter(k=>progress[k]); if(readKeys.length) target = Math.max(...readKeys.map(Number)); }
+    if(target > 1){
+      const el = document.getElementById(`v-${target}`);
+      if(el){
+        quranResumeUntil = Date.now() + 900; // ne pas enregistrer les versets traversés pendant le saut
+        setTimeout(()=>{
+          if(currentSourateNum !== num) return;
+          el.scrollIntoView({behavior:'auto',block:'center'});
+          el.classList.add('resume-flash'); setTimeout(()=>el.classList.remove('resume-flash'), 2200);
+          saveQuranPos(num, target);
+        }, 300);
+      }
     }
 
     setupVersetObserver(num, versets);
@@ -6665,7 +6833,7 @@ async function loadSourateIntro(num){
 }
 
 // Un seul suivi de lecture à la fois (sinon les versets d'une sourate étaient comptés pour une autre)
-let quranScrollHandler = null, quranTrackTimers = [];
+let quranScrollHandler = null, quranTrackTimers = [], quranResumeUntil = 0;
 function stopVersetTracking(){
   const screen = document.getElementById('screen-sourate');
   if(screen && quranScrollHandler) screen.removeEventListener('scroll', quranScrollHandler);
@@ -6724,6 +6892,7 @@ function setupVersetObserver(num, total){
     if(vNum === _lastCenterV) return;
     _lastCenterV = vNum;
     markRead([bestEl]);
+    if(Date.now() >= quranResumeUntil) saveQuranPos(num, vNum);
   }
 
   function onScroll(){
@@ -6846,9 +7015,145 @@ function selectVerset(el, surahNum, versetNum){
   selectedVerset = el.classList.contains('selected') ? el : null;
 }
 
+// ============================================================
+// PARTAGER UN VERSET EN IMAGE
+// ============================================================
+let verseStore = {}, vshareBlob = null, vshareUrl = null, vshareName = 'verset.png', vshareJob = 0;
+function arDigits(n){ return String(n).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]); }
+function loadVerseFonts(){
+  let link = document.getElementById('vshare-fonts');
+  const linkReady = link ? Promise.resolve() : new Promise(res => {
+    link = document.createElement('link'); link.id = 'vshare-fonts'; link.rel = 'stylesheet';
+    link.href = 'https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap';
+    link.onload = link.onerror = () => res(); document.head.appendChild(link);
+  });
+  const all = linkReady.then(() => Promise.all([
+    document.fonts.load('60px "Amiri Quran"', 'بسم الله'),
+    document.fonts.load('500 40px Fraunces', 'Aa'), document.fonts.load('600 40px Fraunces', 'Aa'),
+    document.fonts.load('500 24px Inter', 'Aa'), document.fonts.load('600 24px Inter', 'Aa')
+  ])).catch(() => {});
+  return Promise.race([all, new Promise(r => setTimeout(r, 4000))]);
+}
+// Motif zellige dessiné à la main (pas d'image externe : le partage reste possible partout)
+function zelligeTile(color, size){
+  const c = document.createElement('canvas'); c.width = c.height = size; const x = c.getContext('2d');
+  const k = size / 40; x.strokeStyle = color; x.lineWidth = 1.2 * k; x.lineJoin = 'round';
+  const star = (cx, cy, R, rot) => { const r = R * Math.cos(Math.PI/4) / Math.cos(Math.PI/8); x.beginPath();
+    for(let i = 0; i < 16; i++){ const a = rot + i*Math.PI/8, rr = i%2 ? r : R; x.lineTo((cx + rr*Math.cos(a))*k, (cy + rr*Math.sin(a))*k); } x.closePath(); x.stroke(); };
+  for(const [cx, cy] of [[0,0],[40,0],[0,40],[40,40]]){ star(cx, cy, 20, 0); star(cx, cy, 10.4, Math.PI/8); }
+  x.beginPath(); for(let i = 0; i < 8; i++){ const a = Math.PI/8 + i*Math.PI/4; x.lineTo((20 + 4.5*Math.cos(a))*k, (20 + 4.5*Math.sin(a))*k); } x.closePath(); x.stroke();
+  return c;
+}
+function wrapText(ctx, text, maxW){
+  const words = text.split(/[ \t\n]+/).filter(Boolean), lines = []; let line = ''; // espaces insécables gardés : « et » ne restent pas seuls
+  for(const w of words){ const t = line ? line + ' ' + w : w; if(line && ctx.measureText(t).width > maxW){ lines.push(line); line = w; } else line = t; }
+  if(line) lines.push(line); return lines;
+}
+function drawStar8(ctx, cx, cy, R, color){
+  const r = R * 0.62; ctx.beginPath();
+  for(let i = 0; i < 16; i++){ const a = -Math.PI/2 + i*Math.PI/8, rr = i%2 ? r : R; ctx.lineTo(cx + rr*Math.cos(a), cy + rr*Math.sin(a)); }
+  ctx.closePath(); ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.stroke();
+}
+function renderVerseCanvas(surah, v){
+  const meta = SOURATES_META[surah-1], data = verseStore[v] || { ar:'', fr:'' };
+  const W = 1080, PADX = 120, MAXW = W - 2*PADX;
+  const ar = `${data.ar}\u00a0﴿${arDigits(v)}﴾`, fr = data.fr ? `«\u00a0${data.fr.replace(/ ([:;!?»])/g,'\u00a0$1')}\u00a0»` : '';
+  const ref = `Sourate ${meta[1]} (${surah}) · verset ${v}`;
+  const GOLD = '#cdb98a', CREAM = '#f6f1e6', SOFT = '#ddd5c3';
+  const m = document.createElement('canvas').getContext('2d');
+  // Taille du texte : la plus grande qui tient dans le format portrait (1080 × 1350), sinon l'image s'allonge
+  let L = null;
+  for(let f = 1; f >= 0.5; f -= 0.05){
+    const arSize = Math.round(64*f), frSize = Math.round(38*f);
+    m.font = `${arSize}px "Amiri Quran", "Amiri", serif`; m.direction = 'rtl';
+    const arLines = wrapText(m, ar, MAXW);
+    m.font = `500 ${frSize}px Fraunces, Georgia, serif`; m.direction = 'ltr';
+    const frLines = fr ? wrapText(m, fr, MAXW) : [];
+    const arLH = arSize*1.95, frLH = frSize*1.45;
+    const content = arLines.length*arLH + 96 + frLines.length*frLH + 74 + 66;
+    L = { arSize, frSize, arLines, frLines, arLH, frLH, content };
+    if(content <= 1350 - 210 - 190) break;
+  }
+  const H = Math.max(1350, Math.ceil(L.content + 210 + 190));
+  const c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d');
+  // Fond : vert sapin, motif zellige très léger, cadre fin
+  const g = x.createLinearGradient(0, 0, W, H); g.addColorStop(0, '#2e4a3a'); g.addColorStop(1, '#1c2d24');
+  x.fillStyle = g; x.fillRect(0, 0, W, H);
+  x.save(); x.globalAlpha = 0.07; x.fillStyle = x.createPattern(zelligeTile(CREAM, 120), 'repeat'); x.fillRect(0, 0, W, H); x.restore();
+  const vg = x.createRadialGradient(W/2, H/2, H*0.15, W/2, H/2, H*0.75); vg.addColorStop(0, 'rgba(28,45,36,0.55)'); vg.addColorStop(1, 'rgba(28,45,36,0)');
+  x.fillStyle = vg; x.fillRect(0, 0, W, H);
+  x.strokeStyle = 'rgba(205,185,138,0.35)'; x.lineWidth = 2; x.beginPath(); x.roundRect ? x.roundRect(40, 40, W-80, H-80, 30) : x.rect(40, 40, W-80, H-80); x.stroke();
+  // Ornement du haut
+  let y = Math.round(210 + (H - 400 - L.content) / 2);
+  drawStar8(x, W/2, y - 44, 16, GOLD);
+  x.strokeStyle = 'rgba(205,185,138,0.5)'; x.lineWidth = 1.5;
+  x.beginPath(); x.moveTo(W/2 - 150, y - 44); x.lineTo(W/2 - 30, y - 44); x.moveTo(W/2 + 30, y - 44); x.lineTo(W/2 + 150, y - 44); x.stroke();
+  // Arabe
+  x.fillStyle = CREAM; x.textAlign = 'center'; x.textBaseline = 'middle';
+  x.font = `${L.arSize}px "Amiri Quran", "Amiri", serif`; x.direction = 'rtl';
+  y += 30;
+  for(const line of L.arLines){ x.fillText(line, W/2, y + L.arLH/2); y += L.arLH; }
+  // Séparateur
+  y += 40; drawStar8(x, W/2, y, 9, GOLD);
+  x.beginPath(); x.moveTo(W/2 - 70, y); x.lineTo(W/2 - 18, y); x.moveTo(W/2 + 18, y); x.lineTo(W/2 + 70, y); x.stroke();
+  y += 56;
+  // Traduction
+  x.direction = 'ltr'; x.fillStyle = SOFT; x.font = `500 ${L.frSize}px Fraunces, Georgia, serif`;
+  for(const line of L.frLines){ x.fillText(line, W/2, y + L.frLH/2); y += L.frLH; }
+  // Référence
+  y += 46; x.fillStyle = GOLD; x.font = '600 27px Inter, Arial, sans-serif';
+  x.fillText(ref.toUpperCase().replace(/ /g, '  '), W/2, y);
+  y += 40; x.fillStyle = 'rgba(221,213,195,0.7)'; x.font = '500 22px Inter, Arial, sans-serif';
+  x.fillText('Traduction : Muhammad Hamidullah', W/2, y);
+  // Signature discrète
+  x.fillStyle = 'rgba(246,241,230,0.75)'; x.font = '600 27px Fraunces, Georgia, serif';
+  x.fillText('Prayer Spot', W/2, H - 112);
+  x.fillStyle = 'rgba(221,213,195,0.55)'; x.font = '500 20px Inter, Arial, sans-serif';
+  x.fillText('prayerspot.fr', W/2, H - 80);
+  return c;
+}
+async function openVerseShare(surah, v){
+  const job = ++vshareJob;
+  const meta = SOURATES_META[surah-1];
+  document.getElementById('vshare-overlay').style.display = 'flex';
+  document.getElementById('vshare-ref').textContent = `Sourate ${meta[1]} (${surah}), verset ${v}`;
+  document.getElementById('vshare-preview').innerHTML = '<div class="tafsir-loading">Préparation de l\'image…</div>';
+  vshareBlob = null; document.getElementById('vshare-share').disabled = true; document.getElementById('vshare-save').disabled = true;
+  await loadVerseFonts();
+  if(job !== vshareJob) return;
+  const c = renderVerseCanvas(surah, v);
+  const blob = await new Promise(res => c.toBlob(res, 'image/png'));
+  if(job !== vshareJob || !blob) return;
+  vshareBlob = blob; vshareName = `verset-${surah}-${v}.png`;
+  if(vshareUrl) URL.revokeObjectURL(vshareUrl);
+  vshareUrl = URL.createObjectURL(blob);
+  document.getElementById('vshare-preview').innerHTML = `<img src="${vshareUrl}" alt="Verset ${surah}:${v} en image">`;
+  // Téléphone : menu de partage (WhatsApp, Instagram…) ; ordinateur : on enregistre l'image
+  let canShare = false;
+  try{ canShare = !!(navigator.canShare && navigator.canShare({ files:[ new File([blob], vshareName, { type:'image/png' }) ] })); }catch(e){}
+  const sh = document.getElementById('vshare-share'), sv = document.getElementById('vshare-save');
+  sh.style.display = canShare ? '' : 'none'; sh.disabled = false; sv.disabled = false;
+  sv.className = canShare ? 'vshare-sec' : 'vshare-main';
+  sv.textContent = canShare ? 'Enregistrer' : 'Enregistrer l\'image';
+}
+async function shareVerseImage(){
+  if(!vshareBlob) return;
+  const file = new File([vshareBlob], vshareName, { type:'image/png' });
+  try{ await navigator.share({ files:[file] }); }
+  catch(e){ if(e && e.name !== 'AbortError') saveVerseImage(); }
+}
+function saveVerseImage(){
+  if(!vshareUrl) return;
+  const a = document.createElement('a'); a.href = vshareUrl; a.download = vshareName;
+  document.body.appendChild(a); a.click(); a.remove();
+  showToast('Image enregistrée ✓');
+}
+function closeVerseShare(){ vshareJob++; document.getElementById('vshare-overlay').style.display = 'none'; }
+
+const tafsirSurahCache = {};
 async function openTafsir(surahNum, ayahNum){
   document.getElementById('tafsir-overlay').style.display = 'flex';
-  document.getElementById('tafsir-ref').textContent = `Sourate ${surahNum}, verset ${ayahNum} · Al-Muyassar`;
+  document.getElementById('tafsir-ref').textContent = `Sourate ${surahNum}, verset ${ayahNum} · Al-Mukhtasar`;
   document.getElementById('tafsir-body').innerHTML = '<div class="tafsir-loading">Chargement de l\'explication...</div>';
 
   const cacheKey = `${surahNum}_${ayahNum}`;
@@ -6858,9 +7163,21 @@ async function openTafsir(surahNum, ayahNum){
   }
 
   try{
-    const r = await fetch(`https://cdn.jsdelivr.net/gh/spa5k/tafsir_api@main/tafsir/french-mokhtasar/${surahNum}/${ayahNum}.json`);
-    const data = await r.json();
-    const text = data?.text || data?.tafsir || data?.content || null;
+    // Explications hébergées sur prayerspot.fr : un fichier par sourate (chargé une seule fois)
+    let text = null;
+    try{
+      if(!tafsirSurahCache[surahNum]){
+        const r = await fetch(`/tafsir/${surahNum}.json`);
+        if(!r.ok) throw new Error('HTTP '+r.status);
+        tafsirSurahCache[surahNum] = await r.json();
+      }
+      text = tafsirSurahCache[surahNum][ayahNum-1] || null;
+    }catch(e){
+      // Secours : ancienne source, verset par verset
+      const r = await fetch(`https://cdn.jsdelivr.net/gh/spa5k/tafsir_api@main/tafsir/french-mokhtasar/${surahNum}/${ayahNum}.json`);
+      const data = await r.json();
+      text = data?.text || data?.tafsir || data?.content || null;
+    }
     if(text){
       tafsirCache[cacheKey] = text;
       renderTafsirText(text);
@@ -6874,10 +7191,12 @@ async function openTafsir(surahNum, ayahNum){
 
 function renderTafsirText(text){
   // Nettoie le HTML éventuel et formate le texte
-  const clean = text.replace(/<[^>]*>/g,'').trim();
+  const clean = text.replace(/<[^>]*>/g,'').replace(/&/g,'&amp;').replace(/</g,'&lt;').trim();
+  // Respecte les retours à la ligne du texte (listes, paragraphes)
+  const paras = clean.split(/\n+/).map(t=>t.trim()).filter(Boolean).map(t=>`<p class="tafsir-text">${t}</p>`).join('');
   document.getElementById('tafsir-body').innerHTML = `
-    <p class="tafsir-text">${clean}</p>
-    <p class="tafsir-source">Source : Al-Muyassar fi Tafsir al-Quran al-Karim</p>`;
+    ${paras}
+    <p class="tafsir-source">Source : Al-Mukhtasar fi Tafsir al-Qur'an al-Karim (Markaz Tafsir), traduction française</p>`;
 }
 
 function closeTafsir(){
