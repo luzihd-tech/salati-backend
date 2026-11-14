@@ -49,11 +49,18 @@ function makeLimiter(perHour, perDay) {
 }
 // Envoie un e-mail à l'équipe. Renvoie true si parti, false sinon (erreur déjà journalisée).
 async function sendTeamMail({ subject, html, text, replyTo, label }) {
+  return sendMail({ to: TO(), subject, html, text, replyTo, label });
+}
+// Envoie un e-mail à un utilisateur (ex. lien « mot de passe oublié »)
+async function sendUserMail({ to, subject, html, text, label }) {
+  return sendMail({ to, subject, html, text, label });
+}
+async function sendMail({ to, subject, html, text, replyTo, label }) {
   const provider = mailProvider();
   if (!provider) return false;
   if (provider === 'gmail') {
     try {
-      await getGmail().sendMail({ from: `"Prayer Spot" <${GMAIL_USER()}>`, to: TO(), subject, html, text, ...(replyTo ? { replyTo } : {}) });
+      await getGmail().sendMail({ from: `"Prayer Spot" <${GMAIL_USER()}>`, to, subject, html, text, ...(replyTo ? { replyTo } : {}) });
       return true;
     } catch (e) {
       console.error(`${label} : Gmail a refusé l'envoi —`, e.code || '', (e.message || '').slice(0, 200));
@@ -65,11 +72,11 @@ async function sendTeamMail({ subject, html, text, replyTo, label }) {
     const r = await fetch('https://api.resend.com/emails', {
       method: 'POST', signal: ctl.signal,
       headers: { 'Authorization': `Bearer ${process.env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ from: FROM_RESEND(), to: [TO()], subject, html, text, ...(replyTo ? { reply_to: replyTo } : {}) })
+      body: JSON.stringify({ from: FROM_RESEND(), to: [to], subject, html, text, ...(replyTo ? { reply_to: replyTo } : {}) })
     });
     clearTimeout(t);
     if (!r.ok) { console.error(`${label} : Resend a refusé l'envoi —`, r.status, (await r.text().catch(() => '')).slice(0, 200)); return false; }
     return true;
   } catch (e) { console.error(`${label} : Resend injoignable —`, e.message); return false; }
 }
-module.exports = { sendTeamMail, mailProvider, makeLimiter, clientIp, esc, clean, EMAIL_RE };
+module.exports = { sendTeamMail, sendUserMail, mailProvider, makeLimiter, clientIp, esc, clean, EMAIL_RE };

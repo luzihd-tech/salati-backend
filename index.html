@@ -1656,6 +1656,14 @@ html.theme-dark .sout-free-item svg{color:var(--green)}
 .sout-more{color:var(--green-deep);font-weight:600;text-decoration:underline;cursor:pointer}
 html.theme-dark .sout-more{color:var(--green)}
 /* ═══ LOT NOVEMBRE ═══ */
+/* Mot de passe oublié */
+.forgot-row{display:flex;justify-content:flex-end;margin:-6px 0 14px}
+.forgot-row a{font-size:12px;font-weight:600;color:var(--green-deep);cursor:pointer}
+html.theme-dark .forgot-row a{color:var(--green)}
+.reset-ico{font-size:34px;text-align:center;margin:4px 0 6px}
+
+.verset{contain:layout paint style}
+#screen-sourate{will-change:scroll-position}
 /* Recherche : loupe, groupes de suggestions, bandeau « Autour de » */
 .sbar-ico{width:18px;height:18px;color:var(--muted);flex-shrink:0;margin:0 2px 0 4px}
 .sinput::-webkit-search-cancel-button{display:none}
@@ -5702,16 +5710,83 @@ function confirmDeleteAccount(){
 // ============================================================
 // AUTH — connecté au vrai backend
 // ============================================================
-function openAuth(mode){
+function openAuth(mode, arg){
   document.getElementById('authov').classList.add('open');
   const m=document.getElementById('authmodal');
+  if(mode==='forgot' || mode==='reset'){ renderPasswordReset(m, mode, arg); return; }
   if(mode==='login'){
-    m.innerHTML=`<button class="bx" onclick="closeAuth()">✕</button><h2>Connexion</h2><p>Connecte-toi à ton compte Salati</p><div class="fg"><label>Email</label><input id="ae" type="email" placeholder="votre@email.com"></div><div class="fg"><label>Mot de passe</label><input id="ap" type="password" placeholder="••••••••"></div><button class="bprim" onclick="doLogin()" id="login-btn">Se connecter</button><div class="msw">Pas de compte ? <a onclick="openAuth('register')">S'inscrire</a></div>`;
+    m.innerHTML=`<button class="bx" onclick="closeAuth()">✕</button><h2>Connexion</h2><p>Connecte-toi à ton compte Prayer Spot</p><div class="fg"><label>Email</label><input id="ae" type="email" autocomplete="email" placeholder="votre@email.com"></div><div class="fg"><label>Mot de passe</label><input id="ap" type="password" autocomplete="current-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div><div class="forgot-row"><a onclick="openAuth('forgot', (document.getElementById('ae')||{}).value)">Mot de passe oublié ?</a></div><button class="bprim" onclick="doLogin()" id="login-btn">Se connecter</button><div class="msw">Pas de compte ? <a onclick="openAuth('register')">S'inscrire</a></div>`;
   }else{
-    m.innerHTML=`<button class="bx" onclick="closeAuth()">✕</button><h2>Inscription</h2><p>Crée ton compte Salati gratuitement</p><div class="fg"><label>Prénom</label><input id="an" type="text" placeholder="Votre prénom"></div><div class="fg"><label>Email</label><input id="ae" type="email" placeholder="votre@email.com"></div><div class="fg"><label>Mot de passe (6+ caractères)</label><input id="ap" type="password" placeholder="••••••••"></div><button class="bprim" onclick="doRegister()" id="register-btn">Créer mon compte</button><div class="msw">Déjà un compte ? <a onclick="openAuth('login')">Se connecter</a></div>`;
+    m.innerHTML=`<button class="bx" onclick="closeAuth()">✕</button><h2>Inscription</h2><p>Crée ton compte Prayer Spot gratuitement</p><div class="fg"><label>Prénom</label><input id="an" type="text" placeholder="Votre prénom"></div><div class="fg"><label>Email</label><input id="ae" type="email" placeholder="votre@email.com"></div><div class="fg"><label>Mot de passe (6+ caractères)</label><input id="ap" type="password" placeholder="••••••••"></div><button class="bprim" onclick="doRegister()" id="register-btn">Créer mon compte</button><div class="msw">Déjà un compte ? <a onclick="openAuth('login')">Se connecter</a></div>`;
   }
 }
 function closeAuth(){document.getElementById('authov').classList.remove('open');}
+
+// ============================================================
+// MOT DE PASSE OUBLIÉ
+// ============================================================
+const RESET_MSG = {
+  expired:['Lien expiré','Ce lien n\'est valable qu\'une heure. Demande un nouveau lien, il arrive en quelques minutes.'],
+  used:['Lien déjà utilisé','Ce lien a déjà servi. Si tu as encore besoin de changer ton mot de passe, demande un nouveau lien.'],
+  invalid:['Lien non valide','Ce lien n\'est pas valide. Demande un nouveau lien depuis la fenêtre de connexion.']
+};
+function renderPasswordReset(m, mode, arg){
+  const head = `<button class="bx" onclick="closeAuth()">✕</button>`;
+  if(mode === 'forgot'){
+    const email = (arg || '').toString().trim();
+    m.innerHTML = `${head}<h2>Mot de passe oublié</h2><p>Entre l'e-mail de ton compte : on t'envoie un lien pour choisir un nouveau mot de passe.</p>
+      <div class="fg"><label>Email</label><input id="fe" type="email" autocomplete="email" placeholder="votre@email.com" onkeydown="if(event.key==='Enter')doForgot()"></div>
+      <button class="bprim" onclick="doForgot()" id="forgot-btn">Envoyer le lien</button>
+      <div class="msw"><a onclick="openAuth('login')">Retour à la connexion</a></div>`;
+    const i = document.getElementById('fe'); i.value = email; setTimeout(()=>i.focus(), 150);
+  } else if(mode === 'sent'){
+    m.innerHTML = `${head}<div class="reset-ico">✉️</div><h2>Regarde tes e-mails</h2><p>Si un compte existe avec <b>${escHtml(arg)}</b>, tu vas recevoir un lien dans quelques minutes. Il est valable 1 heure.<br>Pense à regarder dans les spams.</p>
+      <button class="bprim" onclick="openAuth('login')">Retour à la connexion</button>`;
+  } else if(mode === 'reset'){
+    m.innerHTML = `${head}<h2>Nouveau mot de passe</h2><p>Choisis un nouveau mot de passe pour ton compte Prayer Spot.</p>
+      <div class="fg"><label>Nouveau mot de passe (6+ caractères)</label><input id="rp1" type="password" autocomplete="new-password" placeholder="••••••••"></div>
+      <div class="fg"><label>Confirme-le</label><input id="rp2" type="password" autocomplete="new-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doReset()"></div>
+      <button class="bprim" onclick="doReset()" id="reset-btn">Enregistrer</button>`;
+    m.dataset.resetToken = arg || '';
+    setTimeout(()=>{ const i = document.getElementById('rp1'); if(i) i.focus(); }, 150);
+  } else if(RESET_MSG[mode]){
+    const [t, d] = RESET_MSG[mode];
+    m.innerHTML = `${head}<div class="reset-ico">⏳</div><h2>${t}</h2><p>${d}</p><button class="bprim" onclick="openAuth('forgot')">Recevoir un nouveau lien</button>`;
+  }
+}
+async function doForgot(){
+  const email = (document.getElementById('fe').value || '').trim();
+  if(!/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]{2,}$/.test(email)){ showToast('Entre une adresse e-mail valide'); return; }
+  const btn = document.getElementById('forgot-btn'); btn.textContent = 'Envoi…'; btn.disabled = true;
+  try{
+    const r = await fetch(`${API}/auth/forgot-password`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email }) });
+    const data = await r.json().catch(()=>({}));
+    if(!r.ok){ showToast(data.error || 'Envoi impossible, réessaie'); btn.textContent = 'Envoyer le lien'; btn.disabled = false; return; }
+    renderPasswordReset(document.getElementById('authmodal'), 'sent', email);
+  }catch(e){
+    showToast('Connexion au serveur impossible, réessaie'); btn.textContent = 'Envoyer le lien'; btn.disabled = false;
+  }
+}
+async function doReset(){
+  const m = document.getElementById('authmodal'), t = m.dataset.resetToken || '';
+  const p1 = document.getElementById('rp1').value, p2 = document.getElementById('rp2').value;
+  if(p1.length < 6){ showToast('Mot de passe : 6 caractères minimum'); return; }
+  if(p1 !== p2){ showToast('Les deux mots de passe ne sont pas identiques'); return; }
+  const btn = document.getElementById('reset-btn'); btn.textContent = 'Enregistrement…'; btn.disabled = true;
+  try{
+    const r = await fetch(`${API}/auth/reset-password`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ token: t, password: p1 }) });
+    const data = await r.json().catch(()=>({}));
+    if(!r.ok){
+      if(RESET_MSG[data.code]){ renderPasswordReset(m, data.code); return; }
+      showToast(data.error || 'Erreur, réessaie'); btn.textContent = 'Enregistrer'; btn.disabled = false; return;
+    }
+    setSession(data.token, data.user);
+    closeAuth();
+    showToast('Mot de passe modifié ✓ Tu es connecté');
+  }catch(e){
+    showToast('Connexion au serveur impossible, réessaie'); btn.textContent = 'Enregistrer'; btn.disabled = false;
+  }
+}
 
 async function doLogin(){
   const email=document.getElementById('ae').value.trim();
@@ -6201,6 +6276,13 @@ async function initApp(){
     // Sur l'écran racine, minimise l'app (comportement natif Android)
     // On ne peut pas vraiment minimiser depuis le web, donc on ne fait rien
   });
+
+  // Lien « mot de passe oublié » reçu par e-mail : prayerspot.fr/#reset=…
+  const resetMatch = (window.location.hash || '').match(/^#reset=([A-Za-z0-9_-]{20,200})$/);
+  if(resetMatch){
+    window.history.replaceState({}, '', window.location.pathname + window.location.search);
+    openAuth('reset', resetMatch[1]);
+  }
 
   // Gestion du retour depuis la page de paiement Stripe
   const params = new URLSearchParams(window.location.search);
@@ -6875,19 +6957,20 @@ function setupVersetObserver(num, total){
     if(screen.scrollHeight - screen.clientHeight > 4 && screen.scrollTop + screen.clientHeight >= screen.scrollHeight - 12) markRead(visibleVersets());
   }
 
+  // Verset au centre de l'écran : on part du dernier trouvé et on ne regarde que ses voisins
+  // (au lieu de mesurer les 286 versets d'Al-Baqara à chaque mouvement du doigt)
+  const versetEls = [...screen.querySelectorAll('.verset[data-v]')];
+  let _idx = 0;
+  function centerDist(i, cy){ const r = versetEls[i].getBoundingClientRect(); return Math.abs(r.top + r.height / 2 - cy); }
   function updateCenterVerset(){
-    if(currentSourateNum !== num) return;
+    if(currentSourateNum !== num || !versetEls.length) return;
     const screenRect = screen.getBoundingClientRect();
-    const screenCenterY = screenRect.top + screenRect.height / 2;
-    const versets = screen.querySelectorAll('.verset[data-v]');
-    let bestEl = null, bestDist = Infinity;
-    versets.forEach(el=>{
-      const r = el.getBoundingClientRect();
-      const elCenterY = r.top + r.height / 2;
-      const d = Math.abs(elCenterY - screenCenterY);
-      if(d < bestDist){ bestDist = d; bestEl = el; }
-    });
-    if(!bestEl) return;
+    const cy = screenRect.top + screenRect.height / 2;
+    let i = Math.min(_idx, versetEls.length - 1), d = centerDist(i, cy);
+    while(i + 1 < versetEls.length){ const d2 = centerDist(i + 1, cy); if(d2 < d){ i++; d = d2; } else break; }
+    while(i - 1 >= 0){ const d2 = centerDist(i - 1, cy); if(d2 < d){ i--; d = d2; } else break; }
+    _idx = i;
+    const bestEl = versetEls[i];
     const vNum = parseInt(bestEl.dataset.v);
     if(vNum === _lastCenterV) return;
     _lastCenterV = vNum;
@@ -6895,10 +6978,13 @@ function setupVersetObserver(num, total){
     if(Date.now() >= quranResumeUntil) saveQuranPos(num, vNum);
   }
 
+  // Au plus ~8 fois par seconde pendant le défilement, et une dernière fois quand il s'arrête
+  let _lastRun = 0, _trail = null;
+  function runTrack(){ _lastRun = performance.now(); updateCenterVerset(); checkEnd(); }
   function onScroll(){
-    if(_rafPending) return;
-    _rafPending = true;
-    requestAnimationFrame(()=>{ _rafPending = false; updateCenterVerset(); checkEnd(); });
+    const now = performance.now();
+    if(now - _lastRun >= 120){ if(!_rafPending){ _rafPending = true; requestAnimationFrame(()=>{ _rafPending = false; runTrack(); }); } }
+    else if(!_trail){ _trail = setTimeout(()=>{ _trail = null; if(currentSourateNum === num) runTrack(); }, 140); quranTrackTimers.push(_trail); }
   }
 
   quranScrollHandler = onScroll;
